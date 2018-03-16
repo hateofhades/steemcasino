@@ -26,10 +26,6 @@ body {
     text-decoration: none;
 }
 
-.nav-item .nav-link:hover:not(.active) {
+.nav-item .nav-link:hover {
     background-color: #111;
-}
-
-.active {
-    background-color: #4CAF50;
 }
