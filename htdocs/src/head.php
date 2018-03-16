@@ -1,3 +1,5 @@
+<title>SteemCasino</title>
+
 <link rel="stylesheet" type="text/css" href="src/design.css">
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
@@ -6,4 +8,4 @@
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.0/src/js.cookie.min.js"></script>
 <script type="text/javascript" src="js/config.js"></script>
 <script type="text/javascript" src="js/sc2.min.js"></script>
-<script type="text/javascript" src="js/sc2.js?filever=<?php echo filesize('./js/steem.js')?>"></script>
+<script type="text/javascript" src="js/sc2.js"></script>

@@ -1,8 +1,4 @@
 <?php
-	// setcookie() defines a cookie to be sent along with the rest of the HTTP headers. Like other headers, 
-	// cookies must be sent before any output from your script (this is a protocol restriction). This requires 
-	// that you place calls to this function prior to any output, including and tags as well as any whitespace.
-
 	if(!empty($_GET["username"]) && !empty($_GET["access_token"]) && !empty($_GET["expires_in"]))
 	{
 		$expiresIn = $_GET["expires_in"];

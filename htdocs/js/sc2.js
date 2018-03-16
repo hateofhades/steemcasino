@@ -18,7 +18,7 @@ function SetProfileInfo()
 				{
 					var profileImage = JSON.parse(result.account.json_metadata)['profile']['profile_image'];
 
-					$("#accountName").append(result.account.name);
+					var accountName = result.account.name;
 					if(profileImage)
 					{
 						$("#profileImage").attr("src", profileImage);
@@ -27,6 +27,14 @@ function SetProfileInfo()
 			}
 			else
 			{
+				var url=location.href;
+				var urlFilename = url.substring(url.lastIndexOf('/')+1);
+		
+				if(urlFilename != "index.php")
+				{
+					window.location.href = "http://localhost/index.php";
+				}
+				
 				var loginUrl = sc2.getLoginURL();
 				$("#login").attr("href", loginUrl);
 			}
@@ -34,6 +42,14 @@ function SetProfileInfo()
 	}
 	else
 	{
+		var url=location.href;
+		var urlFilename = url.substring(url.lastIndexOf('/')+1);
+		
+		if(urlFilename != "index.php")
+		{
+			window.location.href = "http://localhost/index.php";
+		}
+		
 		var loginUrl = sc2.getLoginURL();
 		$("#login").attr("href", loginUrl);
 	}
@@ -49,4 +65,11 @@ function Logout()
 
 		location.reload();
 	});
+}
+			
+function log10(str) {
+    const leadingDigits = parseInt(str.substring(0, 4));
+    const log = Math.log(leadingDigits) / Math.log(10)
+    const n = str.length - 1;
+    return n + (log - parseInt(log));
 }
