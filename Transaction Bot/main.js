@@ -11,9 +11,10 @@ var con = mysql.createConnection({
 
 var lastTransInt;
 
-var username = "";
+var botName = "";
 var activekey = "";
 var depositMemo = "deposit";
+var withdrawMemo = "withdraw";
 
 con.connect(function(err) {
 	if (err) throw err;
@@ -35,7 +36,7 @@ function lastTrans() {
 }
 
 function updateLastTrans() {
-	request("https://uploadbeta.com/api/steemit/transfer-history/?id=" + username, function (error, response, body) {
+	request("https://uploadbeta.com/api/steemit/transfer-history/?id=" + botName, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			var json = JSON.parse(body);
 			console.log("New transaction list aquired.");
@@ -66,6 +67,16 @@ function updateLastTrans() {
 						depositReceived(username, deposit);	
 					}
 				}
+				else {
+					var memed = json[i].memo.split(" ");
+					if(!withdrawMemo.localeCompare(memed[0])) {
+						var trans = json[i].transaction.split(" ");
+						var username = trans[4];
+						var withdraw = parseFloat(memed[1]);
+						console.log(username + " wants to withdraw: " + withdraw + " SBD.");
+						withdrawReceived(username, withdraw);
+					}
+				}
 			}
 		}
 	});
@@ -80,4 +91,25 @@ function depositReceived(username, deposit) {
 					console.log("Deposited");
 				});
 			});
+}
+
+function withdrawReceived(username, withdraw) {
+	con.query("SELECT * FROM users WHERE username = '" + username + "'", function (err, result) {
+		if (err) throw err;
+		var balance = result[0].balance;
+		if(balance >= withdraw) {
+			var newBalance = balance - withdraw;
+			con.query("UPDATE users SET balance = '" + newBalance + "' WHERE username = '" + username + "'", function (errr, rresult) {
+				steem.broadcast.transfer(activekey, botName, username, withdraw + " SBD", "Your withdrawal has been successful! New balance: " + newBalance + " SBD", function(err, result) {
+				console.log(err, result);
+				console.log(username + " has withdraw " + withdraw + " SBD."); 
+				});
+			});
+		} else {
+			console.log(username + " dosn't have enough money in balance. Balance: " + balance + ". Wants do withdraw: " + withdraw);
+			steem.broadcast.transfer(activekey, botName, username, "0.001 SBD", "You dont have enough money in balance. Balance: " + balance + " SBD", function(err, result) {
+				console.log(err, result);
+			});
+		}
+	});		
 }
