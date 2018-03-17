@@ -66,6 +66,11 @@ function updateLastTrans() {
 						console.log("Registering deposit from: " + username);
 						depositReceived(username, deposit);	
 					}
+					else
+					{
+						console.log(username + " send a deposit in STEEM, returning.");
+						returnDeposit(username, deposit, "STEEM");
+					}
 				}
 				else {
 					var memed = json[i].memo.split(" ");
@@ -79,6 +84,17 @@ function updateLastTrans() {
 				}
 			}
 		}
+	});
+}
+
+function returnDeposit(username, deposit, currency) {
+	if(currency == "STEEM")
+		var returnMemo = "We currently do not accept deposits in STEEM only SBD.";
+	else
+		var returnMemo = "We are currently performing maintenance!";
+	
+	steem.broadcast.transfer(activekey, botName, username, deposit + " " + currency, returnMemo, function(err, result) {
+		console.log("Returned to " + username + " " + deposit + " " + currency);
 	});
 }
 
@@ -110,14 +126,12 @@ function withdrawReceived(username, withdraw) {
 					con.query("UPDATE users SET balance = '" + newBalance + "' WHERE username = '" + username + "'", function (errr, rresult) {
 					
 						steem.broadcast.transfer(activekey, botName, username, withdraw + " SBD", "Your withdrawal has been successful! New balance: " + newBalance + " SBD", function(err, result) {
-							console.log(err, result);
 							console.log(username + " has withdraw " + withdraw + " SBD."); 
 					});
 					
 					});
 				} else {
 					steem.broadcast.transfer(activekey, botName, username, "0.001 SBD", "We don't have this amount of money at this moment. Please wait until we add more or withdraw less than: " + botBalance + " SBD", function(err, result) {
-							console.log(err, result);
 					});
 				}
 			});
@@ -125,7 +139,6 @@ function withdrawReceived(username, withdraw) {
 		} else {
 			console.log(username + " dosn't have enough money in balance. Balance: " + balance + ". Wants do withdraw: " + withdraw);
 			steem.broadcast.transfer(activekey, botName, username, "0.001 SBD", "You dont have enough money in balance. Balance: " + balance + " SBD", function(err, result) {
-				console.log(err, result);
 			});
 		}
 	});		
