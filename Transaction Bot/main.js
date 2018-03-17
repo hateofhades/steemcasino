@@ -99,12 +99,29 @@ function withdrawReceived(username, withdraw) {
 		var balance = result[0].balance;
 		if(balance >= withdraw) {
 			var newBalance = balance - withdraw;
-			con.query("UPDATE users SET balance = '" + newBalance + "' WHERE username = '" + username + "'", function (errr, rresult) {
-				steem.broadcast.transfer(activekey, botName, username, withdraw + " SBD", "Your withdrawal has been successful! New balance: " + newBalance + " SBD", function(err, result) {
-				console.log(err, result);
-				console.log(username + " has withdraw " + withdraw + " SBD."); 
-				});
+			
+			steem.api.getAccounts([botName], function(err, result) {	
+				var botBalance = result[0].sbd_balance.split(" ");
+				botBalance = botBalance[0];
+				botBalance = botBalance - 0.001;
+				
+				if(botBalance >= withdraw)
+				{
+					con.query("UPDATE users SET balance = '" + newBalance + "' WHERE username = '" + username + "'", function (errr, rresult) {
+					
+						steem.broadcast.transfer(activekey, botName, username, withdraw + " SBD", "Your withdrawal has been successful! New balance: " + newBalance + " SBD", function(err, result) {
+							console.log(err, result);
+							console.log(username + " has withdraw " + withdraw + " SBD."); 
+					});
+					
+					});
+				} else {
+					steem.broadcast.transfer(activekey, botName, username, "0.001 SBD", "We don't have this amount of money at this moment. Please wait until we add more or withdraw less than: " + botBalance + " SBD", function(err, result) {
+							console.log(err, result);
+					});
+				}
 			});
+			
 		} else {
 			console.log(username + " dosn't have enough money in balance. Balance: " + balance + ". Wants do withdraw: " + withdraw);
 			steem.broadcast.transfer(activekey, botName, username, "0.001 SBD", "You dont have enough money in balance. Balance: " + balance + " SBD", function(err, result) {
