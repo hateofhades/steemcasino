@@ -16,6 +16,8 @@ var activekey = "";
 var depositMemo = "deposit";
 var withdrawMemo = "withdraw";
 
+var isMaintenance = false;
+
 con.connect(function(err) {
 	if (err) throw err;
   console.log("Bot is now connected to the database.");
@@ -25,6 +27,8 @@ con.connect(function(err) {
 steem.api.setOptions({ url: 'https://api.steemit.com'});
 
 setInterval(updateLastTrans, 5*1000);
+maintenanceCheck();
+var maintenanceCheckID = setInterval(maintenanceCheck, 60*1000*30);
 
 function lastTrans() {	
 	con.query("SELECT * FROM info", function (err, result) {
@@ -33,6 +37,24 @@ function lastTrans() {
 	console.log();
 	lastTransInt = result[0].value;
   });
+}
+
+function maintenanceCheck() {
+	con.query("SELECT * FROM info WHERE name = 'isMaintenance'", function (err, result) {
+		if(result[0].value == 1 && isMaintenance == false)
+		{
+			isMaintenance = true;
+			console.log("SteemCasino is now in maintenance mode!");
+			clearInterval(maintenanceCheckID);
+			var maintenanceCheckID = setInterval(maintenanceCheck, 60*1000*5);
+		}
+		else if(result[0].value == 0 && isMaintenance == true) {
+			isMaintenance = false;
+			console.log("SteemCasino is not anymore in maintenance mode!");
+			clearInterval(maintenanceCheckID);
+			var maintenanceCheckID = setInterval(maintenanceCheck, 60*1000*30);
+		}
+	});
 }
 
 function updateLastTrans() {
@@ -63,8 +85,14 @@ function updateLastTrans() {
 					var currency = trans[2];
 					if(!currency.localeCompare("SBD"))
 					{
-						console.log("Registering deposit from: " + username);
-						depositReceived(username, deposit);	
+						if(isMaintenance == false)
+						{
+							console.log("Registering deposit from: " + username);
+							depositReceived(username, deposit);	
+						} else {
+							console.log(username + " send a deposit in SBD, but SteemCasino is in maintenance mode, returning.");
+							returnDeposit(username, deposit, "SBD");
+						}
 					}
 					else
 					{
