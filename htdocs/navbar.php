@@ -16,7 +16,7 @@ require_once('src/utils.php');
 				<a class="nav-link" href="profile.php">My profile</a>
 			</li>
 			<li class="nav-item">
-				
+				<a class="nav-link" href="games.php">Games</a>
 			</li>';
 	}
 	else

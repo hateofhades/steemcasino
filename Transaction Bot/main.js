@@ -1,6 +1,7 @@
 var steem = require('steem');
 var mysql = require('mysql');
 var request = require('request');
+var crypto = require('crypto');
 
 var con = mysql.createConnection({
   host: "localhost",
@@ -15,8 +16,11 @@ var botName = "";
 var activekey = "";
 var depositMemo = "deposit";
 var withdrawMemo = "withdraw";
+var coinflipStartMemo = "play coinflip";
 
 var isMaintenance = false;
+
+playCoinflip("meme-bot", 1);
 
 con.connect(function(err) {
 	if (err) throw err;
@@ -108,11 +112,23 @@ function updateLastTrans() {
 						var withdraw = parseFloat(memed[1]);
 						console.log(username + " wants to withdraw: " + withdraw + " SBD.");
 						withdrawReceived(username, withdraw);
+					} else if(!coinflipStartMemo.localeCompare(memed[0])) {
+						var trans = json[i].transaction.split(" ");
+						var username = trans[4];
+						var coinflipBet = parseFloat(memed[1]);
+						console.log(username + " has started a new coinflip game. Bet: " + coinflipBet + " SBD");
+						playCoinflip(username, coinflipBet);
 					}
 				}
 			}
 		}
 	});
+}
+
+function playCoinflip(username, coinflipBet) {
+	var secret = createSecret() + randomChars(99);
+	var hash = hashSecret(secret);
+	
 }
 
 function returnDeposit(username, deposit, currency) {
@@ -170,4 +186,27 @@ function withdrawReceived(username, withdraw) {
 			});
 		}
 	});		
+}
+
+function randomChars(chars) {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < chars; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}
+
+function createSecret() {
+	var value = Math.floor(Math.random() * Math.floor(100));
+	if(value % 2 == 0)
+		return "A";
+	else (value % 2 == 1)
+		return "B";
+}
+
+function hashSecret(secret) {
+	var hash = crypto.createHash('sha256').update(secret).digest('hex');
+	return hash;
 }
