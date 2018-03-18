@@ -26,7 +26,6 @@ con.connect(function(err) {
 
 steem.api.setOptions({ url: 'https://api.steemit.com'});
 
-updateLastTrans();
 setInterval(updateLastTrans, 5*1000);
 maintenanceCheck();
 var maintenanceCheckID = setInterval(maintenanceCheck, 60*1000*30);
@@ -107,13 +106,9 @@ function updateLastTrans() {
 						var trans = json[i].transaction.split(" ");
 						var username = trans[4];
 						var withdraw = parseFloat(memed[1]);
+						withdraw = withdraw.toFixed(3);
 						console.log(username + " wants to withdraw: " + withdraw + " SBD.");
 						withdrawReceived(username, withdraw);
-					} else {
-						var username = trans[4];
-						var transactionAmount = parseFloat(memed[1]);
-						var currency = trans[2];
-						returnDeposit(username, transactionAmount, currency);
 					}
 				}
 			}
@@ -125,7 +120,7 @@ function returnDeposit(username, deposit, currency) {
 	if(currency == "STEEM")
 		var returnMemo = "We currently do not accept deposits in STEEM only SBD.";
 	else
-		var returnMemo = "We are currently performing maintenance or you sent an invalid deposit/withdrawal!";
+		var returnMemo = "We are currently performing maintenance!";
 	
 	steem.broadcast.transfer(activekey, botName, username, deposit + " " + currency, returnMemo, function(err, result) {
 		console.log("Returned to " + username + " " + deposit + " " + currency);
@@ -147,7 +142,7 @@ function withdrawReceived(username, withdraw) {
 	con.query("SELECT * FROM users WHERE username = '" + username + "'", function (err, result) {
 		if (err) throw err;
 		var balance = result[0].balance;
-		if(balance >= withdraw && withdraw != 0) {
+		if(balance >= withdraw) {
 			var newBalance = balance - withdraw;
 			
 			steem.api.getAccounts([botName], function(err, result) {	
@@ -160,7 +155,7 @@ function withdrawReceived(username, withdraw) {
 					con.query("UPDATE users SET balance = '" + newBalance + "' WHERE username = '" + username + "'", function (errr, rresult) {
 					
 						steem.broadcast.transfer(activekey, botName, username, withdraw + " SBD", "Your withdrawal has been successful! New balance: " + newBalance + " SBD", function(err, result) {
-							console.log(err, result);
+							console.log(err);
 							console.log(username + " has withdraw " + withdraw + " SBD."); 
 					});
 					
