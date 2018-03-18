@@ -12,5 +12,6 @@ git clone https://github.com/andreistalker/steemcasino.git
 cd steemcasino/Transaction Bot
 $ npm install mysql
 $ npm install request
-$ nmp install steem
+$ npm install steem
+$ npm install crypto
 ```
