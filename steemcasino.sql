@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 18 Mar 2018 la 11:07
+-- Generation Time: 19 Mar 2018 la 09:26
 -- Versiune server: 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -33,8 +33,8 @@ CREATE TABLE `coinflip` (
   `player1` varchar(255) NOT NULL,
   `player2` varchar(255) NOT NULL,
   `win` int(11) NOT NULL,
-  `bet` int(11) NOT NULL,
-  `reward` int(11) NOT NULL,
+  `bet` float NOT NULL,
+  `reward` float NOT NULL,
   `secret` varchar(128) NOT NULL,
   `hash` varchar(300) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -68,7 +68,8 @@ INSERT INTO `info` (`ID`, `name`, `value`) VALUES
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(256) NOT NULL,
-  `balance` float NOT NULL
+  `balance` float NOT NULL,
+  `token` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -111,7 +112,7 @@ ALTER TABLE `info`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;COMMIT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
