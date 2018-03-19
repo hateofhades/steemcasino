@@ -9,6 +9,8 @@ include_once('src/db.php');
 		setcookie("expires_in", $expiresIn, time()+$expiresIn, "/");
 	}
 	
+	$token = password_hash($_GET['access_token'], PASSWORD_DEFAULT);
+	
 	$query = $db->prepare('SELECT * FROM users WHERE username = ?');
 	$query->bind_param('s', $_GET['username']);
 	
@@ -16,9 +18,14 @@ include_once('src/db.php');
 	
 	$result = $query->get_result();
 	if(!$result->num_rows) {
-		$query = $db->prepare('INSERT INTO users (username) VALUES (?)');
-		$query->bind_param('s', $_GET['username']);
+		$query = $db->prepare('INSERT INTO users (username, token) VALUES (?, ?)');
+		$query->bind_param('ss', $_GET['username'], $token);
 	
+		$query->execute();
+	} else {
+		$query = $db->prepare('UPDATE users SET token = ? WHERE username = ?');
+		$query->bind_param('ss', $token, $_GET['username']);
+		
 		$query->execute();
 	}
 ?>

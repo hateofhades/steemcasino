@@ -34,12 +34,16 @@ $balance = $row['balance'];
 					reputation = Math.floor(reputation);
 					$("#accountName").append(reputation + ")");
 					$("#balance").text("Balance: <?php echo $balance;?> SBD ");
-					$("#topup").text(" Add more");
+					$("#topup").text(" Deposit");
+					$("#withdraw").text(" Withdraw");
+					$("#lll").text(" / ");
 				}
 			});
 			</script></h1>
 			<h3 id="balance" style="display:inline"></h3> 
-			<a href="#" id="topup" style="display:inline;text-decoration:none;color:black;"  onClick="MyWindow=window.open('topup.php','MyWindow',width=600,height=300); return false;"></a>
+			<a href="#" id="topup" style="display:inline;text-decoration:none;color:black;"  onClick="MyWindow=window.open('balance.php?action=deposit','MyWindow',width=600,height=300); return false;"></a> 
+			<p id="lll" style="display:inline;text-decoration:none;color:black;"></p> 
+			<a href="#" id="withdraw" style="display:inline;text-decoration:none;color:black;"  onClick="MyWindow=window.open('balance.php?action=withdrawal','MyWindow',width=600,height=300); return false;"></a>
 		</center>
 	</body>
 </html>
