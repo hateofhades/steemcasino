@@ -19,13 +19,15 @@ if($result->num_rows) {
 		$hash = $row['hash'];
 		
 		if($player1 == "")
-			$players = "<a href=\"#\">Enter</a><br>".$player2;
+			$players = "Steem - <a href=\"#\" onClick=\"MyWindow=window.open('confirmcoinflip.php?game=".$gameid."','MyWindow',width=600,height=300); return false;\">Enter game</a><br>Bitcoin - ".$player2;
+		else if($player2 == "")
+			$players = "Steem - ".$player1."<br>Bitcoin - <a href=\"#\" onClick=\"MyWindow=window.open('confirmcoinflip.php?game=".$gameid."','MyWindow',width=600,height=300); return false;\">Enter game</a>";
 		else 
-			$players = $player1."<br><a href=\"#\">Enter</a>";
+			$players = $player1."<br>".$player2."<br><a href=\"#\">View game</a>";
 		
 		$body .= "
 		<div>
-			<h1>Game ID:".$gameid."</h1>
+			<h1>Game #".$gameid."</h1>
 			<h3>Players<br>".$players."<br><br>
 			Bet: ".$bet." SBD (Reward:".$reward." SBD)<br><a href=\"#\" onClick=\"MyWindow=window.open('hash.php?hash=".$hash."','MyWindow',width=600,height=300); return false;\">
 			See hash
