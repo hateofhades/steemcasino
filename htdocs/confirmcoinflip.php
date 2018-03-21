@@ -3,6 +3,8 @@ include_once('src/config.php');
 
 include_once('src/db.php');
 
+include_once('src/head.php');
+
 include_once('src/coinfliputils.php');
 
 if(isset($_GET['game'])) {
@@ -16,12 +18,10 @@ if(isset($_GET['game'])) {
 			
 			$result = $query->get_result();
 			if($result->num_rows) {
-				$token = $_COOKIE['access_token'];
 				while ($row = $result->fetch_assoc()) { 
 					$balanced = $row['balance'];
-					$hash = $row['token'];
 				}
-				if(password_verify($token, $hash)) {
+				if(IsLoggedOnUser()) {
 					$query = $db->prepare('SELECT * FROM coinflip WHERE ID = ?');
 					$query->bind_param('i', $_GET['game']);
 							

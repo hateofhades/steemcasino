@@ -9,8 +9,6 @@ include_once('src/db.php');
 		setcookie("expires_in", $expiresIn, time()+$expiresIn, "/");
 	}
 	
-	$token = password_hash($_GET['access_token'], PASSWORD_DEFAULT);
-	
 	$query = $db->prepare('SELECT * FROM users WHERE username = ?');
 	$query->bind_param('s', $_GET['username']);
 	
@@ -18,22 +16,15 @@ include_once('src/db.php');
 	
 	$result = $query->get_result();
 	if(!$result->num_rows) {
-		$query = $db->prepare('INSERT INTO users (username, token) VALUES (?, ?)');
-		$query->bind_param('ss', $_GET['username'], $token);
+		$query = $db->prepare('INSERT INTO users (username) VALUES (?)');
+		$query->bind_param('s', $_COOKIE['username']);
 	
-		$query->execute();
-	} else {
-		$query = $db->prepare('UPDATE users SET token = ? WHERE username = ?');
-		$query->bind_param('ss', $token, $_GET['username']);
-		
 		$query->execute();
 	}
 ?>
-
-<!DOCTYPE html>
 <html lang="en">
 	<head>
-		<?php include("src/head.php"); ?>
+		<?php include_once("src/head.php"); ?>
 	</head>
 	<body>
 		<?php include ("navbar.php"); ?>

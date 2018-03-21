@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 19 Mar 2018 la 09:26
+-- Generation Time: 21 Mar 2018 la 09:35
 -- Versiune server: 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -56,7 +56,7 @@ CREATE TABLE `info` (
 --
 
 INSERT INTO `info` (`ID`, `name`, `value`) VALUES
-(1, 'lastTrans', 0),
+(1, 'lastTrans', 522),
 (2, 'isMaintenance', 0);
 
 -- --------------------------------------------------------
@@ -68,8 +68,7 @@ INSERT INTO `info` (`ID`, `name`, `value`) VALUES
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(256) NOT NULL,
-  `balance` float NOT NULL,
-  `token` varchar(255) NOT NULL
+  `balance` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -112,7 +111,7 @@ ALTER TABLE `info`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;COMMIT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

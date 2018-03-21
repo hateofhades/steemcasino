@@ -3,7 +3,11 @@ include_once('src/config.php');
 
 include_once('src/db.php');
 
+include_once('src/head.php');
+
 include_once('src/coinfliputils.php');
+
+include_once('src/utils.php');
 
 if(isset($_GET['balanceTop']))
 	if($_GET['balanceTop'] != 0 && ($_GET['player'] == 1 || $_GET['player'] == 2)) {
@@ -15,13 +19,11 @@ if(isset($_GET['balanceTop']))
 			
 			$result = $query->get_result();
 			if($result->num_rows) {
-				$token = $_COOKIE['access_token'];
 				while ($row = $result->fetch_assoc()) { 
-					$hash = $row['token'];
 					$balanced = $row['balance'];
 				}
 				
-				if(password_verify($token, $hash)) {
+				if(IsLoggedOnUser()) {
 					$secret = generateSecret();
 					$hashed = hash("whirlpool", $secret);
 					if($balanced >= $_GET['balanceTop']) {
