@@ -28,6 +28,6 @@ require_once('src/utils.php');
 	}
 ?>	
 </ul>
-				<script>SetProfileInfo();
-				console.log(IsValidToken());
+				<script>
+				SetProfileInfo();
 				</script>

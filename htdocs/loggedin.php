@@ -16,8 +16,9 @@ include_once('src/db.php');
 	
 	$result = $query->get_result();
 	if(!$result->num_rows) {
-		$query = $db->prepare('INSERT INTO users (username) VALUES (?)');
-		$query->bind_param('s', $_COOKIE['username']);
+		$balance = 0;
+		$query = $db->prepare('INSERT INTO users (`username`, `balance`) VALUES (?, ?)');
+		$query->bind_param('si', $_GET['username'], $balance);
 	
 		$query->execute();
 	}

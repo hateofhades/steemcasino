@@ -7,6 +7,8 @@ include_once('src/head.php');
 
 include_once('src/coinfliputils.php');
 
+include_once('src/utils.php');
+
 if(isset($_GET['game'])) {
 	if(!$_GET['game'] == NULL) {
 		if($_GET['game'] == 0)
@@ -54,8 +56,10 @@ if(isset($_GET['game'])) {
 					else
 						$win = 2;
 					
-					$query = $db->prepare('UPDATE coinflip SET player'.$playered.' = ?, win = ? WHERE ID = ?');
-					$query->bind_param('sii', $_COOKIE['username'], $win, $_GET['game']);
+					$timestamp = time();
+					
+					$query = $db->prepare('UPDATE coinflip SET player'.$playered.' = ?, win = ?, timestamp = ? WHERE ID = ?');
+					$query->bind_param('siii', $_COOKIE['username'], $win, $timestamp, $_GET['game']);
 					
 					$query->execute();
 					if($playered = $win)
