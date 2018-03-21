@@ -17,6 +17,7 @@ $ npm install steem
 ```
 
 Import the .sql file into your database
+
 Copy the htdocs folder in your Apache/Xampp/etc
 
 Modify the first lines of Transaction Bot/main.js with your information
