@@ -27,11 +27,11 @@ if(isset($_GET['balanceTop']))
 					$secret = generateSecret();
 					$hashed = hash("whirlpool", $secret);
 					if($balanced >= $_GET['balanceTop']) {
-						if($_GET['player'] == 1)
+						if($_GET['player'] == 1) 
 							$playered = 1;
-						else
+						else 
 							$playered = 2;
-						
+
 						$reward = $_GET['balanceTop'] * 2;
 						
 						$newbalance = $balanced - $_GET['balanceTop'];

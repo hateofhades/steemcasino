@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 21 Mar 2018 la 11:51
+-- Generation Time: 22 Mar 2018 la 21:37
 -- Versiune server: 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -69,7 +69,9 @@ INSERT INTO `info` (`ID`, `name`, `value`) VALUES
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(256) NOT NULL,
-  `balance` float NOT NULL
+  `balance` float NOT NULL,
+  `won` float NOT NULL,
+  `losted` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
