@@ -86,6 +86,9 @@ else {
 				
 				$win = $row['win'];
 				
+				if($win == 0)
+					continue;
+				
 				if($win == 1)
 					$winner = $player1;
 				else
@@ -117,7 +120,7 @@ $secrefresh = "30";
 <html>
 	<head>
 		<?php include('src/head.php'); ?>
-		<meta http-equiv="refresh" content="<?php echo $secrefresh?>;URL='<?php echo $page?>'">
+		<meta http-equiv="refresh" content="<?php echo $secrefresh?>;URL='<?php echo $page?><?php if($past == 1) echo "?past=1";?>'">
 	</head>
 	<body>
 		<?php include('navbar.php'); ?>
