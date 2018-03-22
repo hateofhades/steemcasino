@@ -53,14 +53,14 @@ if(!isset($_GET['past'])) {
 				else
 					$winner = $player2;
 				
-					$players = $player1."<br>".$player2."<br><a href=\"#\">View game</a>";
+					$players = $player1."<br>".$player2."<br><a href=\"#\" onClick=\"MyWindow=window.open('viewcoinflipgame.php?gameid=".$gameid."&player1=".$player1."&player2=".$player2."&bet=".$bet."&reward=".$reward."&hash=".$hash."&secret=".$secret."','MyWindow',width=600,height=300); return false;\">View game</a>";
 				
 				$body .= "
 				<div style=\"display:inline;float:left;padding-left:10px;\"><center>
 					<h3>Game #".$gameid."</h3>
 					<h4>Players<br>".$players."<br>
 					Jackpot: ".$reward." SBD
-					<br>Winner: ".$winner."<br><a href=\"#\" onClick=\"MyWindow=window.open('hash.php?hash=".$hash."&secret=".$secret."','MyWindow',width=600,height=300); return false;\">
+					<br><br><a href=\"#\" onClick=\"MyWindow=window.open('hash.php?hash=".$hash."&secret=".$secret."','MyWindow',width=600,height=300); return false;\">
 					See hash and secret
 					</a></center>
 				</div>
@@ -94,7 +94,7 @@ else {
 				else
 					$winner = $player2;
 				
-					$players = $player1."<br>".$player2."<br><a href=\"#\">View game</a>";
+					$players = $player1."<br>".$player2."<br><a href=\"#\" onClick=\"MyWindow=window.open('viewcoinflipgame.php?gameid=".$gameid."&player1=".$player1."&player2=".$player2."&bet=".$bet."&reward=".$reward."&hash=".$hash."&secret=".$secret."','MyWindow',width=600,height=300); return false;\">View game</a>";
 				
 				$body = "
 				<div style=\"display:inline;float:left;padding-left:10px;\"><center>
