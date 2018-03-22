@@ -10,6 +10,12 @@ body {
     background-color: #333;
 }
 
+#footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
 .nav-item {
     float: right;
 }

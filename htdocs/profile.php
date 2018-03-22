@@ -45,5 +45,6 @@ $balance = $row['balance'];
 			<p id="lll" style="display:inline;text-decoration:none;color:black;"></p> 
 			<a href="#" id="withdraw" style="display:inline;text-decoration:none;color:black;"  onClick="MyWindow=window.open('balance.php?action=withdrawal','MyWindow',width=600,height=300); return false;"></a>
 		</center>
+		<?php include('src/footer.php'); ?>
 	</body>
 </html>

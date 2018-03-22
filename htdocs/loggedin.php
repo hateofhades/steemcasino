@@ -37,6 +37,6 @@ include_once('src/db.php');
 		<script>
 			setTimeout(function(){$(location).attr('href', 'index.php');}, 3000);
 		</script>
-
+		<?php include('src/footer.php'); ?>
 	</body>
 </html>
