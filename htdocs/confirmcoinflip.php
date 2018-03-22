@@ -3,7 +3,11 @@ include_once('src/config.php');
 
 include_once('src/db.php');
 
+include_once('src/head.php');
+
 include_once('src/coinfliputils.php');
+
+include_once('src/utils.php');
 
 if(isset($_GET['game'])) {
 	if(!$_GET['game'] == NULL) {
@@ -16,12 +20,12 @@ if(isset($_GET['game'])) {
 			
 			$result = $query->get_result();
 			if($result->num_rows) {
-				$token = $_COOKIE['access_token'];
 				while ($row = $result->fetch_assoc()) { 
 					$balanced = $row['balance'];
-					$hash = $row['token'];
+					$thiswon = $row['won'];
+					$thislost = $row['losted'];
 				}
-				if(password_verify($token, $hash)) {
+				if(IsLoggedOnUser()) {
 					$query = $db->prepare('SELECT * FROM coinflip WHERE ID = ?');
 					$query->bind_param('i', $_GET['game']);
 							
@@ -42,57 +46,70 @@ if(isset($_GET['game'])) {
 						die("You don't have enough money!");
 					if($player2 == "") {
 						$playered = 2;
+						if($player1 == $_COOKIE['username'])
+							die("You can't play in your own games!");
 						$otherplayer = $player1;
 					}
 					else {
 						$playered = 1;
+						if($player2 == $_COOKIE['username'])
+							die("You can't play in your own games!");
 						$otherplayer = $player2;
 					}
 					
 					if($secret[0] == "A")
 						$win = 1;
-					else
+					else if($secret[0] == "B")
 						$win = 2;
 					
-					$query = $db->prepare('UPDATE coinflip SET player'.$playered.' = ?, win = ? WHERE ID = ?');
-					$query->bind_param('sii', $_COOKIE['username'], $win, $_GET['game']);
+					$timestamp = time();
+					
+					$query = $db->prepare('UPDATE coinflip SET player'.$playered.' = ?, win = ?, timestamp = ? WHERE ID = ?');
+					$query->bind_param('siii', $_COOKIE['username'], $win, $timestamp, $_GET['game']);
 					
 					$query->execute();
-					if($playered = $win)
-					{
-						$newbalance = $balanced + $bet;
-						$won = 4;
-					} else {
-						$newbalance = $balance - $bet;
+					
+					$query = $db->prepare('SELECT * FROM users WHERE username = ?');
+					$query->bind_param('s', $otherplayer);
 						
-						$query = $db->prepare('SELECT * FROM users WHERE username = ?');
-						$query->bind_param('s', $otherplayer);
-						
-						$query->execute();
-						$result = $query->get_result();
-						while ($row = $result->fetch_assoc()) { 
-							$otherbalance = $row['balance'];
-						}
-						
-						$otherbalance = $otherbalance + $bet;
-						
-						$query = $db->prepare('UPDATE users SET balance = ? WHERE username = ?');
-						$query->bind_param('ds', $otherbalance, $otherplayer);
-						
-						$query->execute();	
+					$query->execute();
+					$result = $query->get_result();
+					while ($row = $result->fetch_assoc()) { 
+						$otherbalance = $row['balance'];
+						$otherwon = $row['won'];
+						$otherlost = $row['losted'];
 					}
 					
-					$query = $db->prepare('UPDATE users SET balance = ? WHERE username = ?');
-					$query->bind_param('ds', $newbalance, $_COOKIE['username']);
+					if($playered == $win)
+					{
+						$newbalance = $balanced + $bet;
+						$thiswon = $thiswon + $bet;
+						$otherlost = $otherlost + $bet;
+						
+					} else{
+						$newbalance = $balanced - $bet;
+						$thislost = $thislost + $bet;
+						$otherwon = $otherwon + $bet;
+						$otherbalance = $otherbalance + $reward;
+					}
+					
+					$query = $db->prepare('UPDATE users SET balance = ?, won = ?, losted = ? WHERE username = ?');
+					$query->bind_param('ddds', $otherbalance, $otherwon, $otherlost, $otherplayer);
+						
+					$query->execute();	
+					
+					$query = $db->prepare('UPDATE users SET balance = ?, won = ?, losted = ? WHERE username = ?');
+					$query->bind_param('ddds', $newbalance, $thiswon, $thislost, $_COOKIE['username']);
 					
 					$query->execute();
+					
 					echo "<script>
 							window.onunload = refreshParent;
 							function refreshParent() {
 								window.opener.location.reload();
 							}
 							window.close();
-						</script>";					
+						</script>";				
 				} else
 					die("Your session is invalid. Please relog.");
 			} else 

@@ -1,5 +1,8 @@
 <?php
 include_once('src/config.php');
+
+include_once('src/head.php');
+
 if(isset($_GET['balanceTop']))
 	if($_GET['balanceTop'] != 0)
 	{

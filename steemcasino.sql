@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 19 Mar 2018 la 09:26
+-- Generation Time: 22 Mar 2018 la 21:37
 -- Versiune server: 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -36,7 +36,8 @@ CREATE TABLE `coinflip` (
   `bet` float NOT NULL,
   `reward` float NOT NULL,
   `secret` varchar(128) NOT NULL,
-  `hash` varchar(300) NOT NULL
+  `hash` varchar(300) NOT NULL,
+  `timestamp` int(144) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -69,7 +70,8 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(256) NOT NULL,
   `balance` float NOT NULL,
-  `token` varchar(255) NOT NULL
+  `won` float NOT NULL,
+  `losted` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --

@@ -3,7 +3,11 @@ include_once('src/config.php');
 
 include_once('src/db.php');
 
+include_once('src/head.php');
+
 include_once('src/coinfliputils.php');
+
+include_once('src/utils.php');
 
 if(isset($_GET['balanceTop']))
 	if($_GET['balanceTop'] != 0 && ($_GET['player'] == 1 || $_GET['player'] == 2)) {
@@ -15,21 +19,19 @@ if(isset($_GET['balanceTop']))
 			
 			$result = $query->get_result();
 			if($result->num_rows) {
-				$token = $_COOKIE['access_token'];
 				while ($row = $result->fetch_assoc()) { 
-					$hash = $row['token'];
 					$balanced = $row['balance'];
 				}
 				
-				if(password_verify($token, $hash)) {
+				if(IsLoggedOnUser()) {
 					$secret = generateSecret();
 					$hashed = hash("whirlpool", $secret);
 					if($balanced >= $_GET['balanceTop']) {
-						if($_GET['player'] == 1)
+						if($_GET['player'] == 1) 
 							$playered = 1;
-						else
+						else 
 							$playered = 2;
-						
+
 						$reward = $_GET['balanceTop'] * 2;
 						
 						$newbalance = $balanced - $_GET['balanceTop'];
@@ -49,10 +51,10 @@ if(isset($_GET['balanceTop']))
 						echo '<p style="color:red">You don\'t have enough balance. Balance: '.$balanced.' SBD</p>';
 					}
 				} else {
-					echo '<p style="color:red">Your session is invalid! Please relog.</p>';
+					echo '<p style="color:red">Error 1: Your session is invalid! Please relog.</p>';
 				}
 			} else {
-					echo '<p style="color:red">Your session is invalid! Please relog.</p>';
+					echo '<p style="color:red">Error 2: Your session is invalid! Please relog.</p>';
 			}
 		}
 	}

@@ -28,4 +28,6 @@ require_once('src/utils.php');
 	}
 ?>	
 </ul>
-				<script>SetProfileInfo();</script>
+				<script>
+				SetProfileInfo();
+				</script>
