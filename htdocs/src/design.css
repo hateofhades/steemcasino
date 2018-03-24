@@ -1,5 +1,30 @@
 body {
+	font-family: Arial;
 	margin: 0;
+}
+
+#clickhere {
+	text-decoration: none;
+	color: gray;
+}
+
+#redirect {
+	font-size: 20px;
+	margin-top: 22%;
+}
+
+.default-body #accountName {
+	color: #444444;
+}
+
+.default-body a {
+	display:inline;
+	text-decoration:none;
+	color:black;
+}
+
+.games-body a {
+	color:black;
 }
 
 .nav {
@@ -7,13 +32,20 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #333;
+    background-color: #3780D7;
 }
 
-#footer {
+.footer {
     position: fixed;
+	color: white;
+	background-color: #3780D7;
     bottom: 0;
     width: 100%;
+}
+
+.footer a {
+	text-decoration: underline;
+	color: white;
 }
 
 .nav-item {
@@ -22,6 +54,8 @@ body {
 
 .nav-logo {
 	float: left;
+	margin-top:3px;
+	margin-left:3px;
 }
 
 .nav-link {
@@ -33,5 +67,5 @@ body {
 }
 
 .nav-item .nav-link:hover {
-    background-color: #111;
+    background-color: #225faa;
 }

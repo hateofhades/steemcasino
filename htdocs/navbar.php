@@ -3,14 +3,13 @@ require_once('src/utils.php');
 ?>
 
 <ul class="nav">
-	<li class="nav-logo"><a class="nav-link-img" href="http://steemcasino.org"><img src="img/logo.png"></a></li>
-	<li class="nav-logo"><a class="nav-link" href="http://steemcasino.org">SteemCasino</a></li>
+	<li class="nav-logo"><a class="nav-link-img" href="http://steemcasino.org"><img src="img/fullwhite-horizontal.png" height="40px"></a></li>
 <?php
 	if(IsLoggedOnUser())
 	{
 		echo 
 			'<li class="nav-item">
-				<a class="nav-link" href="#" id=\'logout\' onclick="Logout();return false;">Logout</a>
+				<a class="nav-link" href="#" id=\'logout\' onclick="Logout();return false;"><b>Logout</b></a>
 			</li>
 			<li class="nav-item">
 				<a class="nav-link" href="profile.php">My profile</a>
@@ -23,7 +22,7 @@ require_once('src/utils.php');
 	{
 		echo 
 			'<li class="nav-item">
-				<a class="nav-link" href="" id=\'login\'>Login</a>
+				<a class="nav-link" href="" id=\'login\'><b>Login</b></a>
 			</li>';
 	}
 ?>	

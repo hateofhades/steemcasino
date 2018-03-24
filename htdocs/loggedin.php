@@ -29,9 +29,9 @@ include_once('src/db.php');
 	</head>
 	<body>
 		<?php include ("navbar.php"); ?>
-		<center><p>
+		<center><p id="redirect">
 			You will be redirected automatically in 3 seconds.<br/>
-			If not <a href="index.php">click here</a>.
+			If not click<a href="index.php" id="clickhere"> here</a>.
 		</p></center>
 
 		<script>

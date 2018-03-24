@@ -5,7 +5,9 @@
 	<body>
 		<?php include('navbar.php'); ?>
 		<div>
-			<center><h1>SteemCasino</h1></center>
+			<center>
+				<img src="img/black-horizontal.png" width="50%">
+			</center>
 		</div>
 		<?php include('src/footer.php'); ?>
 	</body>
