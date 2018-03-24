@@ -5,12 +5,13 @@ $body = "";
 
 $win = 0;
 
+$past = 0;
+
 $query = $db->prepare('SELECT * FROM coinflip');
 						
 $query->execute();
 $result = $query->get_result();
 if(!isset($_GET['past'])) {
-	$past = 0;
 	if($result->num_rows) {
 		while ($row = $result->fetch_assoc()) { 
 			$timestamp = $row['timestamp'];
@@ -126,7 +127,7 @@ $secrefresh = "30";
 		<?php include('navbar.php'); ?>
 		<div>
 			<center><h1 style="display:inline">Coinflip </h1><b><a href="games.php" style="display:inline;text-decoration:none;color:black;">(Go back)</a></b></center>
-			<center><a href="#" style="text-decoration:none;color:black;font-size:24px" onClick="MyWindow=window.open('coinflipaction.php?action=newgame','MyWindow',width=600,height=300); return false;">Start new game </a> | <a href="<?php if($past == 1) echo "coinflip.php"; else echo "?past=1";?>" style="text-decoration:none;color:black;font-size:20px"> <?php if($past == 1) echo "See avalabile games"; else echo "See games that ended"; ?></a></center>
+			<center><a href="#" style="text-decoration:none;color:black;font-size:24px" onClick="MyWindow=window.open('coinflipaction.php?action=newgame','MyWindow',width=600,height=300); return false;">Start a new game </a> | <a href="<?php if($past == 1) echo "coinflip.php"; else echo "?past=1";?>" style="text-decoration:none;color:black;font-size:20px"> <?php if($past == 1) echo "See avalabile games"; else echo "See games that ended"; ?></a></center>
 			<?php echo $body; ?>
 		</div>
 		<?php include('src/footer.php'); ?>
