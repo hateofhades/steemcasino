@@ -9,15 +9,17 @@ include_once('src/coinfliputils.php');
 
 include_once('src/utils.php');
 
-if(isset($_GET['game'])) {
+if(isset($_GET['player'])) {
 	if(!$_GET['game'] == NULL) {
 		if($_GET['game'] == 0)
 			die("Invalid gameID.");
+		if($_GET['player'] == 1 || $_GET['player'] == 2 || $_GET['player'] == 3) {
+			$player2pick = $_GET['player'];
 			$query = $db->prepare('SELECT * FROM users WHERE username = ?');
 			$query->bind_param('s', $_COOKIE['username']);
-	
+		
 			$query->execute();
-			
+				
 			$result = $query->get_result();
 			if($result->num_rows) {
 				while ($row = $result->fetch_assoc()) { 
@@ -25,8 +27,9 @@ if(isset($_GET['game'])) {
 					$thiswon = $row['won'];
 					$thislost = $row['losted'];
 				}
+					
 				if(IsLoggedOnUser()) {
-					$query = $db->prepare('SELECT * FROM coinflip WHERE ID = ?');
+					$query = $db->prepare('SELECT * FROM rps WHERE ID = ?');
 					$query->bind_param('i', $_GET['game']);
 							
 					$query->execute();
@@ -38,9 +41,9 @@ if(isset($_GET['game'])) {
 					while ($row = $result->fetch_assoc()) { 
 						$bet = $row['bet'];
 						$player1 = $row['player1'];
-						$reward = $row['reward'];
 						$player2 = $row['player2'];
-						$secret = $row['secret'];
+						$reward = $row['reward'];
+						$player1pick = $row['player1pick'];
 					}
 					
 					if($balanced < $bet)
@@ -49,33 +52,25 @@ if(isset($_GET['game'])) {
 					if($player2 != "" && $player1 != "")
 						die("Game has already ended.");
 					
-					if($player2 == "") {
-						$playered = 2;
-						if($player1 == $_COOKIE['username'])
-							die("You can't play in your own games!");
-						$otherplayer = $player1;
-					}
-					else {
-						$playered = 1;
-						if($player2 == $_COOKIE['username'])
-							die("You can't play in your own games!");
-						$otherplayer = $player2;
-					}
+					if($player1 == $_COOKIE['username'])
+						die("You can't play in your own games!");
 					
-					if($secret[0] == "A")
-						$win = 1;
-					else if($secret[0] == "B")
-						$win = 2;
+					if($player1pick == $player2pick)
+						$winning = 3;
+					else if(($player1pick == 1 && $player2pick == 3) || ($player1pick == 2 && $player2pick == 1) || ($player1pick == 3 && $player2pick == 2))
+						$winning = 1;
+					else
+						$winning = 2;
 					
 					$timestamp = time();
 					
-					$query = $db->prepare('UPDATE coinflip SET player'.$playered.' = ?, win = ?, timestamp = ? WHERE ID = ?');
-					$query->bind_param('siii', $_COOKIE['username'], $win, $timestamp, $_GET['game']);
+					$query = $db->prepare('UPDATE rps SET player2 = ?, player2pick = ?, win = ?, timestamp = ? WHERE ID = ?');
+					$query->bind_param('siiii', $_COOKIE['username'], $player2pick, $winning, $timestamp, $_GET['game']);
 					
 					$query->execute();
 					
 					$query = $db->prepare('SELECT * FROM users WHERE username = ?');
-					$query->bind_param('s', $otherplayer);
+					$query->bind_param('s', $player1);
 						
 					$query->execute();
 					$result = $query->get_result();
@@ -85,21 +80,24 @@ if(isset($_GET['game'])) {
 						$otherlost = $row['losted'];
 					}
 					
-					if($playered == $win)
+					if($winning == 2)
 					{
 						$newbalance = $balanced + $bet;
 						$thiswon = $thiswon + $bet;
 						$otherlost = $otherlost + $bet;
 						
-					} else{
+					} else if($winning == 1){
 						$newbalance = $balanced - $bet;
 						$thislost = $thislost + $bet;
 						$otherwon = $otherwon + $bet;
 						$otherbalance = $otherbalance + $reward;
+					} else {
+						$newbalance = $balanced;
+						$otherbalance = $otherbalance + $bet;
 					}
 					
 					$query = $db->prepare('UPDATE users SET balance = ?, won = ?, losted = ? WHERE username = ?');
-					$query->bind_param('ddds', $otherbalance, $otherwon, $otherlost, $otherplayer);
+					$query->bind_param('ddds', $otherbalance, $otherwon, $otherlost, $player1);
 						
 					$query->execute();	
 					
@@ -109,22 +107,43 @@ if(isset($_GET['game'])) {
 					$query->execute();
 					
 					echo "<script>
-							window.onunload = refreshParent;
-							function refreshParent() {
-								window.opener.location.reload();
-							}
-							window.close();
-						</script>";				
-				} else
-					die("Your session is invalid. Please relog.");
-			} else 
-				die("Your session is invalid. Please relog.");
-				
-				
-	} else {
-		die("Invalid gameID.");
+						window.onunload = refreshParent;
+						function refreshParent() {
+							window.opener.location.reload();
+						}
+						window.close();
+					</script>";	
+				} else {
+					echo '<p style="color:red">You don\'t have enough balance. Balance: '.$balanced.' SBD</p>';
+				}
+			} else {
+				echo '<p style="color:red">Error 1: Your session is invalid! Please relog.</p>';
+			}
+		} else {
+			echo '<p style="color:red">Error 2: Your session is invalid! Please relog.</p>';
+		}
 	}
-} else {
-	die("Invalid gameID.");
 }
 ?>
+<html>
+	<head>
+		<title>SteemCasino </title>
+		<?php include_once('src/head.php'); ?>
+	</head>
+	<body>
+		<center>Rock, paper, scissors?
+		<form>
+			<?php 
+				if(isset($_GET['game']))
+					echo '<input type="hidden" name="game" value="'.$_GET['game'].'">';
+			?>
+			Choose your side!
+			<br><br>
+			<input type="radio" name="player" value="1" checked="checked">Rock
+			<input id="bitcoin" type="radio" name="player" value="2">Paper
+			<input id="bitcoin" type="radio" name="player" value="2">Scissors
+			<br><br>
+			<input type="submit" value="Submit">
+		</form></center>
+	</body>
+</html>

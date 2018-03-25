@@ -10,7 +10,7 @@ include_once('src/coinfliputils.php');
 include_once('src/utils.php');
 
 if(isset($_GET['balanceTop']))
-	if($_GET['balanceTop'] != 0 && ($_GET['player'] == 1 || $_GET['player'] == 2)) {
+	if($_GET['balanceTop'] != 0 && ($_GET['player'] == 1 || $_GET['player'] == 2 || $_GET['player'] == 3)) {
 		if($_GET['action'] == "newgame") {	
 			$query = $db->prepare('SELECT * FROM users WHERE username = ?');
 			$query->bind_param('s', $_COOKIE['username']);
@@ -24,20 +24,20 @@ if(isset($_GET['balanceTop']))
 				}
 				
 				if(IsLoggedOnUser()) {
-					$secret = generateSecret();
-					$hashed = hash("whirlpool", $secret);
 					if($balanced >= $_GET['balanceTop']) {
 						if($_GET['player'] == 1) 
 							$playered = 1;
-						else 
+						else if($_GET['player'] == 2)
 							$playered = 2;
+						else
+							$playered = 3;
 
 						$reward = $_GET['balanceTop'] * 2;
 						
 						$newbalance = $balanced - $_GET['balanceTop'];
 						
-						$query = $db->prepare('INSERT INTO coinflip (player'.$playered.', bet, reward, secret, hash) VALUES (?, ?, ?, ?, ?)');
-						$query->bind_param('sddss', $_COOKIE['username'], $_GET['balanceTop'], $reward, $secret, $hashed);
+						$query = $db->prepare('INSERT INTO rps (player1, player1pick, bet, reward) VALUES (?, ?, ?, ?)');
+						$query->bind_param('sidd', $_COOKIE['username'], $playered, $_GET['balanceTop'], $reward);
 						
 						$query->execute();
 						
@@ -76,8 +76,9 @@ if(isset($_GET['balanceTop']))
 			<br><br>
 			Choose your side!
 			<br>
-			<input type="radio" name="player" value="1" checked="checked">Steem
-			<input id="bitcoin" type="radio" name="player" value="2">Bitcoin
+			<input type="radio" name="player" value="1" checked="checked">Rock
+			<input id="bitcoin" type="radio" name="player" value="2">Paper
+			<input id="bitcoin" type="radio" name="player" value="2">Scissors
 			<br><br>
 			<input type="submit" value="Submit">
 		</form></center>
