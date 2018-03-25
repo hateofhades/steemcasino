@@ -60,7 +60,7 @@ if(isset($_GET['balanceTop']))
 	}
 ?>
 <html>
-	<head>
+	<head style="font-family: Arial;">
 		<title>SteemCasino </title>
 		<?php include_once('src/head.php'); ?>
 	</head>
