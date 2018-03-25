@@ -125,7 +125,7 @@ if(isset($_GET['player'])) {
 	}
 }
 ?>
-<html>
+<html style="font-family: Arial;">
 	<head>
 		<title>SteemCasino </title>
 		<?php include_once('src/head.php'); ?>
