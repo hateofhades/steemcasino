@@ -69,3 +69,16 @@ body {
 .nav-item .nav-link:hover {
     background-color: #225faa;
 }
+
+#messages-box {
+	width:100%;
+	background-color:red;
+	text-align: center;
+}
+
+#closeMessage {
+	text-decoration: none;
+	color: black;
+	float: right;
+	display: inline;
+}
