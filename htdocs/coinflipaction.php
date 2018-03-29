@@ -5,7 +5,7 @@ include_once('src/db.php');
 
 include_once('src/head.php');
 
-include_once('src/coinfliputils.php');
+include_once('src/gamesutils.php');
 
 include_once('src/utils.php');
 
@@ -25,7 +25,7 @@ if(isset($_GET['balanceTop']))
 				
 				if(IsLoggedOnUser()) {
 					$secret = generateSecret();
-					$hashed = hash("whirlpool", $secret);
+					$hashed = hash("sha512", $secret);
 					if($balanced >= $_GET['balanceTop']) {
 						if($_GET['player'] == 1) 
 							$playered = 1;

@@ -2,10 +2,6 @@
 	<head>
 		<?php include('src/head.php'); ?>
 		<script src="js/mines.js"></script>
-		<script>
-			var user="<?php echo $_COOKIE['username'];?>";
-			var token="<?php echo $_COOKIE['access_token'];?>";
-		</script>
 	</head>
 	<body>
 		<?php include('navbar.php'); ?>
@@ -14,8 +10,9 @@
 				<p id="messages" style="display:inline"></p>
 				<a href="#" id="closeMessage" onclick="closeMessage()"></a>
 			</div>
-			<a href="#" onClick="newGame(user, token, game);">Start new game</a>
-			<a href="#" onClick="cashOut(user, token, game);">Cash out</a>
+			<a href="#" id="newgame" onClick="newGame(game, bet);">Start new game</a>
+			<a href="#" id="cashout" onClick="cashOut(game);"></a> <br>
+			Bet : <input type="number" step=".001" min="0.001" value="0.001" pattern="\d+(\.\d{2})?" id="bet" name="bet">
 		</div>
 		<?php include('src/footer.php'); ?>
 	</body>

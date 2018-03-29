@@ -1,25 +1,35 @@
 var game = 0;
+var timer;
 
-function newGame(user, token, game) {
-	
-	$.getJSON( "../src/mines.php?action=newGame&game=" + game, function( data ) {
+function newGame(game, bet) {
+	bet = $("#bet").val();
+	$.getJSON( "../src/mines.php?action=newGame&game=" + game+"&bet=" + bet, function( data ) {
+		console.log(data);
 		if(data['status'] == 'error')
 			errorGame(data['error'], data['message']);
+		else if(data['status'] == 'success') {
+			$("#cashout").text("Cash out");
+			$("#newgame").text("");
+			console.log(data['game']);
+		}
 	});
 }
 
-function cashOut(user, token, game) {
-	console.log("Cash out");
+function cashOut(game) {
+	$("#cashout").text("");
+	$("#newgame").text("Start new game");
 }
 
 function errorGame(errorCode, errorMessage) {
 	$("#messages").text("Error " + errorCode + ": " + errorMessage);
 	$("#closeMessage").text("X");
 	
-	setInterval(function() { closeMessage(); }, 1000 * 10);
+	clearInterval(timer);
+	timer = setInterval(function() { closeMessage(); }, 1000 * 10);
 }
 
 function closeMessage() {
+	clearInterval(timer);
 	$("#messages").text("");
 	$("#closeMessage").text("");
 }
