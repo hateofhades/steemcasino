@@ -24,9 +24,9 @@ else
 if($player1p == $player2p)
 	$win = "Draw";
 else if(($player1p == 1 && $player2p == 3) || ($player1p == 2 && $player2p == 1) || ($player1p == 3 && $player2p == 2))
-	$win = $player1." has won.";
+	$win = $player1." has won ".$reward." SBD.";
 else
-	$win = $player2." has won.";
+	$win = $player2." has won ".$reward." SBD.";
 
 ?>
 <html style="font-family: Arial">

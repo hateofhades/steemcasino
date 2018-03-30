@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 24 Mar 2018 la 11:28
+-- Generation Time: 30 Mar 2018 la 08:23
 -- Versiune server: 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -63,6 +63,24 @@ INSERT INTO `info` (`ID`, `name`, `value`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Structura de tabel pentru tabelul `mines`
+--
+
+CREATE TABLE `mines` (
+  `id` int(11) NOT NULL,
+  `player` varchar(255) NOT NULL,
+  `mode` int(1) NOT NULL,
+  `secret` varchar(256) NOT NULL,
+  `hash` varchar(256) NOT NULL,
+  `bet` float NOT NULL,
+  `win` int(1) NOT NULL,
+  `reward` float NOT NULL,
+  `blocks` varchar(256) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Structura de tabel pentru tabelul `rps`
 --
 
@@ -109,6 +127,12 @@ ALTER TABLE `info`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indexes for table `mines`
+--
+ALTER TABLE `mines`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `rps`
 --
 ALTER TABLE `rps`
@@ -134,6 +158,11 @@ ALTER TABLE `coinflip`
 --
 ALTER TABLE `info`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT for table `mines`
+--
+ALTER TABLE `mines`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `rps`
 --

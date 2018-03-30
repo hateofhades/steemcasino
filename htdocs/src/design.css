@@ -69,3 +69,36 @@ body {
 .nav-item .nav-link:hover {
     background-color: #225faa;
 }
+
+#messages-box {
+	width:100%;
+	background-color:red;
+	text-align: center;
+}
+
+#closeMessage {
+	text-decoration: none;
+	color: black;
+	float: right;
+	display: inline;
+}
+
+#table {
+	width: 50%;
+	height: 50%;
+	background-color:gray;
+	margin-left:25%;
+	margin-top:8%;
+	display:none;
+}
+
+.mine-box {
+	width: 18%;
+	height: 17%;
+	margin:0;
+	margin-left:1.1%;
+	margin-top:1.1%;
+	padding:0;
+	display:inline-block;
+	background-color: pink;
+}
