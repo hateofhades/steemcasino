@@ -12,7 +12,35 @@
 			</div>
 			<a href="#" id="newgame" onClick="newGame(game, bet);">Start new game</a>
 			<a href="#" id="cashout" onClick="cashOut(game);"></a> <br>
-			Bet : <input type="number" step=".001" min="0.001" value="0.001" pattern="\d+(\.\d{2})?" id="bet" name="bet">
+			<span id="betn">Bet :</span><input type="number" step=".001" min="0.001" value="0.001" pattern="\d+(\.\d{2})?" id="bet" name="bet">
+			<p id="hash"></p>
+			<div id="table">
+				<a href="#" onclick="hitBlock(game, 1);"><div class="mine-box" id="1"></div></a>
+				<a href="#" onclick="hitBlock(game, 2);"><div class="mine-box" id="2"></div></a>
+				<a href="#" onclick="hitBlock(game, 3);"><div class="mine-box" id="3"></div></a>
+				<a href="#" onclick="hitBlock(game, 4);"><div class="mine-box" id="4"></div></a>
+				<a href="#" onclick="hitBlock(game, 5);"><div class="mine-box" id="5"></div></a>
+				<a href="#" onclick="hitBlock(game, 6);"><div class="mine-box" id="6"></div></a>
+				<a href="#" onclick="hitBlock(game, 7);"><div class="mine-box" id="7"></div></a>
+				<a href="#" onclick="hitBlock(game, 8);"><div class="mine-box" id="8"></div></a>
+				<a href="#" onclick="hitBlock(game, 9);"><div class="mine-box" id="9"></div></a>
+				<a href="#" onclick="hitBlock(game, 10);"><div class="mine-box" id="10"></div></a>
+				<a href="#" onclick="hitBlock(game, 11);"><div class="mine-box" id="11"></div></a>
+				<a href="#" onclick="hitBlock(game, 12);"><div class="mine-box" id="12"></div></a>
+				<a href="#" onclick="hitBlock(game, 13);"><div class="mine-box" id="13"></div></a>
+				<a href="#" onclick="hitBlock(game, 14);"><div class="mine-box" id="14"></div></a>
+				<a href="#" onclick="hitBlock(game, 15);"><div class="mine-box" id="15"></div></a>
+				<a href="#" onclick="hitBlock(game, 16);"><div class="mine-box" id="16"></div></a>
+				<a href="#" onclick="hitBlock(game, 17);"><div class="mine-box" id="17"></div></a>
+				<a href="#" onclick="hitBlock(game, 18);"><div class="mine-box" id="18"></div></a>
+				<a href="#" onclick="hitBlock(game, 19);"><div class="mine-box" id="19"></div></a>
+				<a href="#" onclick="hitBlock(game, 20);"><div class="mine-box" id="20"></div></a>
+				<a href="#" onclick="hitBlock(game, 21);"><div class="mine-box" id="21"></div></a>
+				<a href="#" onclick="hitBlock(game, 22);"><div class="mine-box" id="22"></div></a>
+				<a href="#" onclick="hitBlock(game, 23);"><div class="mine-box" id="23"></div></a>
+				<a href="#" onclick="hitBlock(game, 24);"><div class="mine-box" id="24"></div></a>
+				<a href="#" onclick="hitBlock(game, 25);"><div class="mine-box" id="25"></div></a>
+			</div>
 		</div>
 		<?php include('src/footer.php'); ?>
 	</body>

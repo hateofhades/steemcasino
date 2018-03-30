@@ -20,9 +20,9 @@ function generateSecretMines($mode = 1, $length = 92) {
     $charactersLength = strlen($characters);
 	
 	if($mode == 1) {
-		$mine1 = mt_rand(0, 25);
-		$mine2 = mt_rand(0, 25);
-		$mine3 = mt_rand(0, 25);
+		$mine1 = mt_rand(1, 25);
+		$mine2 = mt_rand(1, 25);
+		$mine3 = mt_rand(1, 25);
 		
 		if($mine1 == $mine2 || $mine2 == $mine3 || $mine1 == $mine3) {
 			return generateSecretMines($mode, $length);
