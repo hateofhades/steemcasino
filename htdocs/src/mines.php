@@ -84,10 +84,10 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 		$result = $query->get_result();
 		if($result->num_rows) {
 			while ($row = $result->fetch_assoc()) { 
-				$username = $result['player'];
-				$reward = $result['reward'];
-				$win = $result['win'];
-				if($win != 0) {
+				$username = $row['player'];
+				$reward = $row['reward'];
+				$win = $row['win'];
+				if($win == 0) {
 					if($username == $_COOKIE['username']) {
 						$query = $db->prepare('SELECT * FROM users WHERE username = ?');
 						$query->bind_param('s', $_COOKIE['username']);
@@ -97,8 +97,8 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 						$result = $query->get_result();
 						if($result->num_rows) {
 							while ($row = $result->fetch_assoc()) { 
-								$balance = $result['balance'];
-								$won = $result['won'];
+								$balance = $row['balance'];
+								$won = $row['won'];
 							}
 							$balance = $balance + $reward;
 							$won = $won + $reward;
@@ -115,7 +115,8 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 	
 							$query->execute();
 							
-							$arr = array('status' => 'success', 'message' => 'You have won.');
+							$arr = array('status' => 'success', 'message' => 'You have won '.$reward.' SBD.');
+							echo json_encode($arr);
 						} else {
 							$arr = array('status' => 'error', 'error' => 502, 'message' => 'Session is invalid. Please reload.');
 							echo json_encode($arr);

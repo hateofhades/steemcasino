@@ -51,6 +51,12 @@ function cashOut(game) {
 			$("#bet").show();
 			$("#betn").show();
 			
+			("#messages-box").css('background-color', 'green');
+			$("#messages").text("" + data['message']);
+			$("#closeMessage").text("X");
+			
+			clearInterval(timer);
+			timer = setInterval(function() { closeMessage(); }, 1000 * 10);
 		}
 	});
 }
