@@ -4,7 +4,15 @@ var timer, reward, hash;
 $("#table").hide();
 
 function newGame(game, bet) {
+	$("#messages-box").css('background-color', 'yellow');
+	$("#messages").text("Working...");
+	$("#closeMessage").text("X");
+			
+	clearInterval(timer);
+	timer = setInterval(function() { closeMessage(); }, 1000 * 10);
+	
 	bet = $("#bet").val();
+	
 	$.getJSON( "../src/mines.php?action=newGame&game=" + game+"&bet=" + bet, function( data ) {
 		console.log(data);
 		if(data['status'] == 'error')
@@ -41,6 +49,13 @@ function newGame(game, bet) {
 }
 
 function cashOut(game) {
+	$("#messages-box").css('background-color', 'yellow');
+	$("#messages").text("Working...");
+	$("#closeMessage").text("X");
+			
+	clearInterval(timer);
+	timer = setInterval(function() { closeMessage(); }, 1000 * 10);
+	
 	$.getJSON( "../src/mines.php?action=cashOut&game=" + game, function( data ) {
 		console.log(data);
 		if(data['status'] == 'error')
@@ -75,6 +90,13 @@ function cashOut(game) {
 }
 
 function hitBlock(game, block) {
+	$("#messages-box").css('background-color', 'yellow');
+	$("#messages").text("Working...");
+	$("#closeMessage").text("X");
+			
+	clearInterval(timer);
+	timer = setInterval(function() { closeMessage(); }, 1000 * 10);
+	
 	$.getJSON( "../src/mines.php?action=hitBlock&game=" + game + "&block=" + block, function( data ) {
 		console.log(data);
 		if(data['status'] == 'error')
