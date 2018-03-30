@@ -16,12 +16,19 @@ function newGame(game, bet) {
 			hash = data['hash'];
 			reward = data['reward'];
 			
+			for(var i = 1; i<=25; i++) {
+				$("#a" + i).attr("onClick", "hitBlock(" + game + ", " + i + ");");
+				$("#" + i).css("background-color", "pink");
+			}
+			
 			$("#messages-box").css('background-color', 'green');
 			$("#messages").text("A new game has started.");
 			$("#hash").text("Hash: " + hash);
 			$("#cashout").attr("onClick", "cashOut(" + game + ");");
 			$("#newgame").attr("onClick", "newGame(" + game + ", bet);");
 			$("#closeMessage").text("X");
+			
+			$("#secret").text("");
 			
 			$("#bet").hide();
 			$("#betn").hide();
@@ -46,12 +53,18 @@ function cashOut(game) {
 			$("#cashout").attr("onClick", "cashOut(0);");
 			$("#newgame").attr("onClick", "newGame(0, bet);");
 			
+			for(var i = 1; i<=25; i++)
+				$("#a" + i).attr("onClick", "");
+
+			
 			$("#table").hide();
 			
 			$("#bet").show();
 			$("#betn").show();
 			
-			("#messages-box").css('background-color', 'green');
+			$("#secret").text("" + data['secret']);
+			
+			$("#messages-box").css('background-color', 'green');
 			$("#messages").text("" + data['message']);
 			$("#closeMessage").text("X");
 			
@@ -62,7 +75,52 @@ function cashOut(game) {
 }
 
 function hitBlock(game, block) {
-	console.log(block);
+	$.getJSON( "../src/mines.php?action=hitBlock&game=" + game + "&block=" + block, function( data ) {
+		console.log(data);
+		if(data['status'] == 'error')
+			errorGame(data['error'], data['message']);
+		if(data['status'] == 'lost') {
+			$("#messages-box").css('background-color', 'red');
+			$("#messages").text(data['message']);
+			$("#closeMessage").text("X");
+			
+			$("#cashout").text("");
+			game = 0;
+			$("#newgame").text("Start new game");
+			
+			$("#cashout").attr("onClick", "cashOut(0);");
+			$("#newgame").attr("onClick", "newGame(0, bet);");
+			
+			var bombs = data['bombs'];
+			
+			bombs.forEach(changeTable);
+			
+			$("#bet").show();
+			$("#betn").show();
+			
+			$("#secret").text("Secret: " + data['secret']);
+	
+			clearInterval(timer);
+			timer = setInterval(function() { closeMessage(); }, 1000 * 10);
+		} else if(data['status'] == 'increase') {
+			$("#" + data['block']).css('background-color', 'green');
+			
+			$("#a" + data['block']).attr("onClick", "");
+			
+			$("#messages-box").css('background-color', 'green');
+			$("#messages").text(data['message']);
+			$("#closeMessage").text("X");
+	
+			clearInterval(timer);
+			timer = setInterval(function() { closeMessage(); }, 1000 * 10);
+		}
+			
+	});
+}
+
+function changeTable(element, index, array) {
+	$("#" + element).css('background-color', 'red');
+	$("#a" + element).attr("onClick", "");
 }
 
 function errorGame(errorCode, errorMessage) {
