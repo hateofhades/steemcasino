@@ -1,6 +1,10 @@
 body {
 	font-family: Arial;
 	margin: 0;
+	min-width: 1280px;
+	min-height: 1024px;
+	max-width: 1280px;
+	max-height: 1024px;
 }
 
 #clickhere {
@@ -84,21 +88,57 @@ body {
 }
 
 #table {
-	width: 50%;
+	width: 40%;
+	margin-top: 12.5%;
+	display:inline-block;
+	float:left;
+	margin-left:2.5%;
 	height: 50%;
-	background-color:gray;
-	margin-left:25%;
-	margin-top:8%;
+	background-color:#464646;
 	display:none;
+	border: 1px solid white;
+}
+
+#messagess {
+	margin:0;
+	background:#000;
+	display:inline-block;
+	border:1px solid #333;
+	border-bottom-color:#444;
+	border-top-color:#222;
+	height:14.57em;
+	width:40%;
+	height:50%;
+	float:right;
+	margin-top:12.5%;
+	margin-right:2%;
+	color:white;
+	overflow-y:auto;
+}
+
+#messagess::-webkit-scrollbar{-webkit-appearance:none;width:10px;}
+
+#game {
+	background-color:#1c1c1c;
+	height:64%;
+	width:80%;
+	margin-left:10%;
+	display:none;
+	border: 5px solid #3780D7;
+	border-radius: 10px;
+}
+
+.p-messagess {
+	word-wrap: break-word;
+	display:inline;
 }
 
 .mine-box {
 	width: 18%;
 	height: 17%;
 	margin:0;
-	margin-left:1.1%;
-	margin-top:1.1%;
 	padding:0;
 	display:inline-block;
-	background-color: pink;
+	background-color: #e5e5e5;
+	border: 1px solid black;
 }

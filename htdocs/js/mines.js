@@ -1,8 +1,6 @@
 var game = 0;
 var timer, reward, hash;
 
-$("#table").hide();
-
 function newGame(game, bet) {
 	$("#messages-box").css('background-color', 'yellow');
 	$("#messages").text("Working...");
@@ -26,7 +24,7 @@ function newGame(game, bet) {
 			
 			for(var i = 1; i<=25; i++) {
 				$("#a" + i).attr("onClick", "hitBlock(" + game + ", " + i + ");");
-				$("#" + i).css("background-color", "pink");
+				$("#" + i).css("background-color", "#e5e5e5");
 			}
 			
 			$("#messages-box").css('background-color', 'green');
@@ -41,6 +39,7 @@ function newGame(game, bet) {
 			$("#bet").hide();
 			$("#betn").hide();
 			$("#table").show();
+			$("#game").show();
 	
 			clearInterval(timer);
 			timer = setInterval(function() { closeMessage(); }, 1000 * 10);
@@ -130,7 +129,7 @@ function hitBlock(game, block) {
 			$("#a" + data['block']).attr("onClick", "");
 			
 			$("#messages-box").css('background-color', 'green');
-			$("#messages").text(data['message']);
+			$("#messages").text(data['message'] + " Increased with: " + data['increase'] + " SBD.");
 			$("#closeMessage").text("X");
 	
 			clearInterval(timer);
