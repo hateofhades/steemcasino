@@ -8,18 +8,18 @@ $player1p = $_GET['player1pick'];
 $player2p = $_GET['player2pick'];
 
 if($player1p == 1)
-	$player1p = "Rock";
+	$player1p = "<img style=\"width:30%;float:left\" id=\"rps1\" src=\"img/rock.png\">";
 else if($player1p == 2)
-	$player1p = "Paper";
+	$player1p = "<img style=\"width:30%;float:left\" id=\"rps1\" src=\"img/paper.png\">";
 else
-	$player1p = "Scissors";
+	$player1p = "<img style=\"width:30%;float:left\" id=\"rps1\" src=\"img/scissors.png\">";
 
 if($player2p == 1)
-	$player2p = "Rock";
+	$player2p = "<img style=\"width:30%;float:right\" id=\"rps2\" src=\"img/rock.png\">";
 else if($player2p == 2)
-	$player2p = "Paper";
+	$player2p = "<img style=\"width:30%;float:right\" id=\"rps2\" src=\"img/paper.png\">";
 else
-	$player2p = "Scissors";
+	$player2p = "<img style=\"width:30%;float:right\" id=\"rps2\" src=\"img/scissors.png\">";
 
 if($player1p == $player2p)
 	$win = "Draw";
@@ -39,12 +39,16 @@ else
 		<center>
 			<h2><?php echo $player1." VS. ".$player2; ?></h2>
 			<div id="countdown"></div>
-			<h3 id="player1"></h3>
-			<h3 id="player2"></h3>
-			<br>
-			<h4 id="win"></h4>
+			<h3 id="player1" style="float:left; display:inline;margin-left:5%"></h3>
+			<h3 id="player2" style="float:right; display:inline;margin-right:5%"></h3><br><br><br><br>
+			<?php echo $player1p.$player2p;?>
+			<br><br><br>
+			<center><h4 id="win"></h4></center>
 			
-			<script>		
+			<script>	
+			$("#rps1").hide();
+			$("#rps2").hide();
+			
 			$("#countdown").countdown360({
 			radius      : 60.5,
 			seconds     : 5,
@@ -59,8 +63,10 @@ else
 			
 			function winner () {
 				$("#countdown").remove();
-				$("#player1").text("<?php echo $player1." choose: ".$player1p;?>");
-				$("#player2").text("<?php echo $player2." choose: ".$player2p;?>");
+				$("#rps1").show();
+				$("#rps2").show();
+				$("#player1").text('<?php echo $player1;?>');
+				$("#player2").text('<?php echo $player2;?>');
 				$("#win").text("<?php echo $win;?>");
 			}
 			</script>
