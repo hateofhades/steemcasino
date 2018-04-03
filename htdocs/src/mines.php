@@ -212,6 +212,7 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 							$reward = $reward + $plus;
 							
 							$reward = number_format($reward, 5);
+							$plus = number_format($plus, 5);
 							
 							array_push($blocks, $_GET['block']);
 							
@@ -222,7 +223,7 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 							
 							$query->execute();
 								
-							$arr = array('status' => 'increase', 'message' => 'You increased the reward to: '.$reward.' SBD.', 'block' => ''.$_GET['block']);
+							$arr = array('status' => 'increase', 'message' => 'You increased the reward to: '.$reward.' SBD.', 'block' => ''.$_GET['block'], 'increase' => ''.$plus);
 							echo json_encode($arr);
 								
 						}

@@ -5,7 +5,7 @@ include_once('src/db.php');
 
 include_once('src/head.php');
 
-include_once('src/coinfliputils.php');
+include_once('src/gamesutils.php');
 
 include_once('src/utils.php');
 

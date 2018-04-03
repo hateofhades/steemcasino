@@ -9,27 +9,17 @@ $secret = $_GET['secret'];
 
 if($secret[0] == "A") {
 	$winner = $player1;
-	if(rand(0, 100) % 2)
-		$animation = 1;
-	else
-		$animation = 2;
+	$animation = 1;
 }
 else {
 	$winner = $player2;
-	if(rand(0, 100) % 2)
-		$animation = 3;
-	else
-		$animation = 4;
+	$animation = 2;
 }
 
 if($animation == 1)
-	$animation = "<img style=\"width:10%\" src=\"img/animation1.gif\">";
+	$animation = "<img style=\"width:50%\" id=\"gif\" src=\"img/animation1.gif\">";
 else if($animation == 2)
-	$animation = "<img style=\"width:10%\" src=\"img/animation2.gif\">";
-else if($animation == 3)
-	$animation = "<img style=\"width:10%\" src=\"img/animation3.gif\">";
-else if($animation == 4)
-	$animation = "<img style=\"width:10%\" src=\"img/animation4.gif\">";
+	$animation = "<img style=\"width:50%\" id=\"gif\" src=\"img/animation2.gif\">";
 
 ?>
 <html>
@@ -49,7 +39,7 @@ else if($animation == 4)
 		
 			setTimeout(function(){
 				winner();
-			}, 6500);
+			}, 5000);
 		</script>
 	</body>
 </html>
