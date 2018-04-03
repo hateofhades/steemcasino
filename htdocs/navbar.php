@@ -3,7 +3,7 @@ require_once('src/utils.php');
 ?>
 
 <ul class="nav">
-	<li class="nav-logo"><a class="nav-link-img" href="http://steemcasino.org"><img src="img/fullwhite-horizontal.png" height="40px"></a></li>
+	<li class="nav-logo"><a class="nav-link-img" href="index.php"><img src="img/fullwhite-horizontal.png" height="40px"></a></li>
 <?php
 	if(IsLoggedOnUser())
 	{
