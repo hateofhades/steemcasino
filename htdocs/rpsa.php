@@ -78,7 +78,7 @@ if(isset($_GET['balanceTop']))
 			<br>
 			<input type="radio" name="player" value="1" checked="checked">Rock
 			<input id="bitcoin" type="radio" name="player" value="2">Paper
-			<input id="bitcoin" type="radio" name="player" value="2">Scissors
+			<input id="bitcoin" type="radio" name="player" value="3">Scissors
 			<br><br>
 			<input type="submit" value="Submit">
 		</form></center>
