@@ -50,7 +50,7 @@ if(!isset($_GET['past'])) {
 				else
 					$winner = $player2;
 				
-					$players = $player1."<br>".$player2."<br><a href=\"#\" onClick=\"MyWindow=window.open('viewrps.php?gameid=".$gameid."&player1=".$player1."&player2=".$player2."&bet=".$bet."&reward=".$reward."&player1pick=".$player1pick."&player2pick=".$player2pick."','MyWindow',width=600,height=300); return false;\">View game</a>";
+					$players = $player1."<br>".$player2."<br><a href=\"#\" onClick=\"MyWindow=window.open('viewrps.php?gameid=".$gameid."&player1=".$player1."&player2=".$player2."&bet=".$bet."&reward=".$reward."&player1pick=".$player1pick."&player2pick=".$player2pick."&win=".$win."','MyWindow',width=600,height=300); return false;\">View game</a>";
 				
 				$body .= "
 				<div style=\"display:inline;float:left;padding-left:10px;\"><center>
@@ -94,7 +94,7 @@ if(!isset($_GET['past'])) {
 					$winner = "Winner: ".$winner;
 				}
 				
-					$players = $player1."<br>".$player2."<br><a href=\"#\" onClick=\"MyWindow=window.open('viewrps.php?gameid=".$gameid."&player1=".$player1."&player2=".$player2."&bet=".$bet."&reward=".$reward."&player1pick=".$player1pick."&player2pick=".$player2pick."','MyWindow',width=600,height=300); return false;\">View game</a>";
+					$players = $player1."<br>".$player2."<br><a href=\"#\" onClick=\"MyWindow=window.open('viewrps.php?gameid=".$gameid."&player1=".$player1."&player2=".$player2."&bet=".$bet."&reward=".$reward."&player1pick=".$player1pick."&player2pick=".$player2pick."&win=".$win."','MyWindow',width=600,height=300); return false;\">View game</a>";
 				
 				$body = "
 				<div style=\"display:inline;float:left;padding-left:10px;\"><center>

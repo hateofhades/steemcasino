@@ -3,7 +3,7 @@ include_once('src/config.php');
 
 include_once('src/db.php');
 
-include_once('src/coinfliputils.php');
+include_once('src/gamesutils.php');
 
 include_once('src/utils.php');
 
@@ -104,13 +104,16 @@ if(isset($_GET['player'])) {
 					
 					$query->execute();
 					
-					echo "<script>
-						window.onunload = refreshParent;
+					echo '
+					<script>
 						function refreshParent() {
 							window.opener.location.reload();
+							window.location = "viewrps.php?gameid='.$_GET['game'].'&player1='.$player1.'&player2='.$_COOKIE['username'].'&bet='.$bet.'&reward='.$reward.'&win='.$winning.'&player1pick='.$player1pick.'&player2pick='.$player2pick.'";
 						}
-						window.close();
-					</script>";	
+						
+						setTimeout(function () {refreshParent();}, 1);
+					</script>
+					';
 				} else {
 					echo '<p style="color:red">You don\'t have enough balance. Balance: '.$balanced.' SBD</p>';
 				}

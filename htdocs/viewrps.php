@@ -6,6 +6,7 @@ $bet = $_GET['bet'];
 $reward = $_GET['reward'];
 $player1p = $_GET['player1pick'];
 $player2p = $_GET['player2pick'];
+$win = $_GET['win'];
 
 if($player1p == 1)
 	$player1p = "<img style=\"width:30%;float:left\" id=\"rps1\" src=\"img/rock.png\">";
@@ -21,9 +22,9 @@ else if($player2p == 2)
 else
 	$player2p = "<img style=\"width:30%;float:right\" id=\"rps2\" src=\"img/scissors.png\">";
 
-if($player1p == $player2p)
+if($win == 3)
 	$win = "Draw";
-else if(($player1p == 1 && $player2p == 3) || ($player1p == 2 && $player2p == 1) || ($player1p == 3 && $player2p == 2))
+else if($win == 1)
 	$win = $player1." has won ".$reward." SBD.";
 else
 	$win = $player2." has won ".$reward." SBD.";

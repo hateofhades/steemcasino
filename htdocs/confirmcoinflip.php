@@ -5,7 +5,7 @@ include_once('src/db.php');
 
 include_once('src/head.php');
 
-include_once('src/coinfliputils.php');
+include_once('src/gamesutils.php');
 
 include_once('src/utils.php');
 
@@ -40,6 +40,7 @@ if(isset($_GET['game'])) {
 						$player1 = $row['player1'];
 						$reward = $row['reward'];
 						$player2 = $row['player2'];
+						$hash = $row['hash'];
 						$secret = $row['secret'];
 					}
 					
@@ -54,12 +55,14 @@ if(isset($_GET['game'])) {
 						if($player1 == $_COOKIE['username'])
 							die("You can't play in your own games!");
 						$otherplayer = $player1;
+						$player2 = $_COOKIE['username'];
 					}
 					else {
 						$playered = 1;
 						if($player2 == $_COOKIE['username'])
 							die("You can't play in your own games!");
 						$otherplayer = $player2;
+						$player1 = $_COOKIE['username'];
 					}
 					
 					if($secret[0] == "A")
@@ -108,13 +111,17 @@ if(isset($_GET['game'])) {
 					
 					$query->execute();
 					
-					echo "<script>
-							window.onunload = refreshParent;
-							function refreshParent() {
-								window.opener.location.reload();
-							}
-							window.close();
-						</script>";				
+					
+					echo '
+					<script>
+						function refreshParent() {
+							window.opener.location.reload();
+							window.location = "viewcoinflipgame.php?gameid='.$_GET['game'].'&player1='.$player1.'&player2='.$player2.'&bet='.$bet.'&reward='.$reward.'&hash='.$hash.'&secret='.$secret.'";
+						}
+						
+						setTimeout(function () {refreshParent();}, 1);
+					</script>
+					';
 				} else
 					die("Your session is invalid. Please relog.");
 			} else 

@@ -20,7 +20,8 @@ if($animation == 1)
 	$animation = "<img style=\"width:50%\" id=\"gif\" src=\"img/animation1.gif\">";
 else if($animation == 2)
 	$animation = "<img style=\"width:50%\" id=\"gif\" src=\"img/animation2.gif\">";
-
+						
+						
 ?>
 <html>
 	<head>
