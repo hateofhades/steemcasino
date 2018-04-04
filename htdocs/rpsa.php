@@ -3,8 +3,6 @@ include_once('src/config.php');
 
 include_once('src/db.php');
 
-include_once('src/head.php');
-
 include_once('src/gamesutils.php');
 
 include_once('src/utils.php');
@@ -62,7 +60,6 @@ if(isset($_GET['balanceTop']))
 <html style="font-family: Arial;">
 	<head>
 		<title>SteemCasino </title>
-		<?php include_once('src/head.php'); ?>
 	</head>
 	<body>
 		<center>How much would you like to bet?
