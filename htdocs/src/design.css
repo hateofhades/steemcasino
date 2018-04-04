@@ -142,3 +142,45 @@ body {
 	background-color: #e5e5e5;
 	border: 1px solid black;
 }
+
+#red {
+	background-color: red;
+	border: 1px solid black;
+}
+
+#green {
+	background-color: green;
+	border: 1px solid black;
+}
+
+#black {
+	background-color: black;
+	border: 1px solid black;
+}
+
+.roulette-box {
+	width:70%;
+	position:relative;
+}
+
+.roulette {
+	margin-top:2%;
+	width:60px;
+	color: white;
+	font-weight: bold;
+	font-size: 30px;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 60px;
+	height:60px;
+}
+
+.roulette-sign {
+	position: absolute;
+	top:2%;
+	left:49.9%;
+	z-index: 10;
+	height: 60px;
+	width: 5px;
+	background-color: yellow;
+}
