@@ -25,7 +25,7 @@ else if($animation == 2)
 <html>
 	<head>
 		<title>Game number - <?php echo $gameid;?></title>
-		<?php include_once('src/head.php'); ?>
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 	</head>
 	<body>
 		<center><h1><?php echo $player1." VS. ".$player2;?><br><br><?php echo $animation;?><br><br><h1 id="winner"></h1><h4 id="win"></h1><a href="#" id="close" onclick="window.close();"></a></center>
