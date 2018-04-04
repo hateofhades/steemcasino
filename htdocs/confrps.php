@@ -3,8 +3,6 @@ include_once('src/config.php');
 
 include_once('src/db.php');
 
-include_once('src/head.php');
-
 include_once('src/coinfliputils.php');
 
 include_once('src/utils.php');
@@ -128,7 +126,6 @@ if(isset($_GET['player'])) {
 <html style="font-family: Arial;">
 	<head>
 		<title>SteemCasino </title>
-		<?php include_once('src/head.php'); ?>
 	</head>
 	<body>
 		<center>Rock, paper, scissors?
