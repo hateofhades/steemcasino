@@ -12,6 +12,10 @@ include_once('src/db.php');
 	</head>
 	<body>
 		<?php include('navbar.php'); ?>
+		<div id="messages-box">
+				<p id="messages" style="display:inline"></p>
+				<a href="#" id="closeMessage" onclick="closeMessage()"></a>
+			</div>
 		<div class="roulette-body">
 			<center><h1 style="display:inline">Roulette </h1><b><a href="games.php" style="display:inline;text-decoration:none;color:black;">(Go back)</a></b>
 			<div class="roulette-box">
@@ -56,7 +60,11 @@ include_once('src/db.php');
 				  <div class="roulette" id="black" data-hash="10" > 10 </div>
 				  <div class="roulette" id="red" data-hash="27" > 27 </div>
 				</div>
-			</div>
+			</div><br><br>
+			<span id="betn">Bet :</span><input type="number" step=".001" min="0.001" value="0.001" pattern="\d+(\.\d{2})?" id="bet" name="bet"></center><br>
+			<center><input type="submit" value="Red (x2)" onClick="betRoulette(1)"></input>
+			<input type="submit" value="Black (x2)" onClick="betRoulette(2)"></input>
+			<input type="submit" value="Green (x14)" onClick="betRoulette(3)"></input><br><br></center>
 		</div>
 		<script>
 			var owl, i;

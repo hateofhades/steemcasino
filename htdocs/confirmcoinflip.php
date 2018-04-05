@@ -115,8 +115,8 @@ if(isset($_GET['game'])) {
 					echo '
 					<script>
 						function refreshParent() {
-							window.opener.location.reload();
-							window.location = "viewcoinflipgame.php?gameid='.$_GET['game'].'&player1='.$player1.'&player2='.$player2.'&bet='.$bet.'&reward='.$reward.'&hash='.$hash.'&secret='.$secret.'";
+							parent.$("#coinflip-iframe").attr("src", parent.$("#coinflip-iframe").attr("src"));
+							parent.$("#iframe").attr("src", "viewcoinflipgame.php?gameid='.$_GET['game'].'&player1='.$player1.'&player2='.$player2.'&bet='.$bet.'&reward='.$reward.'&hash='.$hash.'&secret='.$secret.'");
 						}
 						
 						setTimeout(function () {refreshParent();}, 1);

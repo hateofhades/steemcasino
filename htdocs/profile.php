@@ -24,7 +24,10 @@ $profit = $won - $lost;
 		<?php include('navbar.php'); ?>
 		<center>
 			<div class="default-body">
-				<h1 id="accountName">Loading...</h1>
+				<div style="margin-top:2%;vertical-align:center">
+					<img id="accountPicture" style="display:none;margin-right:2%;margin-top:5px" width="60px" height="60px"><h1 id="accountName" style="display:inline;margin-top:0;">Loading...</h1>
+				</div>
+				<br>
 				<script>
 				sc2.me(function (err, result)
 				{
@@ -33,6 +36,11 @@ $profit = $won - $lost;
 						console.log(result);
 						$("#accountName").text(Cookies.get("username") + " (");
 						var reputation = result.account.reputation;
+						var profileImage = JSON.parse(result.account.json_metadata)['profile']['profile_image'];
+						$("#accountPicture").attr("src",profileImage);
+						$("#accountPicture").css("border-radius", "60px");
+						$("#accountPicture").css("display", "inline");
+						console.log(profileImage);
 						reputation = log10(reputation);
 						reputation = reputation - 9;
 						reputation = reputation * 9;

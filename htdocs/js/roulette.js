@@ -1,3 +1,5 @@
+var timer;
+
 function getUnder() {
 	var currentUrl = window.location.href;
 	var under = 0;
@@ -23,7 +25,7 @@ function calculateZero() {
 	var returned;
 	
 	if(under == 0)
-		returned = 0;
+		returned = 1;
 	else if(under == 1)
 		returned = 38;
 	else if(under == 13)
@@ -189,4 +191,37 @@ function playAnimation(onWath) {
 	
 	i = 0;
 	roll(moves);
+}
+
+function betRoulette(betOn) {
+	if(betOn == 1 || betOn == 2 || betOn == 3) {
+		$("#messages-box").css('background-color', 'yellow');
+		$("#messages").text("Working...");
+		$("#closeMessage").text("X");
+			
+		clearInterval(timer);
+		timer = setInterval(function() { closeMessage(); }, 1000 * 10);
+		
+		bet = $("#bet").val();
+		
+		$.getJSON( "../src/roulette.php?betOn=" + betOn + "&bet=" + bet, function( data ) {
+			if(data['status'] == 'error')
+				errorGame(data['error'], data['message']);
+		});
+	}
+}
+
+function closeMessage() {
+	clearInterval(timer);
+	$("#messages").text("");
+	$("#closeMessage").text("");
+}
+
+function errorGame(errorCode, errorMessage) {
+	$("#messages-box").css('background-color', 'red');
+	$("#messages").text("Error " + errorCode + ": " + errorMessage);
+	$("#closeMessage").text("X");
+	
+	clearInterval(timer);
+	timer = setInterval(function() { closeMessage(); }, 1000 * 10);
 }

@@ -164,7 +164,7 @@ body {
 }
 
 .roulette {
-	margin-top:2%;
+	margin-top:3px;
 	width:60px;
 	color: white;
 	font-weight: bold;
@@ -177,10 +177,18 @@ body {
 
 .roulette-sign {
 	position: absolute;
-	top:2%;
+	top:3.5px;
 	left:49.9%;
 	z-index: 10;
 	height: 60px;
 	width: 5px;
-	background-color: yellow;
+	background-color: #4286f4;
+}
+
+.coinflip-game {
+	height: 45%;
+	margin-left: 27.5%;
+	margin-top: 2%;
+	width: 50%;
+	display: none;
 }
