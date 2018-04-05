@@ -36,7 +36,7 @@ else
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 		<script src="dist/jquery.countdown360.min.js"></script>
 	</head>
-	<body style="background-color:#0276FD">
+	<body>
 		<center>
 			<h2><?php echo $player1." VS. ".$player2; ?></h2>
 			<div id="countdown"></div>
@@ -45,6 +45,7 @@ else
 			<?php echo $player1p.$player2p;?>
 			<br><br><br>
 			<center><h4 id="win"></h4></center>
+			<center><a style="text-decoration:underline;cursor:pointer" id="close" onclick="parent.$('.coinflip-game').hide();parent.$('#iframe').attr('src', '');"></a></center>
 			
 			<script>	
 			$("#rps1").hide();
@@ -66,6 +67,7 @@ else
 				$("#countdown").remove();
 				$("#rps1").show();
 				$("#rps2").show();
+				$("#close").text('Close');
 				$("#player1").text('<?php echo $player1;?>');
 				$("#player2").text('<?php echo $player2;?>');
 				$("#win").text("<?php echo $win;?>");

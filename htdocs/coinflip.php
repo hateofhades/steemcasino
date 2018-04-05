@@ -19,7 +19,8 @@
 			</div>
 		</div>
 		<script>	
-		var pasted = 0;
+			var pasted = 0;
+			
 			$(document).ready(function() {
 				setTimeout(function() { reloadIFrame(); }, 30000);
 			});

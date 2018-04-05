@@ -107,13 +107,14 @@ if(isset($_GET['player'])) {
 					echo '
 					<script>
 						function refreshParent() {
-							window.opener.location.reload();
-							window.location = "viewrps.php?gameid='.$_GET['game'].'&player1='.$player1.'&player2='.$_COOKIE['username'].'&bet='.$bet.'&reward='.$reward.'&win='.$winning.'&player1pick='.$player1pick.'&player2pick='.$player2pick.'";
+							parent.$("#coinflip-iframe").attr("src", parent.$("#coinflip-iframe").attr("src"));
+							parent.$("#iframe").attr("src", "viewrps.php?gameid='.$_GET['game'].'&player1='.$player1.'&player2='.$_COOKIE['username'].'&bet='.$bet.'&reward='.$reward.'&player1pick='.$player1pick.'&player2pick='.$player2pick.'&win='.$winning.'");
 						}
 						
 						setTimeout(function () {refreshParent();}, 1);
 					</script>
 					';
+					die();
 				} else {
 					echo '<p style="color:red">You don\'t have enough balance. Balance: '.$balanced.' SBD</p>';
 				}
