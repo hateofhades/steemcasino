@@ -28,7 +28,7 @@ if(!isset($_GET['past'])) {
 					$players = "".$player1."<br><a style=\"text-decoration:underline;cursor:pointer\" onClick=\"parent.enterGame(".$gameid.");\">Enter game</a>";
 				
 				$body .= "
-				<div style=\"display:inline;float:left;padding-left:10px\"><center>
+				<div style=\"display:inline;float:left;padding-left:10px;border: 1px solid black;margin:4px\"><center>
 					<h3>Game #".$gameid."</h3>
 					<h4>Players<br>".$players."<br><br>
 					Bet: ".$bet." SBD </center>
@@ -97,7 +97,7 @@ if(!isset($_GET['past'])) {
 					$players = $player1."<br>".$player2."<br><a style=\"text-decoration:underline;cursor:pointer\" onClick=\"parent.viewGame(".$gameid.", '".$player1."', '".$player2."', ".$bet.", ".$reward.", ".$player1pick.", ".$player2pick.", ".$win.");\">View game</a>";
 				
 				$body = "
-				<div style=\"display:inline;float:left;padding-left:10px;\"><center>
+				<div style=\"display:inline;float:left;padding-left:10px;border: 1px solid black;margin:4px\"><center>
 					<h3>Game #".$gameid."</h3>
 					<h4>Players<br>".$players."<br>
 					Jackpot: ".$reward." SBD

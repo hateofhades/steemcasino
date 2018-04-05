@@ -8,7 +8,7 @@
 			<center><h1 style="display:inline">Rock, Paper, Scissors </h1><b><a href="games.php" style="display:inline;text-decoration:none;color:black;">(Go back)</a></b></center>
 			<center><a href="#" id="newGameBttn" style="text-decoration:none;color:black;font-size:24px" onClick="startGame();">Start a new game </a> <p id="llll" style="display:inline">|</p> <a href="#" id="gamesEnded" style="text-decoration:none;color:black;font-size:24px" onClick="past(1);">See games that ended</a></center>
 			<div class="coinflip-games">
-				<iframe id="coinflip-iframe" width="100%" scrolling="no" style="overflow:hidden;" height="20%" frameborder="0" src="rpsgames.php">
+				<iframe id="coinflip-iframe" width="100%" scrolling="no" style="overflow:hidden;" height="22%" frameborder="0" src="rpsgames.php">
 					Sorry, but your browser is not supported. Please upgrade your browser!
 				</iframe>
 			</div>
