@@ -20,7 +20,11 @@
 					<div>
 						<a href="mines.php"><img height="20%" src="img/mines.png"></a>
 					</div>
-				</div>
+					<div>
+						<a href="roulette.php"><img height="20%" src="img/roulette.png"></a>
+					</div>
+				</div><br>
+				<a href="howtoplay.php">How to play?</a>
 			</center>
 		</div>
 		

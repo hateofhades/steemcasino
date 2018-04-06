@@ -77,7 +77,7 @@ include_once('src/db.php');
 			<input type="submit" value="Black (x2)" id="btn2" onClick="betRoulette(2)"></input>
 			<input type="submit" value="Green (x14)" id="btn3" onClick="betRoulette(3)"></input><br><br></center>
 			<center>
-				<h4 style="margin:0" id="balance">Balance: LOADING...</h4>
+				<h4 style="margin:0" id="balance">LOADING...</h4>
 			</center>
 		</div>
 		<script>
