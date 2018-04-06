@@ -18,7 +18,7 @@ include_once('src/db.php');
 				<a href="#" id="closeMessage" onclick="closeMessage()"></a>
 			</div>
 		<div class="roulette-body">
-			<center><h1 style="display:inline">Roulette </h1><b><a href="games.php" style="display:inline;text-decoration:none;color:black;">(Go back)</a></b>
+			<center><h1 style="display:inline">Roulette </h1><b><a href="games.php" style="display:inline;text-decoration:none;color:black;">(Go back) </a></b>
 			<div class="roulette-box">
 				<div class="roulette-sign"></div>
 				<div class="owl-carousel">
@@ -76,6 +76,9 @@ include_once('src/db.php');
 			<center><input type="submit" value="Red (x2)" id="btn1" onClick="betRoulette(1)"></input>
 			<input type="submit" value="Black (x2)" id="btn2" onClick="betRoulette(2)"></input>
 			<input type="submit" value="Green (x14)" id="btn3" onClick="betRoulette(3)"></input><br><br></center>
+			<center>
+				<h4 style="margin:0" id="balance">Balance: LOADING...</h4>
+			</center>
 		</div>
 		<script>
 			var owl, i;

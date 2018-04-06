@@ -6,6 +6,7 @@ var state;
 
 function connect() {
 	if(!socket) {
+		getBalance();
 		SOCKET = io(HOST);
 			SOCKET.on('connect', function(msg) {
 				console.log("You have been connected to the socket.");
@@ -68,6 +69,8 @@ function getMessage(msg) {
 		displayProgressBar(msg['timestamp']);
 		
 		setButtons();
+		
+		getBalance();
 	}	
 }
 
@@ -335,8 +338,26 @@ function betRoulette(betOn) {
 		$.getJSON( "../src/roulette.php?betOn=" + betOn + "&bet=" + bet, function( data ) {
 			if(data['status'] == 'error')
 				errorGame(data['error'], data['message']);
+			else if(data['status'] == 'success') {
+				$("#messages-box").css('background-color', 'green');
+				$("#messages").text(data['message']);
+				$("#closeMessage").text("X");
+				
+				$("#balance").text("Balance: " + data['balance'] + " SBD");
+				
+				clearInterval(timer);
+				timer = setInterval(function() { closeMessage(); }, 1000 * 10);
+			}
 		});
 	}
+}
+
+function getBalance() {
+	$.getJSON( "../src/getbalance.php", function( data ) {
+		if(data['status'] == 'success') {
+			$("#balance").text("Balance: " + data['balance'] + " SBD");
+		}
+	});
 }
 
 function closeMessage() {
