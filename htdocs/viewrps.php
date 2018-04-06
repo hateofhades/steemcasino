@@ -6,6 +6,7 @@ $bet = $_GET['bet'];
 $reward = $_GET['reward'];
 $player1p = $_GET['player1pick'];
 $player2p = $_GET['player2pick'];
+$win = $_GET['win'];
 
 if($player1p == 1)
 	$player1p = "<img style=\"width:30%;float:left\" id=\"rps1\" src=\"img/rock.png\">";
@@ -21,9 +22,9 @@ else if($player2p == 2)
 else
 	$player2p = "<img style=\"width:30%;float:right\" id=\"rps2\" src=\"img/scissors.png\">";
 
-if($player1p == $player2p)
+if($win == 3)
 	$win = "Draw";
-else if(($player1p == 1 && $player2p == 3) || ($player1p == 2 && $player2p == 1) || ($player1p == 3 && $player2p == 2))
+else if($win == 1)
 	$win = $player1." has won ".$reward." SBD.";
 else
 	$win = $player2." has won ".$reward." SBD.";
@@ -35,7 +36,7 @@ else
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 		<script src="dist/jquery.countdown360.min.js"></script>
 	</head>
-	<body style="background-color:#0276FD">
+	<body>
 		<center>
 			<h2><?php echo $player1." VS. ".$player2; ?></h2>
 			<div id="countdown"></div>
@@ -44,6 +45,7 @@ else
 			<?php echo $player1p.$player2p;?>
 			<br><br><br>
 			<center><h4 id="win"></h4></center>
+			<center><a style="text-decoration:underline;cursor:pointer" id="close" onclick="parent.$('.coinflip-game').hide();parent.$('#iframe').attr('src', '');"></a></center>
 			
 			<script>	
 			$("#rps1").hide();
@@ -65,6 +67,7 @@ else
 				$("#countdown").remove();
 				$("#rps1").show();
 				$("#rps2").show();
+				$("#close").text('Close');
 				$("#player1").text('<?php echo $player1;?>');
 				$("#player2").text('<?php echo $player2;?>');
 				$("#win").text("<?php echo $win;?>");

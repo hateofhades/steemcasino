@@ -3,9 +3,7 @@ include_once('src/config.php');
 
 include_once('src/db.php');
 
-include_once('src/head.php');
-
-include_once('src/coinfliputils.php');
+include_once('src/gamesutils.php');
 
 include_once('src/utils.php');
 
@@ -106,13 +104,17 @@ if(isset($_GET['player'])) {
 					
 					$query->execute();
 					
-					echo "<script>
-						window.onunload = refreshParent;
+					echo '
+					<script>
 						function refreshParent() {
-							window.opener.location.reload();
+							parent.$("#coinflip-iframe").attr("src", parent.$("#coinflip-iframe").attr("src"));
+							parent.$("#iframe").attr("src", "viewrps.php?gameid='.$_GET['game'].'&player1='.$player1.'&player2='.$_COOKIE['username'].'&bet='.$bet.'&reward='.$reward.'&player1pick='.$player1pick.'&player2pick='.$player2pick.'&win='.$winning.'");
 						}
-						window.close();
-					</script>";	
+						
+						setTimeout(function () {refreshParent();}, 1);
+					</script>
+					';
+					die();
 				} else {
 					echo '<p style="color:red">You don\'t have enough balance. Balance: '.$balanced.' SBD</p>';
 				}
@@ -128,7 +130,6 @@ if(isset($_GET['player'])) {
 <html style="font-family: Arial;">
 	<head>
 		<title>SteemCasino </title>
-		<?php include_once('src/head.php'); ?>
 	</head>
 	<body>
 		<center>Rock, paper, scissors?
@@ -141,7 +142,7 @@ if(isset($_GET['player'])) {
 			<br><br>
 			<input type="radio" name="player" value="1" checked="checked">Rock
 			<input id="bitcoin" type="radio" name="player" value="2">Paper
-			<input id="bitcoin" type="radio" name="player" value="2">Scissors
+			<input id="bitcoin" type="radio" name="player" value="3">Scissors
 			<br><br>
 			<input type="submit" value="Submit">
 		</form></center>

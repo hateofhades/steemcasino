@@ -11,6 +11,12 @@ $ npm install mysql
 $ npm install request
 $ npm install steem
 
+cd steemcasino/Site Bot
+$ npm install mysql
+$ npm install express
+$ npm install http
+$ npm install socket.io
+$ npm install mathjs
 ```
 
 Import the .sql file into your database
@@ -29,6 +35,16 @@ var con = mysql.createConnection({
 ```
 var botName = "";
 var activekey = "";
+```
+
+Modify the first lines of Site Bot/main.js with your information
+```
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  pass: "",
+  database: "steemcasino"
+});
 ```
 
 Modify htdocs/src/db.php with your database info.

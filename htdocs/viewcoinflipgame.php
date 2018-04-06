@@ -17,24 +17,25 @@ else {
 }
 
 if($animation == 1)
-	$animation = "<img style=\"width:50%\" id=\"gif\" src=\"img/animation1.gif\">";
+	$animation = "<img style=\"width:50%\" id=\"gif\" src=\"img/animation1.gif?updated=".time()."\">";
 else if($animation == 2)
-	$animation = "<img style=\"width:50%\" id=\"gif\" src=\"img/animation2.gif\">";
-
+	$animation = "<img style=\"width:50%\" id=\"gif\" src=\"img/animation2.gif?updated=".time()."\">";
+						
+						
 ?>
 <html>
 	<head>
 		<title>Game number - <?php echo $gameid;?></title>
-		<?php include_once('src/head.php'); ?>
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 	</head>
 	<body>
-		<center><h1><?php echo $player1." VS. ".$player2;?><br><br><?php echo $animation;?><br><br><h1 id="winner"></h1><h4 id="win"></h1><a href="#" id="close" onclick="window.close();"></a></center>
+		<center><h3 style="margin:0"><?php echo $player1." VS. ".$player2;?></h3><?php echo $animation;?><br><h3 id="winner"></h3><h4 id="win" style="margin:0"></h1><a style="text-decoration:underline;cursor:pointer" id="close" onclick="parent.$('.coinflip-game').hide();parent.$('#iframe').attr('src', '');"></a></center>
 		
 		<script>
 			function winner() {
 				$('#winner').text("Winner: <?php echo $winner;?>");
 				$('#win').text("Congratulations! You have won: <?php echo $reward; ?> SBD.");
-				$('#close').text("Close window");
+				$('#close').text("Close");
 			}
 		
 			setTimeout(function(){

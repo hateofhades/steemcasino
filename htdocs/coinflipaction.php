@@ -3,8 +3,6 @@ include_once('src/config.php');
 
 include_once('src/db.php');
 
-include_once('src/head.php');
-
 include_once('src/gamesutils.php');
 
 include_once('src/utils.php');
@@ -45,10 +43,15 @@ if(isset($_GET['balanceTop']))
 						$query ->bind_param('ds', $newbalance, $_COOKIE['username']);
 						
 						$query->execute();	
-						header("Location:added.php");
-						die();
+						echo '
+						<script>
+							parent.$("#coinflip-iframe").attr("src", "coinflipgames.php");
+							parent.$("#iframe").attr("src", "");
+							parent.$(".coinflip-game").hide();
+						</script>
+						';
 					} else {
-						echo '<p style="color:red">You don\'t have enough balance. Balance: '.$balanced.' SBD</p>';
+						echo '<center><p style="color:red">You don\'t have enough balance. Balance: '.$balanced.' SBD</p></center>';
 					}
 				} else {
 					echo '<p style="color:red">Error 1: Your session is invalid! Please relog.</p>';
@@ -62,7 +65,6 @@ if(isset($_GET['balanceTop']))
 <html>
 	<head style="font-family: Arial;">
 		<title>SteemCasino </title>
-		<?php include_once('src/head.php'); ?>
 	</head>
 	<body>
 		<center>How much would you like to bet?
