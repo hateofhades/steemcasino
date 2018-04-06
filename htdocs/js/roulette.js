@@ -1,4 +1,132 @@
 var timer;
+var HOST = "localhost:3000";
+var socket = null;
+var progress;
+var state;
+
+function connect() {
+	if(!socket) {
+		SOCKET = io(HOST);
+			SOCKET.on('connect', function(msg) {
+				console.log("You have been connected to the socket.");
+				SOCKET.emit('username', Cookies.get("username"));
+			});
+			SOCKET.on('connect_error', function(msg) {
+				console.error(msg);
+			});
+			SOCKET.on('message', function(msg) {
+				getMessage(msg);
+			});
+	} else {
+		console.log('Connexion already exists.');
+	}
+}
+
+function getMessage(msg) {
+	console.log(msg);
+	
+	if(msg['messageType'] == 1) {	
+		var currentUrl = window.location.href;
+		notPhp = currentUrl.indexOf("#");
+		
+		if(notPhp != -1) {
+			currentUrl = currentUrl.replace(currentUrl.substring(currentUrl.indexOf("#")+1), "");
+			if(msg['lastRolls'][0] != 37)	
+				currentUrl = currentUrl + msg['lastRolls'][0];
+			else
+				currentUrl = currentUrl + "zz";
+			window.location.href = currentUrl;
+		} else {
+			if(msg['lastRolls'][0] != 37)
+				window.location.href = "#" + msg['lastRolls'][0];
+			else
+				window.location.href = "#zz";
+		}
+		
+		displayLastRolls(msg['lastRolls']);
+		state = msg['state'];
+		clearTimeout(progress);
+		displayProgressBar(msg['timestamp']);
+		
+		setButtons();
+	}
+	else if(msg['messageType'] == 2) {
+		playAnimation(msg['lastRolls'][0]);
+		
+		setTimeout(function() {displayLastRolls(msg['lastRolls']);}, 10000);
+		
+		clearTimeout(progress);
+		state = 1;
+		
+		displayProgressBar(msg['timestamp']);
+		
+		setButtons();
+	} else if(msg['messageType'] == 3) {
+		clearTimeout(progress);
+		state = 0;
+		
+		displayProgressBar(msg['timestamp']);
+		
+		setButtons();
+	}	
+}
+
+function setButtons() {
+	if(state) {
+		$("#btn1").attr("disabled", "disabled");
+		$("#btn2").attr("disabled", "disabled");
+		$("#btn3").attr("disabled", "disabled");
+	} else {
+		$("#btn1").removeAttr("disabled");
+		$("#btn2").removeAttr("disabled");
+		$("#btn3").removeAttr("disabled");
+	}
+}
+
+function displayProgressBar(timestamp) {
+	if(state == 0 && timestamp >= Math.floor($.now() / 1000)) {
+		$("#progress").attr("max", 60);
+		$("#progress").attr("value", timestamp - Math.floor($.now() / 1000));
+		$("#progressText").text(timestamp - Math.floor($.now() / 1000) + " seconds");
+		progress = setTimeout(function() {displayProgressBar(timestamp)}, 1000);
+	} else if (state == 1 && timestamp >= Math.floor($.now() / 1000)) {
+		$("#progress").attr("max", 10);
+		$("#progress").attr("value", timestamp - Math.floor($.now() / 1000));
+		$("#progressText").text(timestamp - Math.floor($.now() / 1000) + " seconds");
+		progress = setTimeout(function() {displayProgressBar(timestamp)}, 1000);
+	}
+}
+
+function displayLastRolls(lastRolls) {
+	for(var i = 0; i<5; i++) {
+		var color = getColor(lastRolls[i]);
+		var block = i + 1;
+		if(color == 1) {
+			$("#last" + block).css("background-color", "red");
+			$("#last" + block).text(lastRolls[i]);
+		}
+		else if(color == 2) {
+			$("#last" + block).css("background-color", "black");
+			$("#last" + block).text(lastRolls[i]);
+		}
+		else if(color == 3) {
+			$("#last" + block).css("background-color", "green");
+			if(lastRolls[i] == 37)
+				$("#last" + block).text("00");
+			else
+				$("#last" + block).text("0");
+		}
+	}
+}
+
+function getColor(Rolled) {
+	if(Rolled == 1 || Rolled == 3 || Rolled == 5 || Rolled == 7 || Rolled == 9 || Rolled == 36 || Rolled == 34 || Rolled == 32 || Rolled == 30 || Rolled == 14 || Rolled == 16 || Rolled == 18 || Rolled == 12 || Rolled == 27 || Rolled == 23 || Rolled == 21 || Rolled == 19 || Rolled == 25)
+		return 1;
+	else if(Rolled == 13 || Rolled == 24 || Rolled == 15 || Rolled == 22 || Rolled == 17 || Rolled == 20 || Rolled == 11 || Rolled == 26 || Rolled == 28 || Rolled == 2 || Rolled == 35 || Rolled == 4 || Rolled == 33 || Rolled == 6 || Rolled == 31 || Rolled == 8 || Rolled == 29 || Rolled == 10)
+		return 2;
+	else if(Rolled == 0 || Rolled == 37)
+		return 3;
+}
 
 function getUnder() {
 	var currentUrl = window.location.href;

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 30 Mar 2018 la 08:23
+-- Generation Time: 06 Apr 2018 la 12:54
 -- Versiune server: 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -30,14 +30,14 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `coinflip` (
   `ID` int(11) NOT NULL,
-  `player1` varchar(255) NOT NULL,
-  `player2` varchar(255) NOT NULL,
-  `win` int(11) NOT NULL,
-  `bet` float NOT NULL,
-  `reward` float NOT NULL,
-  `secret` varchar(128) NOT NULL,
-  `hash` varchar(300) NOT NULL,
-  `timestamp` int(144) NOT NULL
+  `player1` varchar(255) DEFAULT NULL,
+  `player2` varchar(255) DEFAULT NULL,
+  `win` int(11) DEFAULT NULL,
+  `bet` float DEFAULT NULL,
+  `reward` float DEFAULT NULL,
+  `secret` varchar(128) DEFAULT NULL,
+  `hash` varchar(300) DEFAULT NULL,
+  `timestamp` int(144) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -58,7 +58,9 @@ CREATE TABLE `info` (
 
 INSERT INTO `info` (`ID`, `name`, `value`) VALUES
 (1, 'lastTrans', 0),
-(2, 'isMaintenance', 0);
+(2, 'isMaintenance', 0),
+(3, 'roulettetimestamp', 1523012048),
+(4, 'roulettestate', 0);
 
 -- --------------------------------------------------------
 
@@ -81,19 +83,32 @@ CREATE TABLE `mines` (
 -- --------------------------------------------------------
 
 --
+-- Structura de tabel pentru tabelul `roulette`
+--
+
+CREATE TABLE `roulette` (
+  `ID` int(11) NOT NULL,
+  `player` varchar(255) NOT NULL,
+  `bet` float NOT NULL,
+  `beton` int(2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Structura de tabel pentru tabelul `rps`
 --
 
 CREATE TABLE `rps` (
   `ID` int(11) NOT NULL,
-  `player1` varchar(255) NOT NULL,
-  `player2` varchar(255) NOT NULL,
-  `win` int(11) NOT NULL,
-  `bet` float NOT NULL,
-  `reward` float NOT NULL,
-  `player1pick` int(11) NOT NULL,
-  `player2pick` int(11) NOT NULL,
-  `timestamp` int(11) NOT NULL
+  `player1` varchar(255) DEFAULT NULL,
+  `player2` varchar(255) DEFAULT NULL,
+  `win` int(11) DEFAULT NULL,
+  `bet` float DEFAULT NULL,
+  `reward` float DEFAULT NULL,
+  `player1pick` int(11) DEFAULT NULL,
+  `player2pick` int(11) DEFAULT NULL,
+  `timestamp` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -105,9 +120,9 @@ CREATE TABLE `rps` (
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(256) NOT NULL,
-  `balance` float NOT NULL,
-  `won` float NOT NULL,
-  `losted` float NOT NULL
+  `balance` float NOT NULL DEFAULT '0',
+  `won` float NOT NULL DEFAULT '0',
+  `losted` float NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -131,6 +146,12 @@ ALTER TABLE `info`
 --
 ALTER TABLE `mines`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `roulette`
+--
+ALTER TABLE `roulette`
+  ADD PRIMARY KEY (`ID`);
 
 --
 -- Indexes for table `rps`
@@ -157,12 +178,17 @@ ALTER TABLE `coinflip`
 -- AUTO_INCREMENT for table `info`
 --
 ALTER TABLE `info`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `mines`
 --
 ALTER TABLE `mines`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `roulette`
+--
+ALTER TABLE `roulette`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `rps`
 --

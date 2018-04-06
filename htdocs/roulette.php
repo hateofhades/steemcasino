@@ -1,6 +1,5 @@
 <?php
 include_once('src/db.php');
-
 ?>
 
 <html>
@@ -9,6 +8,8 @@ include_once('src/db.php');
 		<?php include('src/head.php'); ?>
 		<meta http-equiv="refresh" content="<?php echo $secrefresh?>;URL='<?php echo $page?><?php if($past == 1) echo "?past=1";?>'">
 		<script src="dist/owl.carousel.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
+		<script src="dist/jquery.countdown360.min.js"></script>
 	</head>
 	<body>
 		<?php include('navbar.php'); ?>
@@ -61,10 +62,20 @@ include_once('src/db.php');
 				  <div class="roulette" id="red" data-hash="27" > 27 </div>
 				</div>
 			</div><br><br>
+			<center>
+				<div id="last1" class="lastRolls"></div>
+				<div id="last2" class="lastRolls"></div>
+				<div id="last3" class="lastRolls"></div>
+				<div id="last4" class="lastRolls"></div>
+				<div id="last5" class="lastRolls"></div>
+			</center><br>
+			<div id="progressText"></div>
+			<progress id="progress" value="0" max="100"></progress>
+			<br><br>
 			<span id="betn">Bet :</span><input type="number" step=".001" min="0.001" value="0.001" pattern="\d+(\.\d{2})?" id="bet" name="bet"></center><br>
-			<center><input type="submit" value="Red (x2)" onClick="betRoulette(1)"></input>
-			<input type="submit" value="Black (x2)" onClick="betRoulette(2)"></input>
-			<input type="submit" value="Green (x14)" onClick="betRoulette(3)"></input><br><br></center>
+			<center><input type="submit" value="Red (x2)" id="btn1" onClick="betRoulette(1)"></input>
+			<input type="submit" value="Black (x2)" id="btn2" onClick="betRoulette(2)"></input>
+			<input type="submit" value="Green (x14)" id="btn3" onClick="betRoulette(3)"></input><br><br></center>
 		</div>
 		<script>
 			var owl, i;
@@ -92,7 +103,9 @@ include_once('src/db.php');
 							items:7
 						}
 					}
-				}); 
+				});
+
+				connect();
 			});
 			function roll(howMuch) {
 				i++;
