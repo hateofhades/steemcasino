@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 06 Apr 2018 la 12:54
+-- Generation Time: 07 Apr 2018 la 12:04
 -- Versiune server: 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -43,6 +43,23 @@ CREATE TABLE `coinflip` (
 -- --------------------------------------------------------
 
 --
+-- Structura de tabel pentru tabelul `history`
+--
+
+CREATE TABLE `history` (
+  `ID` int(11) NOT NULL,
+  `transType` int(11) DEFAULT NULL,
+  `amount` float DEFAULT NULL,
+  `gameid` int(11) DEFAULT NULL,
+  `user1` varchar(255) DEFAULT NULL,
+  `user2` varchar(255) DEFAULT NULL,
+  `win` int(11) DEFAULT NULL,
+  `reward` float DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Structura de tabel pentru tabelul `info`
 --
 
@@ -59,8 +76,9 @@ CREATE TABLE `info` (
 INSERT INTO `info` (`ID`, `name`, `value`) VALUES
 (1, 'lastTrans', 0),
 (2, 'isMaintenance', 0),
-(3, 'roulettetimestamp', 1523012048),
-(4, 'roulettestate', 0);
+(3, 'roulettetimestamp', 1523095406),
+(4, 'roulettestate', 0),
+(5, 'rouletteid', 0);
 
 -- --------------------------------------------------------
 
@@ -136,6 +154,12 @@ ALTER TABLE `coinflip`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indexes for table `history`
+--
+ALTER TABLE `history`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- Indexes for table `info`
 --
 ALTER TABLE `info`
@@ -175,10 +199,15 @@ ALTER TABLE `users`
 ALTER TABLE `coinflip`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT for table `history`
+--
+ALTER TABLE `history`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `info`
 --
 ALTER TABLE `info`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `mines`
 --
