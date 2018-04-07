@@ -104,6 +104,13 @@ if(isset($_GET['player'])) {
 					
 					$query->execute();
 					
+					$transType = 4;
+					
+					$query = $db->prepare('INSERT INTO history (transType, amount, gameid, user1, user2, win, reward) VALUES (?, ?, ?, ?, ?, ?, ?)');
+					$query->bind_param('idissid', $transType, $bet, $_GET['game'], $player1, $_COOKIE['username'], $winning, $reward);
+					
+					$query->execute();
+					
 					echo '
 					<script>
 						function refreshParent() {

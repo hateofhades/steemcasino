@@ -17,6 +17,8 @@ var timestamp = 0;
 var rollTime = 10 * 1000;
 var betTime = 60 * 1000;
 
+var gameid;
+
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -27,7 +29,14 @@ var con = mysql.createConnection({
 con.connect(function(err) {
 	if (err) throw err;
   console.log("Bot is now connected to the database.");
+  getGameid();
 });
+
+function getGameid() {
+	con.query("SELECT * FROM info", function (err, result) {
+		gameid = result[4].value;
+	});
+}
 
 io.on('connection', function(socket){
 	socket.on('username', function(username) {
@@ -86,8 +95,6 @@ function win(color, currRoll) {
 	
 	con.query("UPDATE info SET value = 1 WHERE name = 'roulettestate'", function (err, result) {
 	});
-	con.query("UPDATE info SET value = " + Math.floor(Date.now() / 1000) + " WHERE name = 'roulettetimestamp'", function (err, result) {
-	});
 	con.query("SELECT * FROM roulette WHERE beton = " + color, function (err, result) {
 		for( var i = 0, len = result.length; i < len; i++ ) {
 			var reward = result[i].bet;
@@ -110,6 +117,9 @@ function win(color, currRoll) {
 					
 					con.query("UPDATE users SET losted = '" + losted + "', balance = '" + balance + "', won = '" + won + "' WHERE username = '" + player + "'", function (err, result) {
 					});
+					con.query("UPDATE history SET win = '1', reward = '" + reward +"' WHERE user1 = '" + player + "' AND transType = '6' AND gameid = '" + gameid + "'", function (err, result) {
+					});
+					
 				}
 			});
 		}
@@ -127,11 +137,15 @@ function createGame() {
 	
 	timestamp = Math.floor(Date.now() / 1000) + Math.floor(betTime / 1000);
 	
+	gameid = gameid + 1;
+	
 	con.query("TRUNCATE roulette", function (err, result) {
 	});
 	con.query("UPDATE info SET value = 0 WHERE name = 'roulettestate'", function (err, result) {
 	});
 	con.query("UPDATE info SET value = " + Math.floor(Date.now() / 1000) + " WHERE name = 'roulettetimestamp'", function (err, result) {
+	});
+	con.query("UPDATE info SET value = " + gameid + " WHERE name = 'rouletteid'", function (err, result) {
 	});
 	
 	io.sockets.emit('message', {

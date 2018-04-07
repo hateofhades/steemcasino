@@ -1,19 +1,46 @@
 <?php
 include_once('src/db.php');
+include_once('src/utils.php');
 
-$balance = 0;
-$query = $db->prepare('SELECT * FROM users WHERE username = ?');
-$query->bind_param('s', $_COOKIE['username']);
-	
-$query->execute();
-	
-$result = $query->get_result();
-while ($row = $result->fetch_assoc()) {
-$balance = $row['balance'];
-$won = $row['won'];
-$lost = $row['losted'];
+if(IsLoggedOnUser()) {
+	$balance = 0;
+	$query = $db->prepare('SELECT * FROM users WHERE username = ?');
+	$query->bind_param('s', $_COOKIE['username']);
+		
+	$query->execute();
+		
+	$result = $query->get_result();
+	while ($row = $result->fetch_assoc()) {
+		$balance = $row['balance'];
+		$won = $row['won'];
+		$lost = $row['losted'];
 
-$profit = $won - $lost;
+		$profit = $won - $lost;
+	}
+
+	$query = $db->prepare('SELECT * FROM history WHERE user1 = ? OR user2 = ?');
+	$query->bind_param('ss', $_COOKIE['username'], $_COOKIE['username']);
+
+	$query->execute();
+	
+	$result = $query->get_result();
+	while ($row = $result->fetch_assoc()) {
+		if($row['transType'] == 1) {
+			
+		} else if($row['transType'] == 2) {
+			
+		} else if($row['transType'] == 3) {
+			
+		} else if($row['transType'] == 4) {
+			
+		} else if($row['transType'] == 5) {
+			
+		} else if($row['transType'] == 6) {
+			
+		} else if($row['transType'] == 7) {
+			
+		}
+	}
 }
 ?>
 <html>

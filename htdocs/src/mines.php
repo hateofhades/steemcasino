@@ -57,6 +57,14 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 				
 				$query->execute();
 				
+				$transType = 5;
+				$winning = 0;
+				
+				$query = $db->prepare('INSERT INTO history (transType, amount, gameid, user1, win) VALUES (?, ?, ?, ?, ?)');
+				$query->bind_param('idisi', $transType, $_GET['bet'], $game, $_COOKIE['username'], $winning);
+					
+				$query->execute();
+				
 				$arr = array('status' => 'success', 'message' => 'Game has been successfully created.', 'game' => $game, 'hash' => $hash, 'reward' => $_GET['bet']);
 				echo json_encode($arr);
 			} else {
@@ -120,6 +128,11 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 							$query = $db->prepare('UPDATE mines SET win = ? WHERE id = ?');
 							$query->bind_param('ii', $win, $_GET['game']);
 	
+							$query->execute();
+							
+							$query = $db->prepare('UPDATE history SET win = 1, reward = ? WHERE transType = 5 AND gameid = ? AND user1 = ?');
+							$query->bind_param('dis', $reward, $_GET['game'], $_COOKIE['username']);
+					
 							$query->execute();
 							
 							$arr = array('status' => 'success', 'message' => 'You have won '.$reward.' SBD.', 'secret' => 'Secret: '.$secret);
@@ -197,6 +210,11 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 								$query = $db->prepare('UPDATE mines SET win = ? WHERE id = ?');
 								$query->bind_param('ii', $win, $_GET['game']);
 		
+								$query->execute();
+								
+								$query = $db->prepare('UPDATE history SET win = 2, reward = 0 WHERE user1 = ? AND gameid = ? AND transType = 5');
+								$query->bind_param('si', $_COOKIE['username'], $_GET['game']);
+					
 								$query->execute();
 								
 								$arr = array('status' => 'lost', 'message' => 'You hit a bomb. You lost.', 'secret' => ''.$secret, 'bombs' => $bombs);

@@ -26,6 +26,15 @@ if(!isset($_GET['betOn']) || $_GET['betOn'] == "" || !isset($_GET['bet']) || $_G
 				$arr = array('status' => 'error', 'error' => 603, 'message' => 'You can\'t bet now.');
 				echo json_encode($arr);
 			} else {
+				$queried = $db->prepare('SELECT * FROM info WHERE name = \'rouletteid\'');
+				$queried->execute();
+				$resultedd = $queried->get_result();
+				if($resultedd->num_rows) {
+					while ($rowedd = $resultedd->fetch_assoc()) {
+						$gameidd = $rowedd['value'];
+					}
+				}
+				
 				$queryy = $db->prepare('SELECT * FROM users WHERE username = ?');
 				$queryy->bind_param('s', $_COOKIE['username']);
 	
@@ -64,6 +73,15 @@ if(!isset($_GET['betOn']) || $_GET['betOn'] == "" || !isset($_GET['bet']) || $_G
 							$noyou->bind_param('dds', $newbal, $lostedd, $_COOKIE['username']);
 							
 							$noyou->execute();
+							
+							$transType = 6;
+							$win = 2;
+							
+							$yesure = $db->prepare('INSERT INTO history (transType, amount, gameid, user1, win) VALUES (?, ?, ?, ?, ?)');
+							$yesure->bind_param('idisi', $transType, $_GET['bet'], $gameidd, $_COOKIE['username'], $win);
+
+							$yesure->execute();
+							
 							
 							$arr = array('status' => 'success', 'message' => 'Your bet has been placed. Your new balance is: '.$newbal." SBD.", 'balance' => $newbal);
 							echo json_encode($arr);
