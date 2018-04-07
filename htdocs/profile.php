@@ -150,6 +150,7 @@ if(IsLoggedOnUser()) {
 						$("#profit").text("Profit: <?php echo $profit." SBD";?>");
 						$("#totals").text("<?php echo "(Wins: ".$won." SBD | Loses: ".$lost." SBD )";?>");
 						$("#history").text("History");
+						$("#historyTable").css("display", "");
 					}
 				});
 				</script></h1>
@@ -160,7 +161,7 @@ if(IsLoggedOnUser()) {
 				<h3 id="profit" style="margin-bottom:0"></h3>
 				<h5 id="totals" style="margin-top:0"></h4>
 				<h2 id="history" style="text-decoration:underline"></h2>
-				<div id="historyTable">
+				<div id="historyTable" style="display:none">
 					<?php echo $history;?>
 				</div>
 		</center>
