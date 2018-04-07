@@ -60,8 +60,10 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 				$transType = 5;
 				$winning = 0;
 				
-				$query = $db->prepare('INSERT INTO history (transType, amount, gameid, user1, win) VALUES (?, ?, ?, ?, ?)');
-				$query->bind_param('idisi', $transType, $_GET['bet'], $game, $_COOKIE['username'], $winning);
+				$timestampedd = time();
+				
+				$query = $db->prepare('INSERT INTO history (transType, amount, gameid, user1, win, timestamp) VALUES (?, ?, ?, ?, ?, ?)');
+				$query->bind_param('idisii', $transType, $_GET['bet'], $game, $_COOKIE['username'], $winning, $timestampedd);
 					
 				$query->execute();
 				

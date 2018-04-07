@@ -8,7 +8,7 @@
 			<br>
 			<center>
 				<a onclick="show(1)" style="display:inline;text-decoration:underline;cursor:pointer">Coinflip </a>|
-				<a onclick="show(2)" style="display:inline;text-decoration:underline;cursor:pointer"> Rock, Paper, Scissors </a>|
+				<a onclick="show(2)" style="display:inline;text-decoration:underline;cursor:pointer"> Rock Paper Scissors </a>|
 				<a onclick="show(3)" style="display:inline;text-decoration:underline;cursor:pointer"> Mines </a>|
 				<a onclick="show(4)" style="display:inline;text-decoration:underline;cursor:pointer"> Roulette</a>
 			</center><br>

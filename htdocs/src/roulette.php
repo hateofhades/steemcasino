@@ -77,8 +77,10 @@ if(!isset($_GET['betOn']) || $_GET['betOn'] == "" || !isset($_GET['bet']) || $_G
 							$transType = 6;
 							$win = 2;
 							
-							$yesure = $db->prepare('INSERT INTO history (transType, amount, gameid, user1, win) VALUES (?, ?, ?, ?, ?)');
-							$yesure->bind_param('idisi', $transType, $_GET['bet'], $gameidd, $_COOKIE['username'], $win);
+							$timestamped = time();
+							
+							$yesure = $db->prepare('INSERT INTO history (transType, amount, gameid, user1, win, timestamp) VALUES (?, ?, ?, ?, ?, ?)');
+							$yesure->bind_param('idisii', $transType, $_GET['bet'], $gameidd, $_COOKIE['username'], $win, $timestamped);
 
 							$yesure->execute();
 							

@@ -24,19 +24,90 @@ if(IsLoggedOnUser()) {
 	$query->execute();
 	
 	$result = $query->get_result();
+	$history = "<br>";
 	while ($row = $result->fetch_assoc()) {
 		if($row['transType'] == 1) {
-			
+			$date = date("F j, Y, g:i a T", $row['timestamp']);
+			$history =  "
+			<h4 style=\"display:inline\">Deposit | </h4><h4 style=\"display:inline;color:green\">+".$row['amount']." SBD</h4> | <h4 style=\"display:inline\">".$date."</h4><br>
+			".$history;
 		} else if($row['transType'] == 2) {
-			
+			$date = date("F j, Y, g:i T", $row['timestamp']);
+			$history =  "
+			<h4 style=\"display:inline\">Withdraw | </h4><h4 style=\"display:inline;color:red\">-".$row['amount']." SBD</h4> | <h4 style=\"display:inline\">".$date."</h4><br>
+			".$history;
 		} else if($row['transType'] == 3) {
-			
+			$date = date("F j, Y, g:i a T", $row['timestamp']);
+			if($row['user1'] == $_COOKIE['username'])
+				if($row['win'] == 1)
+					$win = "
+					<h4 style=\"display:inline;color:green\">+".$row['reward']." SBD</h4>
+				";
+				else
+					$win = "
+					<h4 style=\"display:inline;color:red\">-".$row['amount']." SBD</h4>
+				";
+			else if($row['user2'] == $_COOKIE['username'])
+				if($row['win'] == 1)
+					$win = "
+					<h4 style=\"display:inline;color:red\">-".$row['amount']." SBD</h4>
+				";
+				else 
+					$win = "
+					<h4 style=\"display:inline;color:green\">+".$row['reward']." SBD</h4>
+				";
+			$history =  "
+			<h4 style=\"display:inline\">Coinflip #".$row['gameid']." | ".$row['user1']." vs ".$row['user2']." |</h4> ".$win." | <h4 style=\"display:inline\">".$date."</h4><br>
+			".$history;
 		} else if($row['transType'] == 4) {
-			
+			$date = date("F j, Y, g:i a T", $row['timestamp']);
+			if($row['user1'] == $_COOKIE['username'])
+				if($row['win'] == 1)
+					$win = "
+					<h4 style=\"display:inline;color:green\">+".$row['reward']." SBD</h4>
+				";
+				else
+					$win = "
+					<h4 style=\"display:inline;color:red\">-".$row['amount']." SBD</h4>
+				";
+			else if($row['user2'] == $_COOKIE['username'])
+				if($row['win'] == 1)
+					$win = "
+					<h4 style=\"display:inline;color:red\">-".$row['amount']." SBD</h4>
+				";
+				else 
+					$win = "
+					<h4 style=\"display:inline;color:green\">+".$row['reward']." SBD</h4>
+				";
+			$history =  "
+			<h4 style=\"display:inline\">Rock Paper Scissors #".$row['gameid']." | ".$row['user1']." vs ".$row['user2']." |</h4> ".$win." | <h4 style=\"display:inline\">".$date."</h4><br>
+			".$history;
 		} else if($row['transType'] == 5) {
-			
+			$date = date("F j, Y, g:i a T", $row['timestamp']);
+			if($row['win'] == 1)
+				$win = "
+					<h4 style=\"display:inline;color:green\">+".$row['reward']." SBD</h4>
+				";
+			else
+				$win = "
+					<h4 style=\"display:inline;color:red\">-".$row['amount']." SBD</h4>
+				";
+			$history =  "
+			<h4 style=\"display:inline\">Mines #".$row['gameid']." | </h4> ".$win." | <h4 style=\"display:inline\">".$date."</h4><br>
+			".$history;
 		} else if($row['transType'] == 6) {
-			
+			$date = date("F j, Y, g:i a T", $row['timestamp']);
+			if($row['win'] == 1)
+				$win = "
+					<h4 style=\"display:inline;color:green\">+".$row['reward']." SBD</h4>
+				";
+			else
+				$win = "
+					<h4 style=\"display:inline;color:red\">-".$row['amount']." SBD</h4>
+				";
+			$history =  "
+			<h4 style=\"display:inline\">Roulette #".$row['gameid']." | </h4> ".$win." | <h4 style=\"display:inline\">".$date."</h4><br>
+			".$history;
 		}
 	}
 }
@@ -78,6 +149,7 @@ if(IsLoggedOnUser()) {
 						$("#lll").text(" / ");
 						$("#profit").text("Profit: <?php echo $profit." SBD";?>");
 						$("#totals").text("<?php echo "(Wins: ".$won." SBD | Loses: ".$lost." SBD )";?>");
+						$("#history").text("History");
 					}
 				});
 				</script></h1>
@@ -87,7 +159,10 @@ if(IsLoggedOnUser()) {
 				<a href="#" id="withdraw" onClick="MyWindow=window.open('balance.php?action=withdrawal','MyWindow',width=600,height=300); return false;"></a>
 				<h3 id="profit" style="margin-bottom:0"></h3>
 				<h5 id="totals" style="margin-top:0"></h4>
-			</div>
+				<h2 id="history" style="text-decoration:underline"></h2>
+				<div id="historyTable">
+					<?php echo $history;?>
+				</div>
 		</center>
 		<?php include('src/footer.php'); ?>
 	</body>

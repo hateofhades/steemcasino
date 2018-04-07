@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 07 Apr 2018 la 12:04
+-- Generation Time: 07 Apr 2018 la 18:29
 -- Versiune server: 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -54,7 +54,8 @@ CREATE TABLE `history` (
   `user1` varchar(255) DEFAULT NULL,
   `user2` varchar(255) DEFAULT NULL,
   `win` int(11) DEFAULT NULL,
-  `reward` float DEFAULT NULL
+  `reward` float DEFAULT NULL,
+  `timestamp` int(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -74,11 +75,11 @@ CREATE TABLE `info` (
 --
 
 INSERT INTO `info` (`ID`, `name`, `value`) VALUES
-(1, 'lastTrans', 0),
+(1, 'lastTrans', 133),
 (2, 'isMaintenance', 0),
-(3, 'roulettetimestamp', 1523095406),
+(3, 'roulettetimestamp', 1523113814),
 (4, 'roulettestate', 0),
-(5, 'rouletteid', 0);
+(5, 'rouletteid', 11);
 
 -- --------------------------------------------------------
 
