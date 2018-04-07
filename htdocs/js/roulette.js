@@ -47,7 +47,7 @@ function getMessage(msg) {
 		displayLastRolls(msg['lastRolls']);
 		state = msg['state'];
 		clearTimeout(progress);
-		displayProgressBar(msg['timestamp']);
+		displayProgressBar(msg['timestamp'] - Math.floor($.now()/1000));
 		
 		setButtons();
 	}
@@ -87,15 +87,17 @@ function setButtons() {
 }
 
 function displayProgressBar(timestamp) {
-	if(state == 0 && timestamp >= Math.floor($.now() / 1000)) {
+	if(state == 0 && timestamp >= 0) {
 		$("#progress").attr("max", 60);
-		$("#progress").attr("value", timestamp - Math.floor($.now() / 1000));
-		$("#progressText").text(timestamp - Math.floor($.now() / 1000) + " seconds");
+		$("#progress").attr("value", timestamp);
+		$("#progressText").text(timestamp + " seconds");
+		timestamp = timestamp - 1;
 		progress = setTimeout(function() {displayProgressBar(timestamp)}, 1000);
-	} else if (state == 1 && timestamp >= Math.floor($.now() / 1000)) {
+	} else if (state == 1 && timestamp >= 0) {
 		$("#progress").attr("max", 10);
-		$("#progress").attr("value", timestamp - Math.floor($.now() / 1000));
-		$("#progressText").text(timestamp - Math.floor($.now() / 1000) + " seconds");
+		$("#progress").attr("value", timestamp);
+		$("#progressText").text(timestamp + " seconds");
+		timestamp = timestamp - 1;
 		progress = setTimeout(function() {displayProgressBar(timestamp)}, 1000);
 	}
 }

@@ -37,8 +37,6 @@ if(IsLoggedOnUser()) {
 			
 		} else if($row['transType'] == 6) {
 			
-		} else if($row['transType'] == 7) {
-			
 		}
 	}
 }

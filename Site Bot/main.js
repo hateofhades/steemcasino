@@ -129,7 +129,7 @@ function win(color, currRoll) {
 		messageType: 2,
 		roll: currRoll,
 		lastRolls: lastRolls,
-		timestamp: timestamp
+		timestamp: rollTime / 1000
 	});
 }
 
@@ -150,7 +150,7 @@ function createGame() {
 	
 	io.sockets.emit('message', {
 		messageType: 3,
-		timestamp: timestamp
+		timestamp: betTime / 1000
 	});
 }
 
