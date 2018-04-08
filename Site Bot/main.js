@@ -3,6 +3,8 @@ var http = require('http').Server(app);
 var mysql = require('mysql');
 var io = require('socket.io')(http);
 var math = require('mathjs');
+var randomstring = require('randomstring');
+var sha = require('sha.js');
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -10,7 +12,7 @@ app.get('/', function(req, res){
 
 setTimeout(changeState, rollTime);
 
-var getBetsInterval = setInterval(getBets, 1000 * 5);
+var getBetsInterval;
 
 var state = 0;
 var lastRolls = [23, 11, 10, 22];
@@ -18,6 +20,15 @@ var timestamp = 0;
 
 var rollTime = 10 * 1000;
 var betTime = 60 * 1000;
+
+var jackpotTime = 10 * 60 * 1000;
+
+var jackpotGame;
+
+var totalBetJackpot = 50;
+var jackpotHash, jackpotSecret = "No secret", lastJackpotSecret;
+var getJackpotTotalInterval = setInterval(getJackpotBets, 1000 * 5);
+var jackpotTimeTick, jackpotTimeTickMax = 120;
 
 var gameid;
 
@@ -32,11 +43,13 @@ con.connect(function(err) {
 	if (err) throw err;
   console.log("Bot is now connected to the database.");
   getGameid();
+  createJackpotGame();
 });
 
 function getGameid() {
 	con.query("SELECT * FROM info", function (err, result) {
 		gameid = result[4].value;
+		jackpotGame = result[6].value;
 	});
 }
 
@@ -66,6 +79,130 @@ function getBets() {
 			greenPlayers: greenPlayers,
 		});
 	});
+}
+
+function getJackpotBets() {
+	jackpotTimeTick++;
+	con.query("SELECT * FROM jackpot", function (err, result) {
+		var totalBet = 0, playerBet = [];
+		for(var val of result) {
+			totalBet += val.bet;
+			playerBet.push([val.player, val.bet]);
+		}
+		
+		io.sockets.emit('message', {
+			messageType: 5,
+			totalBet: totalBet,
+			playerBet: playerBet
+		});
+		if(totalBet >= totalBetJackpot)
+			endJackpotGame(totalBet, playerBet);
+		else if(jackpotTimeTick == jackpotTimeTickMax)
+			endJackpotGame(totalBet, playerBet);
+	});
+}
+
+function createJackpotGame() {
+	
+	console.log("\nCreating jackpot game.");
+	
+	getBetsInterval = setInterval(getBets, 1000 * 5);
+	jackpotTimeTick = 0;
+	jackpotGame++;
+	con.query("TRUNCATE jackpot", function (err, result) {
+	});
+	con.query("UPDATE info SET value = 0 WHERE name = 'jackpotstate'", function (err, result) {
+	});
+	con.query("UPDATE info SET value = " + jackpotGame + " WHERE name = 'jackpotgame'", function (err, result) {
+	});
+	
+	var winnerTicket = math.random(0, 500001);
+	winnerTicket = math.floor(winnerTicket);
+	
+	lastJackpotSecret = jackpotSecret;
+	
+	jackpotSecret = winnerTicket + "-" + randomstring.generate(100);
+	jackpotHash = sha('sha256').update(jackpotSecret).digest('hex');
+	
+	io.sockets.emit('message', {
+		messageType: 6,
+		currentHash: jackpotHash,
+		lastSecret: lastJackpotSecret,
+		jackpotTimeLeft: jackpotTimeTickMax * 5
+	});
+}
+
+function endJackpotGame(totalBet, playerBet) {
+	if(totalBet != 0) {
+		clearInterval(getBetsInterval);
+		
+		con.query("UPDATE info SET value = 1 WHERE name = 'jackpotstate'", function (err, result) {
+		});
+		var ticketsPerSBD = 500000 / totalBet;
+		var playerAndTickets = [];
+		for(var val of playerBet) {
+			playerAndTickets.push([val[0], Math.floor(val[1] * ticketsPerSBD)]);
+		}
+		
+		var winningTicket = jackpotSecret.substr(0, jackpotSecret.indexOf('-'));
+		var winner = "", tickets = 0;
+		for(var val of playerAndTickets) {
+			tickets += val[1];
+			if(tickets >= winningTicket) {
+				winner = val[0];
+				break;
+			}
+		}
+		
+		if(tickets < winningTicket) {
+			winningTicket -= (500000 - tickets);
+			tickets = 0;
+			for(var val of playerAndTickets) {
+				tickets += val[1];
+				if(tickets >= winningTicket) {
+					winner = val[0];
+					break;
+				}
+			}
+		}
+		
+		con.query("SELECT * FROM users WHERE username = '" + winner + "'", function (err, result) {
+			var balance = result[0].balance;
+			var won = result[0].won;
+			var losted = result[0].losted;
+			
+			var reward = totalBet * 99.5 / 100;
+			
+			balance += reward;
+			won += reward;
+			var winnerBet = 0;
+			
+			for(var val of playerBet) {
+				if(val[0] == winner) {
+					winnerBet = val[1];
+					break;
+				}
+			}
+			
+			losted -= winnerBet;
+			
+			con.query("UPDATE users SET balance = '" + balance +"', won = '" + won + "', losted = '" + losted + "' WHERE username = '" + winner + "'", function (er, resul) {
+				con.query("UPDATE history SET win = 1, reward = '" + reward + "' WHERE transType = '7' AND user1 = '" + winner + "' AND gameid = '" + jackpotGame + "'", function (e, resu) {
+					setTimeout(createJackpotGame, 20 * 1000);
+					io.sockets.emit('message', {
+						messageType: 7,
+						winner: winner,
+						totalBet: reward,
+						winningTicket: winningTicket,
+						ticketsAndPlayers: playerAndTickets
+					});
+					console.log("Jackpot game ended, total bets: " + totalBet + " SBD.");
+				});
+			});
+		});
+	} else {
+		createJackpotGame();
+	}
 }
 
 io.on('connection', function(socket){
@@ -107,6 +244,10 @@ function changeState() {
 		getBetsInterval = setInterval(getBets, 1000 * 5);
 	} else {
 		state = 1;
+		
+		clearInterval(getBetsInterval);
+		getBets();
+		
 		var currRoll = roll();
 		var color = calculateColor(currRoll);
 		
@@ -119,8 +260,6 @@ function changeState() {
 		win(color, currRoll);
 		
 		setTimeout(changeState, rollTime);
-		
-		clearInterval(getBetsInterval);
 	}
 }
 
