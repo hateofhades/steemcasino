@@ -10,6 +10,8 @@ app.get('/', function(req, res){
 
 setTimeout(changeState, rollTime);
 
+var getBetsInterval = setInterval(getBets, 1000 * 5);
+
 var state = 0;
 var lastRolls = [23, 11, 10, 22];
 var timestamp = 0;
@@ -35,6 +37,34 @@ con.connect(function(err) {
 function getGameid() {
 	con.query("SELECT * FROM info", function (err, result) {
 		gameid = result[4].value;
+	});
+}
+
+function getBets() {
+	con.query("SELECT * FROM roulette", function (err, result) {
+		var redBet = 0, blackBet = 0, greenBet = 0;
+		var redPlayers = [], blackPlayers = [], greenPlayers = [];
+		for(var val of result) {
+			if(val.beton == 1) {
+				redBet += val.bet;
+				redPlayers.push([val.player, val.bet]);
+			} else if(val.beton == 2) {
+				blackBet += val.bet;
+				blackPlayers.push([val.player, val.bet]);
+			} else if(val.beton == 3) {
+				greenBet += val.bet;
+				greenPlayers.push([val.player, val.bet]);
+			}
+		}
+		io.sockets.emit('message', {
+			messageType: 4,
+			redBet: redBet,
+			blackBet: blackBet,
+			greenBet: greenBet,
+			redPlayers: redPlayers,
+			blackPlayers: blackPlayers,
+			greenPlayers: greenPlayers,
+		});
 	});
 }
 
@@ -72,6 +102,9 @@ function changeState() {
 		console.log("\nBetting round has started.");
 		
 		setTimeout(changeState, betTime);
+		
+		getBets();
+		getBetsInterval = setInterval(getBets, 1000 * 5);
 	} else {
 		state = 1;
 		var currRoll = roll();
@@ -86,6 +119,8 @@ function changeState() {
 		win(color, currRoll);
 		
 		setTimeout(changeState, rollTime);
+		
+		clearInterval(getBetsInterval);
 	}
 }
 

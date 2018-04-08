@@ -71,6 +71,25 @@ function getMessage(msg) {
 		setButtons();
 		
 		getBalance();
+	} else if(msg['messageType'] == 4) {
+		$("#totalRed").text("Total: " + msg['redBet'] + " SBD");
+		$("#totalBlack").text("Total: " + msg['blackBet'] + " SBD");
+		$("#totalGreen").text("Total: " + msg['greenBet'] + " SBD");
+		
+		var redPlayers = "", blackPlayers = "", greenPlayers = "";
+		$.each(msg['redPlayers'], function(i, value) {
+			redPlayers = '<div><img width="10%" style="vertical-align:middle" src="https://steemitimages.com/u/'+ value[0] +'/avatar"> - ' + value[0] + ' - ' + value[1] + ' SBD</div><div style="width:100%;height:1px;margin-top:2px;margin-bot:2px"></div>' + redPlayers;
+		});
+		$.each(msg['blackPlayers'], function(i, value) {
+			blackPlayers = '<div><img width="10%" style="vertical-align:middle" src="https://steemitimages.com/u/'+ value[0] +'/avatar"> - ' + value[0] + ' - ' + value[1] + ' SBD</div><div style="width:100%;height:1px;margin-top:2px;margin-bot:2px"></div>' + blackPlayers;
+		});
+		$.each(msg['greenPlayers'], function(i, value) {
+			greenPlayers = '<div><img width="10%" style="vertical-align:middle" src="https://steemitimages.com/u/'+ value[0] +'/avatar"> - ' + value[0] + ' - ' + value[1] + ' SBD</div><div style="width:100%;height:1px;margin-top:2px;margin-bot:2px"></div>' + greenPlayers;
+		});
+		
+		$("#contentRed").html(redPlayers);
+		$("#contentBlack").html(blackPlayers);
+		$("#contentGreen").html(greenPlayers);
 	}	
 }
 
@@ -357,7 +376,7 @@ function betRoulette(betOn) {
 function getBalance() {
 	$.getJSON( "../src/getbalance.php", function( data ) {
 		if(data['status'] == 'success') {
-			$("#balance").text("Balance: " + data['balance'] + " SBD");
+			$("#balance").text("Your balance: " + data['balance'] + " SBD");
 		}
 	});
 }

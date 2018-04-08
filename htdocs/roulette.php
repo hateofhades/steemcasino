@@ -72,13 +72,38 @@ include_once('src/db.php');
 			<div id="progressText"></div>
 			<progress id="progress" value="0" max="100"></progress>
 			<br><br>
-			<span id="betn">Bet :</span><input type="number" step=".001" min="0.001" value="0.001" pattern="\d+(\.\d{2})?" id="bet" name="bet"></center><br>
-			<center><input type="submit" value="Red (x2)" id="btn1" onClick="betRoulette(1)"></input>
-			<input type="submit" value="Black (x2)" id="btn2" onClick="betRoulette(2)"></input>
-			<input type="submit" value="Green (x14)" id="btn3" onClick="betRoulette(3)"></input><br><br></center>
-			<center>
-				<h4 style="margin:0" id="balance">LOADING...</h4>
-			</center>
+			<h4 style="margin:0" id="balance">LOADING...</h4><br>
+			<h5 id="betn" style="margin:0">Bet</h5><input type="number" step=".001" min="0.001" value="0.001" pattern="\d+(\.\d{2})?" id="bet" name="bet"></center><br>
+			<div style="margin-left:18%;width:20%;display:inline-block;height:50%;vertical-align:top">
+				<center>
+					<input type="submit" value="Red (x2)" id="btn1" onClick="betRoulette(1)"></input><br><br>
+					<h4 style="margin:0" id="totalRed">Loading...</h4>
+					<div style="width:100%;height:2px;background-color:black"></div><br>
+					<div id="contentRed" style="width:100%;">
+						
+					</div>
+				</center>
+			</div>
+			<div style="width:20%;display:inline-block;height:50%;vertical-align:top">
+				<center>
+					<input type="submit" value="Black (x2)" id="btn2" onClick="betRoulette(2)"></input><br><br>
+					<h4 style="margin:0" id="totalBlack">Loading...</h4>
+					<div style="width:100%;height:2px;background-color:black"></div><br>
+					<div id="contentBlack" style="width:100%;">
+					
+					</div>
+				</center>
+			</div>
+			<div style="width:20%;display:inline-block;height:50%;vertical-align:top">
+				<center>
+					<input type="submit" value="Green (x14)" id="btn3" onClick="betRoulette(3)"></input><br><br>
+					<h4 style="margin:0" id="totalGreen">Loading...</h4>
+					<div style="width:100%;height:2px;background-color:black"></div><br>
+					<div id="contentGreen" style="width:100%;">
+					
+					</div>
+				</center>
+			</div>
 		</div>
 		<script>
 			var owl, i;
