@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 07 Apr 2018 la 18:29
+-- Generation Time: 09 Apr 2018 la 18:40
 -- Versiune server: 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -77,9 +77,23 @@ CREATE TABLE `info` (
 INSERT INTO `info` (`ID`, `name`, `value`) VALUES
 (1, 'lastTrans', 133),
 (2, 'isMaintenance', 0),
-(3, 'roulettetimestamp', 1523113814),
+(3, 'roulettetimestamp', 1523291970),
 (4, 'roulettestate', 0),
-(5, 'rouletteid', 11);
+(5, 'rouletteid', 0),
+(6, 'jackpotstate', 0),
+(7, 'jackpotgame', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Structura de tabel pentru tabelul `jackpot`
+--
+
+CREATE TABLE `jackpot` (
+  `ID` int(11) NOT NULL,
+  `player` varchar(255) NOT NULL,
+  `bet` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -167,6 +181,12 @@ ALTER TABLE `info`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indexes for table `jackpot`
+--
+ALTER TABLE `jackpot`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- Indexes for table `mines`
 --
 ALTER TABLE `mines`
@@ -208,7 +228,12 @@ ALTER TABLE `history`
 -- AUTO_INCREMENT for table `info`
 --
 ALTER TABLE `info`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+--
+-- AUTO_INCREMENT for table `jackpot`
+--
+ALTER TABLE `jackpot`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `mines`
 --

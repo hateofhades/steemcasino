@@ -27,7 +27,7 @@ var jackpotGame;
 
 var totalBetJackpot = 50;
 var jackpotHash, jackpotSecret = "No secret", lastJackpotSecret;
-var getJackpotTotalInterval = setInterval(getJackpotBets, 1000 * 5);
+var getJackpotTotalInterval;
 var jackpotTimeTick, jackpotTimeTickMax = 120;
 
 var gameid;
@@ -95,10 +95,12 @@ function getJackpotBets() {
 			totalBet: totalBet,
 			playerBet: playerBet
 		});
-		if(totalBet >= totalBetJackpot)
+		if(totalBet >= totalBetJackpot) {
 			endJackpotGame(totalBet, playerBet);
-		else if(jackpotTimeTick == jackpotTimeTickMax)
+		}
+		else if(jackpotTimeTick == jackpotTimeTickMax) {
 			endJackpotGame(totalBet, playerBet);
+		}
 	});
 }
 
@@ -106,7 +108,8 @@ function createJackpotGame() {
 	
 	console.log("\nCreating jackpot game.");
 	
-	getBetsInterval = setInterval(getBets, 1000 * 5);
+	clearInterval(getJackpotTotalInterval);
+	getJackpotTotalInterval = setInterval(getJackpotBets, 1000 * 5);
 	jackpotTimeTick = 0;
 	jackpotGame++;
 	con.query("TRUNCATE jackpot", function (err, result) {
@@ -128,16 +131,21 @@ function createJackpotGame() {
 		messageType: 6,
 		currentHash: jackpotHash,
 		lastSecret: lastJackpotSecret,
-		jackpotTimeLeft: jackpotTimeTickMax * 5
+		timeleft: jackpotTimeTickMax * 5,
+		gameid: jackpotGame
 	});
 }
 
 function endJackpotGame(totalBet, playerBet) {
 	if(totalBet != 0) {
-		clearInterval(getBetsInterval);
+		clearInterval(getJackpotTotalInterval);
 		
 		con.query("UPDATE info SET value = 1 WHERE name = 'jackpotstate'", function (err, result) {
 		});
+		
+		con.query("TRUNCATE roulette", function (err, result) {
+		});
+		
 		var ticketsPerSBD = 500000 / totalBet;
 		var playerAndTickets = [];
 		for(var val of playerBet) {
@@ -155,15 +163,9 @@ function endJackpotGame(totalBet, playerBet) {
 		}
 		
 		if(tickets < winningTicket) {
-			winningTicket -= (500000 - tickets);
-			tickets = 0;
-			for(var val of playerAndTickets) {
-				tickets += val[1];
-				if(tickets >= winningTicket) {
-					winner = val[0];
-					break;
-				}
-			}
+			var firstTickets = playerAndTickets[0][1];
+			firstTickets += (500000 - tickets);
+			playerAndTickets[0][1] = firstTickets;
 		}
 		
 		con.query("SELECT * FROM users WHERE username = '" + winner + "'", function (err, result) {
@@ -194,9 +196,10 @@ function endJackpotGame(totalBet, playerBet) {
 						winner: winner,
 						totalBet: reward,
 						winningTicket: winningTicket,
-						ticketsAndPlayers: playerAndTickets
+						playerAndTickets: playerAndTickets
 					});
 					console.log("Jackpot game ended, total bets: " + totalBet + " SBD.");
+					totalBet = 0;
 				});
 			});
 		});
@@ -213,6 +216,13 @@ io.on('connection', function(socket){
 			state: state,
 			timestamp: timestamp,
 			lastRolls: lastRolls
+		});
+		socket.emit('message', {
+			messageType: 11,
+			gameid: jackpotGame,
+			timeleft: (jackpotTimeTickMax - jackpotTimeTick) * 5,
+			hash: jackpotHash,
+			lastSecret: lastJackpotSecret
 		});
 	});
 });
@@ -313,8 +323,6 @@ function createGame() {
 	
 	gameid = gameid + 1;
 	
-	con.query("TRUNCATE roulette", function (err, result) {
-	});
 	con.query("UPDATE info SET value = 0 WHERE name = 'roulettestate'", function (err, result) {
 	});
 	con.query("UPDATE info SET value = " + Math.floor(Date.now() / 1000) + " WHERE name = 'roulettetimestamp'", function (err, result) {
