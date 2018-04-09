@@ -23,6 +23,9 @@
 					<div>
 						<a href="roulette.php"><img height="20%" src="img/roulette.png"></a>
 					</div>
+					<div>
+						<a href="jackpot.php"><img height="20%" src="img/jackpot.png"></a>
+					</div>
 				</div><br>
 				<a href="howtoplay.php">How to play?</a>
 			</center>

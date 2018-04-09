@@ -60,7 +60,7 @@ function getMessage(msg) {
 		$(".ow-carousel").html("");
 		var totalBetOn = "";
 		$.each(msg['playerBet'], function(i, value) {
-			totalBetOn = '<div><img height="24px" width="24px" style="vertical-align:middle" src="https://steemitimages.com/u/'+ value[0] +'/avatar"> - ' + value[0] + ' - ' + value[1] + ' SBD</div><div style="width:100%;height:1px;margin-top:2px;margin-bot:2px"></div>' + totalBetOn;
+			totalBetOn = '<div><img height="24px" width="24px" style="vertical-align:middle" src="https://steemitimages.com/u/'+ value[0] +'/avatar"> - ' + value[0] + ' - ' + ((value[1] / msg['totalBet']) * 100).toFixed(2) + '% - ' + value[1] + ' SBD</div><div style="width:100%;height:1px;margin-top:2px;margin-bot:2px"></div>' + totalBetOn;
 		});
 		$("#contentJackpot").html(totalBetOn);
 	}
@@ -95,9 +95,9 @@ function getMessage(msg) {
 				if(totalTickets >= ticket && nomoar == 0) {
 					animation = "<div style=\"border:1px solid black\" class=\"roulette\" data-hash=" + ticket +"><img src=\"https://steemitimages.com/u/" + playerAndTickets[y][0] + "/avatar\"></div>" + animation;
 					nomoar = 1;
+					if(addedWinner == 0)
+						ticketPlace++;
 				}
-				if(addedWinner == 0)
-					ticketPlace++;
 				if(totalTickets >= winningTicket && addedWinner == 0) {
 					addedWinner = 1;
 					animation = '<div style="border:1px solid black" class="roulette" data-hash="winner"><img src="https://steemitimages.com/u/' + playerAndTickets[y][0] + '/avatar"></div>' + animation;

@@ -10,7 +10,8 @@
 				<a onclick="show(1)" style="display:inline;text-decoration:underline;cursor:pointer">Coinflip </a>|
 				<a onclick="show(2)" style="display:inline;text-decoration:underline;cursor:pointer"> Rock Paper Scissors </a>|
 				<a onclick="show(3)" style="display:inline;text-decoration:underline;cursor:pointer"> Mines </a>|
-				<a onclick="show(4)" style="display:inline;text-decoration:underline;cursor:pointer"> Roulette</a>
+				<a onclick="show(4)" style="display:inline;text-decoration:underline;cursor:pointer"> Roulette </a>|
+				<a onclick="show(5)" style="display:inline;text-decoration:underline;cursor:pointer"> Jackpot</a>
 			</center><br>
 			<div id="con" style="display:none">
 				<center>
@@ -56,8 +57,12 @@
 				</center>
 			</div>
 			<div id="rule" style="display:none">
-					<h3 style="display:inline">Here you can see more items:<br> 1. The roulette table, where the rolling animation is played<br> 2. The last 5 rolls<br> 3. A countdown that counts down until the next roll (you have 60 seconds to bet and then there are 10 seconds in which you cannot bet and the roll happens)<br> 4. The bet buttons, if you bet on red or black and the roll is the same color as your bet you will win x2 your bet, if you bet on green and the roll is 0 or 00 you will win x14 your bet<br> 5. Your current balance.</h3><br>
-					<center><img src="https://i.imgur.com/lLzM0M3.png"></center>
+					<h3 style="display:inline">Here you can see more items:<br> 1. The roulette table, where the rolling animation is played<br> 2. The last 5 rolls<br> 3. A countdown that counts down until the next roll (you have 60 seconds to bet and then there are 10 seconds in which you cannot bet and the roll happens)<br> 4. Your current balance<br> 5. The amount that you want to bet<br> 6. The bet buttons, if you bet on red or black and the roll is the same color as your bet you will win x2 your bet, if you bet on green and the roll is 0 or 00 you will win x14 your bet<br> 7,8,9. Totals and players that bet on (in order) red, black and green</h3><br>
+					<center><img src="https://i.imgur.com/YjXP91G.png"></center>
+			</div>
+			<div id="jack" style="display:none">
+				<h3 style="display:inline">Here you can see more items:<br> 1. The current jackpot game id<br> 2. Total amount bet<br> 3. Timeleft until jackpot starts<br> 4. A circle that shows how much players have bet, if bet is over 50 SBD, the circle is complete and the jackpot starts<br> 5. Your current balance<br> 6. The amount you want to bet<br> 7. The submit bet button<br> 8. The players that have bet and their chance to win
+				<center><img src="https://i.imgur.com/XVhxqMB.png"></center>
 			</div>
 		<?php include('src/footer.php'); ?>
 		<script>
@@ -66,6 +71,7 @@
 				$("#rpss").css("display", "none");
 				$("#miness").css("display", "none");
 				$("#rule").css("display", "none");
+				$("#jack").css("display", "none");
 				if(which == 1) {
 					$("#con").css("display", "block");
 				} else if(which == 2) {
@@ -74,6 +80,8 @@
 					$("#miness").css("display", "block");
 				} else if(which == 4) {
 					$("#rule").css("display", "block");
+				} else if(which == 5) {
+					$("#jack").css("display", "block");
 				}
 			}
 		</script>
