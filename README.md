@@ -17,6 +17,8 @@ $ npm install express
 $ npm install http
 $ npm install socket.io
 $ npm install mathjs
+$ npm install randomstring
+$ npm install sha.js
 ```
 
 Import the .sql file into your database

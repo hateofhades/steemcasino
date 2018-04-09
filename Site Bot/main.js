@@ -3,6 +3,8 @@ var http = require('http').Server(app);
 var mysql = require('mysql');
 var io = require('socket.io')(http);
 var math = require('mathjs');
+var randomstring = require('randomstring');
+var sha = require('sha.js');
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -10,12 +12,25 @@ app.get('/', function(req, res){
 
 setTimeout(changeState, rollTime);
 
+var getBetsInterval;
+
 var state = 0;
 var lastRolls = [23, 11, 10, 22];
 var timestamp = 0;
 
 var rollTime = 10 * 1000;
 var betTime = 60 * 1000;
+
+var jackpotTime = 10 * 60 * 1000;
+
+var jackpotGame;
+
+var totalBetJackpot = 50;
+var jackpotHash, jackpotSecret = "No secret", lastJackpotSecret;
+var getJackpotTotalInterval;
+var jackpotTimeTick, jackpotTimeTickMax = 120;
+
+var gameid;
 
 var con = mysql.createConnection({
   host: "localhost",
@@ -27,7 +42,171 @@ var con = mysql.createConnection({
 con.connect(function(err) {
 	if (err) throw err;
   console.log("Bot is now connected to the database.");
+  getGameid();
+  createJackpotGame();
 });
+
+function getGameid() {
+	con.query("SELECT * FROM info", function (err, result) {
+		gameid = result[4].value;
+		jackpotGame = result[6].value;
+	});
+}
+
+function getBets() {
+	con.query("SELECT * FROM roulette", function (err, result) {
+		var redBet = 0, blackBet = 0, greenBet = 0;
+		var redPlayers = [], blackPlayers = [], greenPlayers = [];
+		for(var val of result) {
+			if(val.beton == 1) {
+				redBet += val.bet;
+				redPlayers.push([val.player, val.bet]);
+			} else if(val.beton == 2) {
+				blackBet += val.bet;
+				blackPlayers.push([val.player, val.bet]);
+			} else if(val.beton == 3) {
+				greenBet += val.bet;
+				greenPlayers.push([val.player, val.bet]);
+			}
+		}
+		io.sockets.emit('message', {
+			messageType: 4,
+			redBet: redBet,
+			blackBet: blackBet,
+			greenBet: greenBet,
+			redPlayers: redPlayers,
+			blackPlayers: blackPlayers,
+			greenPlayers: greenPlayers,
+		});
+	});
+}
+
+function getJackpotBets() {
+	jackpotTimeTick++;
+	con.query("SELECT * FROM jackpot", function (err, result) {
+		var totalBet = 0, playerBet = [];
+		for(var val of result) {
+			totalBet += val.bet;
+			playerBet.push([val.player, val.bet]);
+		}
+		
+		io.sockets.emit('message', {
+			messageType: 5,
+			totalBet: totalBet,
+			playerBet: playerBet
+		});
+		if(totalBet >= totalBetJackpot) {
+			endJackpotGame(totalBet, playerBet);
+		}
+		else if(jackpotTimeTick == jackpotTimeTickMax) {
+			endJackpotGame(totalBet, playerBet);
+		}
+	});
+}
+
+function createJackpotGame() {
+	
+	console.log("\nCreating jackpot game.");
+	
+	clearInterval(getJackpotTotalInterval);
+	getJackpotTotalInterval = setInterval(getJackpotBets, 1000 * 5);
+	jackpotTimeTick = 0;
+	jackpotGame++;
+	con.query("TRUNCATE jackpot", function (err, result) {
+	});
+	con.query("UPDATE info SET value = 0 WHERE name = 'jackpotstate'", function (err, result) {
+	});
+	con.query("UPDATE info SET value = " + jackpotGame + " WHERE name = 'jackpotgame'", function (err, result) {
+	});
+	
+	var winnerTicket = math.random(0, 500001);
+	winnerTicket = math.floor(winnerTicket);
+	
+	lastJackpotSecret = jackpotSecret;
+	
+	jackpotSecret = winnerTicket + "-" + randomstring.generate(100);
+	jackpotHash = sha('sha256').update(jackpotSecret).digest('hex');
+	
+	io.sockets.emit('message', {
+		messageType: 6,
+		currentHash: jackpotHash,
+		lastSecret: lastJackpotSecret,
+		timeleft: jackpotTimeTickMax * 5,
+		gameid: jackpotGame
+	});
+}
+
+function endJackpotGame(totalBet, playerBet) {
+	if(totalBet != 0) {
+		clearInterval(getJackpotTotalInterval);
+		
+		con.query("UPDATE info SET value = 1 WHERE name = 'jackpotstate'", function (err, result) {
+		});
+		
+		con.query("TRUNCATE roulette", function (err, result) {
+		});
+		
+		var ticketsPerSBD = 500000 / totalBet;
+		var playerAndTickets = [];
+		for(var val of playerBet) {
+			playerAndTickets.push([val[0], Math.floor(val[1] * ticketsPerSBD)]);
+		}
+		
+		var winningTicket = jackpotSecret.substr(0, jackpotSecret.indexOf('-'));
+		var winner = "", tickets = 0;
+		for(var val of playerAndTickets) {
+			tickets += val[1];
+			if(tickets >= winningTicket) {
+				winner = val[0];
+				break;
+			}
+		}
+		
+		if(tickets < winningTicket) {
+			var firstTickets = playerAndTickets[0][1];
+			firstTickets += (500000 - tickets);
+			playerAndTickets[0][1] = firstTickets;
+		}
+		
+		con.query("SELECT * FROM users WHERE username = '" + winner + "'", function (err, result) {
+			var balance = result[0].balance;
+			var won = result[0].won;
+			var losted = result[0].losted;
+			
+			var reward = totalBet * 99.5 / 100;
+			
+			balance += reward;
+			won += reward;
+			var winnerBet = 0;
+			
+			for(var val of playerBet) {
+				if(val[0] == winner) {
+					winnerBet = val[1];
+					break;
+				}
+			}
+			
+			losted -= winnerBet;
+			
+			con.query("UPDATE users SET balance = '" + balance +"', won = '" + won + "', losted = '" + losted + "' WHERE username = '" + winner + "'", function (er, resul) {
+				con.query("UPDATE history SET win = 1, reward = '" + reward + "' WHERE transType = '7' AND user1 = '" + winner + "' AND gameid = '" + jackpotGame + "'", function (e, resu) {
+					setTimeout(createJackpotGame, 20 * 1000);
+					io.sockets.emit('message', {
+						messageType: 7,
+						winner: winner,
+						totalBet: reward,
+						winningTicket: winningTicket,
+						playerAndTickets: playerAndTickets
+					});
+					console.log("Jackpot game ended, total bets: " + totalBet + " SBD.");
+					totalBet = 0;
+				});
+			});
+		});
+	} else {
+		createJackpotGame();
+	}
+}
 
 io.on('connection', function(socket){
 	socket.on('username', function(username) {
@@ -37,6 +216,13 @@ io.on('connection', function(socket){
 			state: state,
 			timestamp: timestamp,
 			lastRolls: lastRolls
+		});
+		socket.emit('message', {
+			messageType: 11,
+			gameid: jackpotGame,
+			timeleft: (jackpotTimeTickMax - jackpotTimeTick) * 5,
+			hash: jackpotHash,
+			lastSecret: lastJackpotSecret
 		});
 	});
 });
@@ -63,8 +249,15 @@ function changeState() {
 		console.log("\nBetting round has started.");
 		
 		setTimeout(changeState, betTime);
+		
+		getBets();
+		getBetsInterval = setInterval(getBets, 1000 * 5);
 	} else {
 		state = 1;
+		
+		clearInterval(getBetsInterval);
+		getBets();
+		
 		var currRoll = roll();
 		var color = calculateColor(currRoll);
 		
@@ -85,8 +278,6 @@ function win(color, currRoll) {
 	timestamp = Math.floor(Date.now() / 1000) + Math.floor(rollTime/1000);
 	
 	con.query("UPDATE info SET value = 1 WHERE name = 'roulettestate'", function (err, result) {
-	});
-	con.query("UPDATE info SET value = " + Math.floor(Date.now() / 1000) + " WHERE name = 'roulettetimestamp'", function (err, result) {
 	});
 	con.query("SELECT * FROM roulette WHERE beton = " + color, function (err, result) {
 		for( var i = 0, len = result.length; i < len; i++ ) {
@@ -110,6 +301,9 @@ function win(color, currRoll) {
 					
 					con.query("UPDATE users SET losted = '" + losted + "', balance = '" + balance + "', won = '" + won + "' WHERE username = '" + player + "'", function (err, result) {
 					});
+					con.query("UPDATE history SET win = '1', reward = '" + reward +"' WHERE user1 = '" + player + "' AND transType = '6' AND gameid = '" + gameid + "'", function (err, result) {
+					});
+					
 				}
 			});
 		}
@@ -119,7 +313,7 @@ function win(color, currRoll) {
 		messageType: 2,
 		roll: currRoll,
 		lastRolls: lastRolls,
-		timestamp: timestamp
+		timestamp: rollTime / 1000
 	});
 }
 
@@ -127,16 +321,18 @@ function createGame() {
 	
 	timestamp = Math.floor(Date.now() / 1000) + Math.floor(betTime / 1000);
 	
-	con.query("TRUNCATE roulette", function (err, result) {
-	});
+	gameid = gameid + 1;
+	
 	con.query("UPDATE info SET value = 0 WHERE name = 'roulettestate'", function (err, result) {
 	});
 	con.query("UPDATE info SET value = " + Math.floor(Date.now() / 1000) + " WHERE name = 'roulettetimestamp'", function (err, result) {
 	});
+	con.query("UPDATE info SET value = " + gameid + " WHERE name = 'rouletteid'", function (err, result) {
+	});
 	
 	io.sockets.emit('message', {
 		messageType: 3,
-		timestamp: timestamp
+		timestamp: betTime / 1000
 	});
 }
 

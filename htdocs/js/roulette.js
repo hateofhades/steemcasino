@@ -47,7 +47,7 @@ function getMessage(msg) {
 		displayLastRolls(msg['lastRolls']);
 		state = msg['state'];
 		clearTimeout(progress);
-		displayProgressBar(msg['timestamp']);
+		displayProgressBar(msg['timestamp'] - Math.floor($.now()/1000));
 		
 		setButtons();
 	}
@@ -71,6 +71,25 @@ function getMessage(msg) {
 		setButtons();
 		
 		getBalance();
+	} else if(msg['messageType'] == 4) {
+		$("#totalRed").text("Total: " + msg['redBet'] + " SBD");
+		$("#totalBlack").text("Total: " + msg['blackBet'] + " SBD");
+		$("#totalGreen").text("Total: " + msg['greenBet'] + " SBD");
+		
+		var redPlayers = "", blackPlayers = "", greenPlayers = "";
+		$.each(msg['redPlayers'], function(i, value) {
+			redPlayers = '<div><img width="10%" style="vertical-align:middle" src="https://steemitimages.com/u/'+ value[0] +'/avatar"> - ' + value[0] + ' - ' + value[1] + ' SBD</div><div style="width:100%;height:1px;margin-top:2px;margin-bot:2px"></div>' + redPlayers;
+		});
+		$.each(msg['blackPlayers'], function(i, value) {
+			blackPlayers = '<div><img width="10%" style="vertical-align:middle" src="https://steemitimages.com/u/'+ value[0] +'/avatar"> - ' + value[0] + ' - ' + value[1] + ' SBD</div><div style="width:100%;height:1px;margin-top:2px;margin-bot:2px"></div>' + blackPlayers;
+		});
+		$.each(msg['greenPlayers'], function(i, value) {
+			greenPlayers = '<div><img width="10%" style="vertical-align:middle" src="https://steemitimages.com/u/'+ value[0] +'/avatar"> - ' + value[0] + ' - ' + value[1] + ' SBD</div><div style="width:100%;height:1px;margin-top:2px;margin-bot:2px"></div>' + greenPlayers;
+		});
+		
+		$("#contentRed").html(redPlayers);
+		$("#contentBlack").html(blackPlayers);
+		$("#contentGreen").html(greenPlayers);
 	}	
 }
 
@@ -87,15 +106,17 @@ function setButtons() {
 }
 
 function displayProgressBar(timestamp) {
-	if(state == 0 && timestamp >= Math.floor($.now() / 1000)) {
+	if(state == 0 && timestamp >= 0) {
 		$("#progress").attr("max", 60);
-		$("#progress").attr("value", timestamp - Math.floor($.now() / 1000));
-		$("#progressText").text(timestamp - Math.floor($.now() / 1000) + " seconds");
+		$("#progress").attr("value", timestamp);
+		$("#progressText").text(timestamp + " seconds");
+		timestamp = timestamp - 1;
 		progress = setTimeout(function() {displayProgressBar(timestamp)}, 1000);
-	} else if (state == 1 && timestamp >= Math.floor($.now() / 1000)) {
+	} else if (state == 1 && timestamp >= 0) {
 		$("#progress").attr("max", 10);
-		$("#progress").attr("value", timestamp - Math.floor($.now() / 1000));
-		$("#progressText").text(timestamp - Math.floor($.now() / 1000) + " seconds");
+		$("#progress").attr("value", timestamp);
+		$("#progressText").text(timestamp + " seconds");
+		timestamp = timestamp - 1;
 		progress = setTimeout(function() {displayProgressBar(timestamp)}, 1000);
 	}
 }
@@ -343,7 +364,7 @@ function betRoulette(betOn) {
 				$("#messages").text(data['message']);
 				$("#closeMessage").text("X");
 				
-				$("#balance").text("Balance: " + data['balance'] + " SBD");
+				$("#balance").text("Your balance: " + data['balance'] + " SBD");
 				
 				clearInterval(timer);
 				timer = setInterval(function() { closeMessage(); }, 1000 * 10);
@@ -355,7 +376,7 @@ function betRoulette(betOn) {
 function getBalance() {
 	$.getJSON( "../src/getbalance.php", function( data ) {
 		if(data['status'] == 'success') {
-			$("#balance").text("Balance: " + data['balance'] + " SBD");
+			$("#balance").text("Your balance: " + data['balance'] + " SBD");
 		}
 	});
 }

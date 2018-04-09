@@ -111,6 +111,13 @@ if(isset($_GET['game'])) {
 					
 					$query->execute();
 					
+					$transType = 3;
+					
+					$query = $db->prepare('INSERT INTO history (transType, amount, gameid, user1, user2, win, reward, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+					$query->bind_param('idissidi', $transType, $bet, $_GET['game'], $player1, $player2, $win, $reward, $timestamp);
+					
+					$query->execute();
+					
 					
 					echo '
 					<script>

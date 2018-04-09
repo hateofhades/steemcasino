@@ -11,7 +11,7 @@ var con = mysql.createConnection({
 
 var lastTransInt;
 
-var botName = "";
+var botName = "meme-bot";
 var activekey = "";
 var depositMemo = "deposit";
 var withdrawMemo = "withdraw";
@@ -135,6 +135,8 @@ function depositReceived(username, deposit) {
 				con.query("UPDATE users SET balance = '" + balance + "' WHERE username = '" + username + "'", function (errr, rresult) {
 					console.log("Deposited");
 				});
+				con.query("INSERT INTO history (transType, amount, user1, timestamp) VALUES ('1', '" + deposit + "', '" + username + "', " + Math.floor(Date.now() / 1000) +")", function (err, rresult) {
+				});
 			});
 }
 
@@ -155,10 +157,11 @@ function withdrawReceived(username, withdraw) {
 					con.query("UPDATE users SET balance = '" + newBalance + "' WHERE username = '" + username + "'", function (errr, rresult) {
 					
 						steem.broadcast.transfer(activekey, botName, username, withdraw + " SBD", "Your withdrawal has been successful! New balance: " + newBalance + " SBD", function(err, result) {
-							console.log(err);
 							console.log(username + " has withdraw " + withdraw + " SBD."); 
 					});
 					
+					});
+					con.query("INSERT INTO history (transType, amount, user1, timestamp) VALUES ('2', '" + withdraw + "', '" + username + "', '" + Math.floor(Date.now() / 1000) + "')", function (err, rresult) {
 					});
 				} else {
 					steem.broadcast.transfer(activekey, botName, username, "0.001 SBD", "We don't have this amount of money at this moment. Please wait until we add more or withdraw less than: " + botBalance + " SBD", function(err, result) {
