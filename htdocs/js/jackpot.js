@@ -6,12 +6,15 @@ var rolls;
 
 var owl;
 
+var timer;
+
 var timeleft = 0;
 var timeleftCounter;
 
 function connect() {
 	if(!socket) {
 		SOCKET = io(HOST);
+		getBalance();
 			SOCKET.on('connect', function(msg) {
 				console.log("You have been connected to the socket.");
 				SOCKET.emit('username', Cookies.get("username"));
@@ -55,6 +58,11 @@ function getMessage(msg) {
 		$(".owl-carousel").hide();
 		$(".roulette-sign").hide();
 		$(".ow-carousel").html("");
+		var totalBetOn = "";
+		$.each(msg['playerBet'], function(i, value) {
+			totalBetOn = '<div><img height="24px" width="24px" style="vertical-align:middle" src="https://steemitimages.com/u/'+ value[0] +'/avatar"> - ' + value[0] + ' - ' + value[1] + ' SBD</div><div style="width:100%;height:1px;margin-top:2px;margin-bot:2px"></div>' + totalBetOn;
+		});
+		$("#contentJackpot").html(totalBetOn);
 	}
 	else if(msg['messageType'] == 6) {
 		$(".owl-carousel").hide();
@@ -147,6 +155,55 @@ function roll(howMuch) {
 		window.location.href = "#winner";
 		setTimeout(function() {resetPage();}, 5000);
 	}
+}
+
+function betJackpot() {
+	$("#messages-box").css('background-color', 'yellow');
+	$("#messages").text("Working...");
+	$("#closeMessage").text("X");
+			
+	clearInterval(timer);
+	timer = setInterval(function() { closeMessage(); }, 1000 * 10);
+		
+	bet = $("#bet").val();
+		
+	$.getJSON( "../src/jackpot.php?bet=" + bet, function( data ) {
+		if(data['status'] == 'error')
+			errorGame(data['error'], data['message']);
+		else if(data['status'] == 'success') {
+			$("#messages-box").css('background-color', 'green');
+			$("#messages").text(data['message']);
+			$("#closeMessage").text("X");
+			
+			$("#balance").text("Your balance: " + data['balance'] + " SBD");
+			
+			clearInterval(timer);
+			timer = setInterval(function() { closeMessage(); }, 1000 * 10);
+		}
+	});
+}
+
+function getBalance() {
+	$.getJSON( "../src/getbalance.php", function( data ) {
+		if(data['status'] == 'success') {
+			$("#balance").text("Your balance: " + data['balance'] + " SBD");
+		}
+	});
+}
+
+function closeMessage() {
+	clearInterval(timer);
+	$("#messages").text("");
+	$("#closeMessage").text("");
+}
+
+function errorGame(errorCode, errorMessage) {
+	$("#messages-box").css('background-color', 'red');
+	$("#messages").text("Error " + errorCode + ": " + errorMessage);
+	$("#closeMessage").text("X");
+	
+	clearInterval(timer);
+	timer = setInterval(function() { closeMessage(); }, 1000 * 10);
 }
 
 function resetPage() {

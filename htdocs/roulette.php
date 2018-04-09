@@ -14,9 +14,9 @@ include_once('src/db.php');
 	<body>
 		<?php include('navbar.php'); ?>
 		<div id="messages-box">
-				<p id="messages" style="display:inline"></p>
-				<a href="#" id="closeMessage" onclick="closeMessage()"></a>
-			</div>
+			<p id="messages" style="display:inline"></p>
+			<a href="#" id="closeMessage" onclick="closeMessage()"></a>
+		</div>
 		<div class="roulette-body">
 			<center><h1 style="display:inline">Roulette </h1><b><a href="games.php" style="display:inline;text-decoration:none;color:black;">(Go back) </a></b>
 			<div class="roulette-box">

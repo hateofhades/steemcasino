@@ -9,6 +9,10 @@
 	</head>
 	<body>
 		<?php include('navbar.php'); ?>
+		<div id="messages-box">
+			<p id="messages" style="display:inline"></p>
+			<a href="#" id="closeMessage" onclick="closeMessage()"></a>
+		</div>
 		<center><h1 style="display:inline">Jackpot </h1><b><a href="games.php" style="display:inline;text-decoration:none;color:black;">(Go back) </a></b></center><br>
 		<center>
 			<div class="roulette-box">
@@ -21,7 +25,18 @@
 				<strong id="totals" style="position:absolute;top:90px;left:0;width:100%"></strong>
 				<strong id="jackpottime" style="position:absolute;top:120px;left:0;width:100%">00:00</strong>
 			</div>
-			<div 
+			<div><br>
+			<div id="bets">
+				<h5 id="balance" style="margin:0">Loading...</h5><br>
+				<h5 id="betn" style="margin:0">Bet</h5><input type="number" step=".001" min="0.001" value="0.001" pattern="\d+(\.\d{2})?" id="bet" name="bet"><br><br>
+				<input type="submit" value="Submit bet" id="btn1" onClick="betJackpot()"></input><br><br>
+			</div>
+			<div style="width:20%;display:inline-block;vertical-align:top">
+					<div style="width:100%;height:2px;background-color:black"></div><br>
+					<div id="contentJackpot" style="width:100%;">
+						
+					</div>
+			</div>
 		</center>
 		<?php include('src/footer.php'); ?>
 		<script>
