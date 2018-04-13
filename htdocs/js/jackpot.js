@@ -186,7 +186,7 @@ function betJackpot() {
 function getBalance() {
 	$.getJSON( "../src/getbalance.php", function( data ) {
 		if(data['status'] == 'success') {
-			$("#balance").text("Your balance: " + data['balance'] + " SBD");
+			$("#balance").text("Balance: " + data['balance'] + " SBD");
 		}
 	});
 }

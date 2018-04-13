@@ -68,7 +68,7 @@ function Logout()
 }
 			
 function log10(str) {
-    const leadingDigits = parseInt(str.substring(0, 4));
+    const leadingDigits = parseInt("" + str.substring(0, 4));
     const log = Math.log(leadingDigits) / Math.log(10)
     const n = str.length - 1;
     return n + (log - parseInt(log));

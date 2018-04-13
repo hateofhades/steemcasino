@@ -145,18 +145,21 @@ if(IsLoggedOnUser()) {
 						console.log(result);
 						$("#accountName").text(Cookies.get("username") + " (");
 						var reputation = result.account.reputation;
-						var profileImage = JSON.parse(result.account.json_metadata)['profile']['profile_image'];
+						var profileImage = "https://steemitimages.com/u/" + Cookies.get("username") + "/avatar";
 						$("#accountPicture").attr("src",profileImage);
 						$("#accountPicture").css("border-radius", "60px");
 						$("#accountPicture").css("display", "inline");
 						console.log(profileImage);
 						reputation = log10(reputation);
 						reputation = reputation - 9;
-						reputation = reputation * 9;
-						reputation = reputation + 25;
+						if(reputation > 0) {
+							reputation = reputation * 9;
+							reputation = reputation + 25;
+						}
 						reputation = Math.floor(reputation);
 						$("#accountName").append(reputation + ")");
 						$("#balance").text("Balance: <?php echo $balance;?> SBD ");
+						$("#balanced").text("Balance: <?php echo $balance;?> SBD ");
 						$("#topup").text(" Deposit");
 						$("#withdraw").text(" Withdraw");
 						$("#lll").text(" / ");
@@ -167,7 +170,7 @@ if(IsLoggedOnUser()) {
 					}
 				});
 				</script></h1>
-				<h3 id="balance" style="display:inline"></h3>
+				<h3 id="balanced" style="display:inline"></h3>
 				<a href="#" id="topup"  onClick="MyWindow=window.open('balance.php?action=deposit','MyWindow',width=600,height=300); return false;"></a> 
 				<p id="lll" style="display:inline"></p> 
 				<a href="#" id="withdraw" onClick="MyWindow=window.open('balance.php?action=withdrawal','MyWindow',width=600,height=300); return false;"></a>
