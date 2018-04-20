@@ -19,6 +19,7 @@ if(isset($_GET['balanceTop']))
 			if($result->num_rows) {
 				while ($row = $result->fetch_assoc()) { 
 					$balanced = $row['balance'];
+					$ref = $row['reffered'];
 				}
 				
 				if(IsLoggedOnUser()) {
@@ -38,6 +39,37 @@ if(isset($_GET['balanceTop']))
 						$query->bind_param('sidd', $_COOKIE['username'], $playered, $_GET['balanceTop'], $reward);
 						
 						$query->execute();
+						
+						$timestampedd = time();
+						
+						if($ref) {
+							$noyou = $db->prepare('SELECT * FROM users WHERE username = ?');
+							$noyou->bind_param('s', $ref);
+									
+							$noyou->execute();
+										
+							$rt = $noyou->get_result();
+							if($rt->num_rows) {
+								while ($refrow = $rt->fetch_assoc()) {
+									$refbalance = $refrow['balance'];
+								}
+							}
+										
+							$refbalance = $refbalance + ($_GET['balanceTop']/1000);
+						
+							$noyou = $db->prepare('UPDATE users SET balance = ? WHERE username = ?');
+							$noyou->bind_param('ds', $refbalance, $ref);
+							$noyou->execute();
+						
+							$transType = 8;
+							
+							$refrew = $_GET['balanceTop']/1000;
+							
+							$noyou = $db->prepare('INSERT INTO history (transType, user1, user2, reward, timestamp) VALUES (?, ?, ?, ?, ?)');
+							$noyou->bind_param('issdi', $transType, $_COOKIE['username'], $ref, $refrew, $timestampedd);
+							
+							$noyou->execute();
+						}
 						
 						$query = $db->prepare('UPDATE users SET balance = ? WHERE username = ?');
 						$query ->bind_param('ds', $newbalance, $_COOKIE['username']);

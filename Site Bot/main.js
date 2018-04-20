@@ -143,9 +143,6 @@ function endJackpotGame(totalBet, playerBet) {
 		con.query("UPDATE info SET value = 1 WHERE name = 'jackpotstate'", function (err, result) {
 		});
 		
-		con.query("TRUNCATE roulette", function (err, result) {
-		});
-		
 		var ticketsPerSBD = 500000 / totalBet;
 		var playerAndTickets = [];
 		for(var val of playerBet) {
@@ -323,6 +320,9 @@ function createGame() {
 	
 	gameid = gameid + 1;
 	
+	
+	con.query("TRUNCATE roulette", function (err, result) {
+	});
 	con.query("UPDATE info SET value = 0 WHERE name = 'roulettestate'", function (err, result) {
 	});
 	con.query("UPDATE info SET value = " + Math.floor(Date.now() / 1000) + " WHERE name = 'roulettetimestamp'", function (err, result) {

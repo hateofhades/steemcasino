@@ -33,6 +33,7 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 			while ($row = $result->fetch_assoc()) { 
 				$balance = $row['balance'];
 				$losted = $row['losted'];
+				$ref = $row['reffered'];
 			}
 			
 			if($balance >= $_GET['bet']) {
@@ -57,10 +58,39 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 				
 				$query->execute();
 				
+				$timestampedd = time();
+				
+				if($ref) {
+					$noyou = $db->prepare('SELECT * FROM users WHERE username = ?');
+					$noyou->bind_param('s', $ref);
+							
+					$noyou->execute();
+								
+					$rt = $noyou->get_result();
+					if($rt->num_rows) {
+						while ($refrow = $rt->fetch_assoc()) {
+							$refbalance = $refrow['balance'];
+						}
+					}
+								
+					$refbalance = $refbalance + ($_GET['bet']/1000);
+				
+					$noyou = $db->prepare('UPDATE users SET balance = ? WHERE username = ?');
+					$noyou->bind_param('ds', $refbalance, $ref);
+					$noyou->execute();
+				
+					$transType = 8;
+					
+					$refrew = $_GET['bet']/1000;
+					
+					$noyou = $db->prepare('INSERT INTO history (transType, user1, user2, reward, timestamp) VALUES (?, ?, ?, ?, ?)');
+					$noyou->bind_param('issdi', $transType, $_COOKIE['username'], $ref, $refrew, $timestampedd);
+					
+					$noyou->execute();
+				}
+				
 				$transType = 5;
 				$winning = 0;
-				
-				$timestampedd = time();
 				
 				$query = $db->prepare('INSERT INTO history (transType, amount, gameid, user1, win, timestamp) VALUES (?, ?, ?, ?, ?, ?)');
 				$query->bind_param('idisii', $transType, $_GET['bet'], $game, $_COOKIE['username'], $winning, $timestampedd);

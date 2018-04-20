@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 09 Apr 2018 la 18:40
+-- Generation Time: 20 Apr 2018 la 20:32
 -- Versiune server: 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -75,9 +75,9 @@ CREATE TABLE `info` (
 --
 
 INSERT INTO `info` (`ID`, `name`, `value`) VALUES
-(1, 'lastTrans', 133),
+(1, 'lastTrans', 0),
 (2, 'isMaintenance', 0),
-(3, 'roulettetimestamp', 1523291970),
+(3, 'roulettetimestamp', 0),
 (4, 'roulettestate', 0),
 (5, 'rouletteid', 0),
 (6, 'jackpotstate', 0),
@@ -152,10 +152,11 @@ CREATE TABLE `rps` (
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
-  `username` varchar(256) NOT NULL,
+  `username` varchar(255) NOT NULL,
   `balance` float NOT NULL DEFAULT '0',
   `won` float NOT NULL DEFAULT '0',
-  `losted` float NOT NULL DEFAULT '0'
+  `losted` float NOT NULL DEFAULT '0',
+  `reffered` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --

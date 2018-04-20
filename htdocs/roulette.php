@@ -72,7 +72,6 @@ include_once('src/db.php');
 			<div id="progressText"></div>
 			<progress id="progress" value="0" max="100"></progress>
 			<br><br>
-			<h4 style="margin:0" id="balance">LOADING...</h4><br>
 			<h5 id="betn" style="margin:0">Bet</h5><input type="number" step=".001" min="0.001" value="0.001" pattern="\d+(\.\d{2})?" id="bet" name="bet"></center><br>
 			<div style="margin-left:18%;width:20%;display:inline-block;height:50%;vertical-align:top">
 				<center>

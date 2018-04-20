@@ -1,7 +1,7 @@
 <div class="footer">
 	<center>
 		<span>
-				Copyright © SteemCasino 2018. Created by <a href="credits.php">all those people</a>.<a href="#" onClick="removeFooter()" style="float:right">x</a>
+				Copyright © SteemCasino 2018. Created by <a href="credits.php">all those people</a>. | <a href="updates.php">Updates</a><a href="#" onClick="removeFooter()" style="float:right">x</a>
 		</span>
 	</center>
 </div>
