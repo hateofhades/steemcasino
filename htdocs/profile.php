@@ -129,6 +129,11 @@ if(IsLoggedOnUser()) {
 			$history =  "
 			<h4 style=\"display:inline\">Jackpot #".$row['gameid']." | </h4> ".$win." | <h4 style=\"display:inline\">".$date."</h4><br>
 			".$history;
+		} else if($row['transType'] == 8) {
+			$date = date("F j, Y, g:i a T", $row['timestamp']);
+			if($row['user2'] == $_COOKIE['username']) {
+				$history = "<h4 style=\"display:inline\">Refferal | ".$row['user1']." | </h4><h4 style=\"display:inline;color:green\">+".$row['reward']." SBD</h4><h4 style=\"display:inline;\"> | ".$date."</h4><br>".$history;
+			}
 		}
 	}
 	
