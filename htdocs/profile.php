@@ -188,6 +188,13 @@ if(IsLoggedOnUser()) {
 						reputation = Math.floor(reputation);
 						$("#accountName").append(reputation + ")");
 						$("#balance").text("Balance: <?php echo $balance;?> SBD ");
+						
+						$.getJSON( "https://api.coinmarketcap.com/v1/ticker/steem-dollars/?convert=usd", function( data ) {
+							var curr = <?php echo $balance;?> * data[0]['price_usd'];
+							curr = curr.toFixed(2);
+							$("#underbalanced").text(curr + " US$");
+						});
+						
 						$("#balanced").text("Balance: <?php echo $balance;?> SBD ");
 						$("#topup").text(" Deposit");
 						$("#withdraw").text(" Withdraw");
@@ -250,7 +257,8 @@ if(IsLoggedOnUser()) {
 				<h3 id="balanced" style="display:inline"></h3>
 				<a href="#" id="topup"  onClick="MyWindow=window.open('balance.php?action=deposit','MyWindow',width=600,height=300); return false;"></a> 
 				<p id="lll" style="display:inline"></p> 
-				<a href="#" id="withdraw" onClick="MyWindow=window.open('balance.php?action=withdrawal','MyWindow',width=600,height=300); return false;"></a>
+				<a href="#" id="withdraw" onClick="MyWindow=window.open('balance.php?action=withdrawal','MyWindow',width=600,height=300); return false;"></a><br>
+				<h4 id="underbalanced" style="display:inline"></h4>
 				<h3 id="profit" style="margin-bottom:0"></h3>
 				<h5 id="totals" style="margin-top:0"></h4>
 				<h2 id="ref" style="text-decoration:underline"></h2>
