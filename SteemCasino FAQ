@@ -1,0 +1,50 @@
+        SteemCasino FAQ
+
+What is SteemCasino?
+
+SteemCasino is the first open-source based on the Steem Blockchain casino, where users can compete against other users in the different games available.
+
+How do I create a SteemCasino account?
+
+Account creation is not necessary in SteemCasino. To gain access to SteemCasino, one must possess a Steemit account. Since SteemCasino is connected to Steemit, only your Steemit username and password is required to log in.
+
+How do I log into SteemCasino?
+
+Clicking the login button redirects the user to Steemconnect v2 to authenticate to the Steem Blockchain where the user will provide a username and password.
+
+What kind of games are available?
+
+SteemCasino offers its users a wide range of games to choose from. Games available on SteemCasino include Coinflip, Rock,paper,scissors, Mines, Roulette and Jackpot.
+Please note that one must be logged in before he/she can gain access to the available games.
+
+How are the available games played?
+
+Instructions on how to play each game available on SteemCasino is provided. It provides steps on how to play a desired game. "How to play?" option is seen under the available games which can be accessed after clicking the games option on the home page. 
+
+What currency am I paid in?
+
+SteemCasino runs on the Steem Blockchain thus making use of Steem and Steem Dollars as modes of payment. Bets are placed using Steem and Steem Dollars which also applies to winnings which are paid in Steem and Steem Dollars depending on which was used in placing the bet.
+
+How do I deposit to play a game?
+
+Firstly, you will need to log in once to SteemCasino. Deposits are done through Steemconnect's transfer function or transfer to @steemcasino.bot with the memo "deposit" which will be done through your Steemit wallet which makes payment much safer because there will be absolutely no need to provide billing information of any kind.
+
+Is SteemCasino safe?
+
+Yes, SteemCasino is absolutely safe. We try to provide the safest environment for our users. We use https encryption and the latest version of scripts.
+
+How do I withdraw my earnings?
+
+Your SBD won from gambling can be withdrawn to your steemit account and it reflects in your steemit wallet almost immediately.
+
+Are there withdrawal limits?
+
+No, there are none. The only limit is the balance available.
+
+Are SteemCasino games fair?
+
+Yes, we offer games that are fair and played in the safest environment. SteemCasino employs the use of SHA-256 Hash. Hash is a one way function- it cannot be decrypted back. Thus, ensuring the results of games can not be tampered with while games like rock,paper,scissors are verified by the other player's choice.
+
+What age do I need to be to play on SteemCasino?
+
+This will depend on the country you are a legal resident or citizen of and could vary between 18-21 years of age or more. Government and legal websites can be consulted for verification of the legal gambling age to play on SteemCasino.
