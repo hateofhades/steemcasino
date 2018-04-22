@@ -24,6 +24,7 @@ if(isset($_GET['game'])) {
 					$balanced = $row['balance'];
 					$thiswon = $row['won'];
 					$thislost = $row['losted'];
+					$promobal = $row['promob'];
 				}
 				if(IsLoggedOnUser()) {
 					$query = $db->prepare('SELECT * FROM coinflip WHERE ID = ?');
@@ -44,7 +45,7 @@ if(isset($_GET['game'])) {
 						$secret = $row['secret'];
 					}
 					
-					if($balanced < $bet)
+					if(($balanced + $promobal) < $bet)
 						die("You don't have enough money!");
 					
 					if($player2 != "" && $player1 != "")
@@ -93,7 +94,6 @@ if(isset($_GET['game'])) {
 						$newbalance = $balanced + $bet;
 						$thiswon = $thiswon + $bet;
 						$otherlost = $otherlost + $bet;
-						
 					} else{
 						$newbalance = $balanced - $bet;
 						$thislost = $thislost + $bet;

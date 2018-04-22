@@ -20,6 +20,9 @@ if(IsLoggedOnUser()) {
 		$reffered = $row['reffered'];
 
 		$profit = $won - $lost;
+		
+		$promobal = $row['promob'];
+		$balance += $promobal;
 	}
 	
 	if($reffered) {
@@ -188,7 +191,6 @@ if(IsLoggedOnUser()) {
 						reputation = Math.floor(reputation);
 						$("#accountName").append(reputation + ")");
 						$("#balance").text("Balance: <?php echo $balance;?> SBD ");
-						
 						$.getJSON( "https://api.coinmarketcap.com/v1/ticker/steem-dollars/?convert=usd", function( data ) {
 							var curr = <?php echo $balance;?> * data[0]['price_usd'];
 							curr = curr.toFixed(2);
@@ -196,6 +198,8 @@ if(IsLoggedOnUser()) {
 						});
 						
 						$("#balanced").text("Balance: <?php echo $balance;?> SBD ");
+						if(<?php echo $promobal; ?>)
+							$("#balanced").append("(Promotional: <?php echo $promobal; ?> SBD)");
 						$("#topup").text(" Deposit");
 						$("#withdraw").text(" Withdraw");
 						$("#lll").text(" / ");

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 20 Apr 2018 la 20:32
+-- Generation Time: 22 Apr 2018 la 19:34
 -- Versiune server: 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -156,7 +156,9 @@ CREATE TABLE `users` (
   `balance` float NOT NULL DEFAULT '0',
   `won` float NOT NULL DEFAULT '0',
   `losted` float NOT NULL DEFAULT '0',
-  `reffered` varchar(255) DEFAULT NULL
+  `reffered` varchar(255) DEFAULT NULL,
+  `privacy` int(1) DEFAULT '0',
+  `promob` float NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --

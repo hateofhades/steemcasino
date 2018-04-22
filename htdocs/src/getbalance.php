@@ -12,6 +12,7 @@ if(IsLoggedOnUser()) {
 	if($result->num_rows) {
 		while ($row = $result->fetch_assoc()) {
 			$balance = $row['balance'];
+			$balance += $row['promob'];
 			$arr = array('status' => 'success', 'balance' => $balance);
 			echo json_encode($arr);
 		}

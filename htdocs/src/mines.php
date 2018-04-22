@@ -32,17 +32,16 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 		if($result->num_rows) {
 			while ($row = $result->fetch_assoc()) { 
 				$balance = $row['balance'];
+				$promobal = $row['promob'];
 				$losted = $row['losted'];
 				$ref = $row['reffered'];
 			}
 			
-			if($balance >= $_GET['bet']) {
+			if(($promobal + $balance) >= $_GET['bet']) {
 				$secret = generateSecretMines();
 				$hash = hash("sha256", $secret);
 				
 				$mode = 1;
-				
-				$newbalance = $balance - $_GET['bet'];
 				
 				$losted = $losted + $_GET['bet'];
 				
@@ -53,8 +52,21 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 				
 				$game = mysqli_insert_id($db);
 				
-				$query = $db->prepare('UPDATE users SET balance = ?, losted = ? WHERE username = ?');
-				$query->bind_param('dds', $newbalance, $losted, $_COOKIE['username']);
+				if(!$promobal) {
+					$newbalance = $balance - $_GET['bet'];
+				} else {
+					if($promobal <= $_GET['bet']) {
+						$betnew = $_GET['bet'] - $promobal;
+						$promobal = 0;
+						$newbalance = $balance - $betnew;
+					} else {
+						$promobal = $promobal - $_GET['bet'];
+						$newbalance = $balance;
+					}
+				}
+				
+				$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, promob = ? WHERE username = ?');
+				$query->bind_param('ddds', $newbalance, $losted, $promobal, $_COOKIE['username']);
 				
 				$query->execute();
 				
