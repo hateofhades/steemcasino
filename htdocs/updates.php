@@ -12,7 +12,8 @@
 					- Fixed the profit bug.<br>
 					- Added an About Us page and FAQ page.<br>
 					- Added a Cookie Consent banner.<br>
-					- Added a promotional balance. (You can't use them as player 2 in Coinflip or RPS.)
+					- Added a promotional balance. (You can't use them as player 2 in Coinflip or RPS.)<br>
+					- Added a Cancel button for Coinflip and RPS.
 				</p>
 				<h3 style="margin-top:0">(20 of April 2018)</h3>
 				<p>

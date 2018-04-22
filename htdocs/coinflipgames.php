@@ -29,13 +29,18 @@ if(!isset($_GET['past'])) {
 				else
 					$players = "Steem - ".$player1."<br>Bitcoin - <a style=\"text-decoration:underline;cursor:pointer\" onClick=\"parent.enterGame(".$gameid.");\">Enter game</a>";
 				
+				if($player1 == $_COOKIE['username'] || $player2 == $_COOKIE['username'])
+					$cancel = "<br><a style=\"text-decoration:underline;cursor:pointer\" onclick=\"parent.cancelGame(".$gameid.")\">Cancel game</a>";
+				else
+					$cancel = "";
+				
 				$body .= "
 				<div style=\"display:inline;float:left;padding-left:10px;border:1px solid black;margin:4px\">
 					<center><h3>Game #".$gameid."</h3></center>
-					<center><h4 style=\"display:inline\">Players</h4></center><h4 style=\"display:inline\">".$players."</h4><center><h4>
+					<center><h4 style=\"display:inline\">Players</h4></center><h4 style=\"display:inline\">".$players."</h4><center><h4 style=\"display:inline\">
 					Bet: ".$bet." SBD <br><br><a style=\"text-decoration:underline;cursor:pointer\" onClick=\"parent.$('.coinflip-game').show();parent.$('#iframe').attr('src', 'hash.php?hash=".$hash."');\">
 					See hash
-					</a>
+					</a>".$cancel."
 				</div>
 				";
 			} else if($timestamper <= 60) {
