@@ -147,7 +147,7 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 								$losted = $row['losted'];
 							}
 							$balance = $balance + $reward;
-							$won = $won + $reward;
+							$won = $won + $reward - $bet;
 							$losted = $losted - $bet;
 							
 							$query = $db->prepare('UPDATE users SET balance = ?, won = ?, losted = ? WHERE username = ?');
