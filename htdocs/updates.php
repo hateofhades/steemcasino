@@ -7,7 +7,11 @@
 		<div>
 			<center>
 				<h1 style="margin-bot:0">Updates</h1>
-				<h3 style="margin-top:0">(21 of April 2018)</h3>
+				<h3 style="margin-top:0">(23 of April 2018)</h3>
+				<p>
+					- Added a scrollbar to history.
+				</p>
+				<h3 style="margin-top:0">(22 of April 2018)</h3>
 				<p>
 					- Fixed the profit bug.<br>
 					- Added an About Us page and FAQ page.<br>
@@ -15,7 +19,7 @@
 					- Added a promotional balance. (You can't use them as player 2 in Coinflip or RPS.)<br>
 					- Added a Cancel button for Coinflip and RPS.
 				</p>
-				<h3 style="margin-top:0">(20 of April 2018)</h3>
+				<h3 style="margin-top:0">(21 of April 2018)</h3>
 				<p>
 					- Added balance to all pages once you log in.<br>
 					- Added a sign up button to steemit.com.<br>

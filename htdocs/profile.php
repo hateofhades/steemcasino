@@ -274,7 +274,7 @@ if(IsLoggedOnUser()) {
 					<?php echo $yr;?>
 				</div>
 				<h2 id="history" style="text-decoration:underline"></h2>
-				<div id="historyTable" style="display:none">
+				<div id="historyTable" style="display:none;overflow:auto;overflow-y:scroll;height:35%;width:80%">
 					<?php echo $history;?>
 				</div>
 		</center>

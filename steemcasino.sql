@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 22 Apr 2018 la 19:34
+-- Generation Time: 23 Apr 2018 la 08:07
 -- Versiune server: 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -116,6 +116,20 @@ CREATE TABLE `mines` (
 -- --------------------------------------------------------
 
 --
+-- Structura de tabel pentru tabelul `promocodes`
+--
+
+CREATE TABLE `promocodes` (
+  `ID` int(10) NOT NULL,
+  `type` int(1) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `amount` float DEFAULT NULL,
+  `usedCode` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Structura de tabel pentru tabelul `roulette`
 --
 
@@ -196,6 +210,12 @@ ALTER TABLE `mines`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `promocodes`
+--
+ALTER TABLE `promocodes`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- Indexes for table `roulette`
 --
 ALTER TABLE `roulette`
@@ -242,6 +262,11 @@ ALTER TABLE `jackpot`
 --
 ALTER TABLE `mines`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `promocodes`
+--
+ALTER TABLE `promocodes`
+  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `roulette`
 --
