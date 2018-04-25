@@ -1,0 +1,131 @@
+<html>
+	<head>
+		<?php include('src/head.php'); ?>
+		<link rel="stylesheet" href="src/slots.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="dist/jquery.slotmachine.min.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="dist/slotmachine.js"></script>
+		<script src="dist/jquery.slotmachine.min.js"></script>
+		<script>
+		var slot1, slot2, slot3;
+		$(document).ready(function(){
+			slot1 = $("#casino1").slotMachine({
+				active	: 2,
+				delay	: 500
+			});
+			slot2 = $("#casino2").slotMachine({
+				active	: 3,
+				delay	: 500
+			});
+			slot3 = $("#casino3").slotMachine({
+				active	: 0,
+				delay	: 500
+			});
+		});
+		
+		function spin() {
+			var bet = $("#bet").val();
+			if(!slot3.running && !slot3.stopping) {
+				$.getJSON( "/src/slots.php?bet=" + bet , function( data ) {
+					console.log(data);
+					if(data['status'] == "success") {
+						console.log("Spinning...");
+						animateSlots(data['slot1'], data['slot2'], data['slot3']);
+						$("#balance").text("Balance: " + data['balance'] + " SBD");
+					}
+				});
+			}
+		}
+		
+		function animateSlots(sslot1, sslot2, sslot3) {
+			slot1.randomize = sslot1;
+			slot2.randomize = sslot2;
+			slot3.randomize = sslot3;
+			slot1.shuffle(20);
+			slot2.shuffle(25);
+			slot3.shuffle(30);
+		}
+		</script>
+	</head>
+	<body>
+		<?php include('navbar.php'); ?>
+		<div>
+			<div id="casino" style="padding-top:50px;">
+			  <div class="content" style="height:84%">
+				<h1>Slots</h1>
+
+				<div>
+				  <div id="casino1" class="slotMachine" style="margin-left: -65px">
+					<div class="slot slot1"></div>
+					<div class="slot slot2"></div>
+					<div class="slot slot3"></div>
+					<div class="slot slot4"></div>
+					<div class="slot slot5"></div>
+					<div class="slot slot6"></div>
+				  </div>
+
+				  <div id="casino2" class="slotMachine">
+					<div class="slot slot1"></div>
+					<div class="slot slot2"></div>
+					<div class="slot slot3"></div>
+					<div class="slot slot4"></div>
+					<div class="slot slot5"></div>
+					<div class="slot slot6"></div>
+				  </div>
+
+				  <div id="casino3" class="slotMachine">
+					<div class="slot slot1"></div>
+					<div class="slot slot2"></div>
+					<div class="slot slot3"></div>
+					<div class="slot slot4"></div>
+					<div class="slot slot5"></div>
+					<div class="slot slot6"></div>
+				  </div>
+				  
+				  <div id="slotsInput">
+					<center>
+						<span id="betn">Bet :</span><input type="number" step=".001" min="0.001" value="1" pattern="\d+(\.\d{2})?" id="bet" name="bet"><br>
+						<button onClick="spin()">Spin</button>
+					</center>
+				  </div>
+				  
+				  <div id="payoutTable">
+					<img src="img/slot1.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot2.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot3.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<h5 style="display:inline"> - 2x</h5><br>
+					<img src="img/slot1.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot1.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot1.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<h5 style="display:inline"> - 2.5x</h5><br>
+					<img src="img/slot2.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot2.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot2.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<h5 style="display:inline"> - 2.5x</h5><br>
+					<img src="img/slot3.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot3.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot3.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<h5 style="display:inline"> - 2.5x</h5><br>
+					<img src="img/slot4.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot4.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot4.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<h5 style="display:inline"> - 3x</h5><br>
+					<img src="img/slot4.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot5.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot6.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<h5 style="display:inline"> - 4x</h5><br>
+					<img src="img/slot5.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot5.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot5.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<h5 style="display:inline"> - 5.5x</h5><br>
+					<img src="img/slot6.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot6.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<img src="img/slot6.png" style="height:50px;width:50px;display:inline;vertical-align:middle">
+					<h5 style="display:inline"> - 7x</h5><br>
+				  </div>
+			</div>
+			</div>
+		</div>
+		</div>
+		<?php include('src/footer.php'); ?>
+	</body>
+</html>

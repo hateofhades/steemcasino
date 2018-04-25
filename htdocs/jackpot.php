@@ -27,7 +27,7 @@
 			</div>
 			<div><br>
 			<div id="bets">
-				<h5 id="betn" style="margin:0">Bet</h5><input type="number" step=".001" min="0.001" value="0.001" pattern="\d+(\.\d{2})?" id="bet" name="bet"><br><br>
+				<h5 id="betn" style="margin:0">Bet</h5><input type="number" step=".001" min="0.001" value="1" pattern="\d+(\.\d{2})?" id="bet" name="bet"><br><br>
 				<input type="submit" value="Submit bet" id="btn1" onClick="betJackpot()"></input><br><br>
 			</div>
 			<div style="width:30%;display:inline-block;vertical-align:top">

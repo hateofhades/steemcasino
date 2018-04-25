@@ -17,6 +17,22 @@ body {
 	margin-top: 22%;
 }
 
+#slotsInput {
+	width: 80%;
+	height:10%;
+	position: absolute;
+	left: 8%;
+	top: 56%;
+}
+
+#payoutTable {
+	position: absolute;
+	left: 2%;
+	top: 22%;
+	height: 35%;
+	width: 25%;
+}
+
 .default-body #accountName {
 	color: #444444;
 }

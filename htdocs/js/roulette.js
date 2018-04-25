@@ -364,7 +364,7 @@ function betRoulette(betOn) {
 				$("#messages").text(data['message']);
 				$("#closeMessage").text("X");
 				
-				$("#balance").text("Your balance: " + data['balance'] + " SBD");
+				$("#balance").text("Balance: " + data['balance'] + " SBD");
 				
 				clearInterval(timer);
 				timer = setInterval(function() { closeMessage(); }, 1000 * 10);

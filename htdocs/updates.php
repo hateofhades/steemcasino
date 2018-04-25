@@ -9,7 +9,9 @@
 				<h1 style="margin-bot:0">Updates</h1>
 				<h3 style="margin-top:0">(23 of April 2018)</h3>
 				<p>
-					- Added a scrollbar to history.
+					- Added a scrollbar to history.<br>
+					- You can now redeem promocodes!<br>
+					- Added Slots.
 				</p>
 				<h3 style="margin-top:0">(22 of April 2018)</h3>
 				<p>
