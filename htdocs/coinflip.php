@@ -33,6 +33,13 @@
 				setTimeout(function() { reloadIFrame(); }, 30000);
 			}
 			
+			function cancelGame(gameid) {
+				$.getJSON( "../src/cancel.php?type=1&game=" + gameid, function( data ) {
+					if(data['status'] == "success")
+						reloadIFrame();
+				});
+			}
+			
 			function startGame() {
 				$("#iframe").attr("src", "coinflipaction.php?action=newgame");
 				$(".coinflip-game").show();

@@ -30,7 +30,7 @@ function SetProfileInfo()
 				var url=location.href;
 				var urlFilename = url.substring(url.lastIndexOf('/')+1);
 		
-				if(urlFilename != "index.php" && urlFilename != "credits.php")
+				if(urlFilename != "index.php" && urlFilename != "credits.php" && urlFilename != "updates.php" && urlFilename != "about.php" && urlFilename != "faq.php")
 				{
 					window.location.href = "http://localhost/index.php";
 				}
@@ -45,7 +45,7 @@ function SetProfileInfo()
 		var url=location.href;
 		var urlFilename = url.substring(url.lastIndexOf('/')+1);
 		
-		if(urlFilename != "index.php" && urlFilename != "credits.php")
+		if(urlFilename != "index.php" && urlFilename != "credits.php" && urlFilename != "updates.php" && urlFilename != "about.php" && urlFilename != "faq.php")
 		{
 			window.location.href = "http://localhost/index.php";
 		}
@@ -62,6 +62,7 @@ function Logout()
 		Cookies.remove("access_token", { path: '/' });
 		Cookies.remove("username", { path: '/' });
 		Cookies.remove("expires_in", { path: '/' });
+		Cookies.remove("privacy", { path: '/'});
 
 		location.reload();
 	});

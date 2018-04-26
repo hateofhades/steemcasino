@@ -38,6 +38,13 @@
 				$(".coinflip-game").show();
 			}
 			
+			function cancelGame(gameid) {
+				$.getJSON( "../src/cancel.php?type=2&game=" + gameid, function( data ) {
+					if(data['status'] == "success")
+						reloadIFrame();
+				});
+			}
+			
 			function past(pastor) {
 				if(pastor == 0) {
 					$("#coinflip-iframe").attr("src", "rpsgames.php");

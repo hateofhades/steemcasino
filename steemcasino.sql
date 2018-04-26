@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 20 Apr 2018 la 20:32
+-- Generation Time: 25 Apr 2018 la 21:38
 -- Versiune server: 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -116,6 +116,20 @@ CREATE TABLE `mines` (
 -- --------------------------------------------------------
 
 --
+-- Structura de tabel pentru tabelul `promocodes`
+--
+
+CREATE TABLE `promocodes` (
+  `ID` int(10) NOT NULL,
+  `type` int(1) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `amount` float DEFAULT NULL,
+  `usedCode` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Structura de tabel pentru tabelul `roulette`
 --
 
@@ -156,7 +170,9 @@ CREATE TABLE `users` (
   `balance` float NOT NULL DEFAULT '0',
   `won` float NOT NULL DEFAULT '0',
   `losted` float NOT NULL DEFAULT '0',
-  `reffered` varchar(255) DEFAULT NULL
+  `reffered` varchar(255) DEFAULT NULL,
+  `privacy` int(1) DEFAULT '0',
+  `promob` float NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -192,6 +208,12 @@ ALTER TABLE `jackpot`
 --
 ALTER TABLE `mines`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `promocodes`
+--
+ALTER TABLE `promocodes`
+  ADD PRIMARY KEY (`ID`);
 
 --
 -- Indexes for table `roulette`
@@ -240,6 +262,11 @@ ALTER TABLE `jackpot`
 --
 ALTER TABLE `mines`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `promocodes`
+--
+ALTER TABLE `promocodes`
+  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `roulette`
 --

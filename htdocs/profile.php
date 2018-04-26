@@ -20,6 +20,9 @@ if(IsLoggedOnUser()) {
 		$reffered = $row['reffered'];
 
 		$profit = $won - $lost;
+		
+		$promobal = $row['promob'];
+		$balance += $promobal;
 	}
 	
 	if($reffered) {
@@ -134,6 +137,19 @@ if(IsLoggedOnUser()) {
 			if($row['user2'] == $_COOKIE['username']) {
 				$history = "<h4 style=\"display:inline\">Refferal | ".$row['user1']." | </h4><h4 style=\"display:inline;color:green\">+".$row['reward']." SBD</h4><h4 style=\"display:inline;\"> | ".$date."</h4><br>".$history;
 			}
+		} else if($row['transType'] == 9) {
+			$date = date("F j, Y, g:i a T", $row['timestamp']);
+			if($row['win'] == 1)
+				$win = "
+					<h4 style=\"display:inline;color:green\">+".$row['reward']." SBD</h4>
+				";
+			else
+				$win = "
+					<h4 style=\"display:inline;color:red\">-".$row['amount']." SBD</h4>
+				";
+			$history =  "
+			<h4 style=\"display:inline\">Slots | </h4> ".$win." | <h4 style=\"display:inline\">".$date."</h4><br>
+			".$history;
 		}
 	}
 	
@@ -188,7 +204,6 @@ if(IsLoggedOnUser()) {
 						reputation = Math.floor(reputation);
 						$("#accountName").append(reputation + ")");
 						$("#balance").text("Balance: <?php echo $balance;?> SBD ");
-						
 						$.getJSON( "https://api.coinmarketcap.com/v1/ticker/steem-dollars/?convert=usd", function( data ) {
 							var curr = <?php echo $balance;?> * data[0]['price_usd'];
 							curr = curr.toFixed(2);
@@ -196,6 +211,8 @@ if(IsLoggedOnUser()) {
 						});
 						
 						$("#balanced").text("Balance: <?php echo $balance;?> SBD ");
+						if(<?php echo $promobal; ?>)
+							$("#balanced").append("(Promotional: <?php echo $promobal; ?> SBD)");
 						$("#topup").text(" Deposit");
 						$("#withdraw").text(" Withdraw");
 						$("#lll").text(" / ");
@@ -270,7 +287,7 @@ if(IsLoggedOnUser()) {
 					<?php echo $yr;?>
 				</div>
 				<h2 id="history" style="text-decoration:underline"></h2>
-				<div id="historyTable" style="display:none">
+				<div id="historyTable" style="display:none;overflow:auto;overflow-y:scroll;height:35%;width:80%">
 					<?php echo $history;?>
 				</div>
 		</center>

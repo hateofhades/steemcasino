@@ -43,9 +43,10 @@ if(!isset($_GET['bet']) || $_GET['bet'] == "") {
 						$balance = $rrow['balance'];
 						$losted = $rrow['losted'];
 						$ref = $rrow['reffered'];
+						$promobal = $rrow['promob'];
 					}
 					
-					if($balance < $_GET['bet']) {
+					if(($promobal + $balance) < $_GET['bet']) {
 						$arr = array('status' => 'error', 'error' => 604, 'message' => 'You do not have enough balance. Current balance: '.$balance.' SBD.');
 						echo json_encode($arr);
 					} else {
@@ -64,11 +65,23 @@ if(!isset($_GET['bet']) || $_GET['bet'] == "") {
 	
 							$wwuery->execute();
 							
-							$newbal = $balance - $_GET['bet'];
 							$lostedd = $losted + $_GET['bet'];
 							
-							$noyou = $db->prepare('UPDATE users SET balance = ?, losted = ? WHERE username = ?');
-							$noyou->bind_param('dds', $newbal, $lostedd, $_COOKIE['username']);
+							if(!$promobal) {
+								$newbal = $balance - $_GET['bet'];
+							} else {
+								if($promobal <= $_GET['bet']) {
+									$betnew = $_GET['bet'] - $promobal;
+									$promobal = 0;
+									$newbal = $balance - $betnew;
+								} else {
+									$promobal = $promobal - $_GET['bet'];
+									$newbal = $balance;
+								}
+							}
+							
+							$noyou = $db->prepare('UPDATE users SET balance = ?, losted = ?, promob = ? WHERE username = ?');
+							$noyou->bind_param('ddds', $newbal, $lostedd, $promobal, $_COOKIE['username']);
 							
 							$noyou->execute();
 							
@@ -113,7 +126,7 @@ if(!isset($_GET['bet']) || $_GET['bet'] == "") {
 							$yesure->execute();
 							
 							
-							$arr = array('status' => 'success', 'message' => 'Your bet has been placed. Your new balance is: '.$newbal." SBD.", 'balance' => $newbal);
+							$arr = array('status' => 'success', 'message' => 'Your bet has been placed. Your new balance is: '.$newbal." SBD.", 'balance' => ($newbal + $promobal));
 							echo json_encode($arr);
 						}
 					}

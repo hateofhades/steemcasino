@@ -6,7 +6,7 @@ include_once('src/db.php');
 		$expiresIn = $_GET["expires_in"];
 		setcookie("username", $_GET["username"], time()+$expiresIn, "/");
 		setcookie("access_token", $_GET["access_token"], time()+$expiresIn, "/");
-		setcookie("expires_in", $expiresIn, time()+$expiresIn, "/");
+		setcookie("expires_in", time()+$expiresIn, time()+$expiresIn, "/");
 	}
 	
 	$query = $db->prepare('SELECT * FROM users WHERE username = ?');
@@ -21,6 +21,10 @@ include_once('src/db.php');
 		$query->bind_param('si', $_GET['username'], $balance);
 	
 		$query->execute();
+	} else {
+		while ($row = $result->fetch_assoc()) { 
+			setcookie("privacy", $row['privacy'], time()+$expiresIn, "/");
+		}
 	}
 ?>
 <html lang="en">

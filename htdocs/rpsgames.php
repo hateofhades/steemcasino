@@ -27,11 +27,16 @@ if(!isset($_GET['past'])) {
 				else
 					$players = "".$player1."<br><a style=\"text-decoration:underline;cursor:pointer\" onClick=\"parent.enterGame(".$gameid.");\">Enter game</a>";
 				
+				if($player1 == $_COOKIE['username'] || $player2 == $_COOKIE['username'])
+					$cancel = "<a style=\"text-decoration:underline;cursor:pointer\" onclick=\"parent.cancelGame(".$gameid.")\">Cancel game</a>";
+				else
+					$cancel = "";
+				
 				$body .= "
 				<div style=\"display:inline;float:left;padding-left:10px;border: 1px solid black;margin:4px\"><center>
 					<h3>Game #".$gameid."</h3>
-					<h4>Players<br>".$players."<br><br>
-					Bet: ".$bet." SBD </center>
+					<h4 style=\"display:inline\">Players<br>".$players."<br><br>
+					Bet: ".$bet." SBD </center>".$cancel."</h4>
 				</div>
 				";
 			} else if($timestamper <= 60) {

@@ -13,7 +13,7 @@
 			<center><h1 style="margin-top:0;margin-bot:0">Mines</h1></center>
 			<center><a href="#" id="newgame" onClick="newGame(game, bet);">Start new game</a><br>
 			<a href="#" id="cashout" onClick="cashOut(game);"></a> <br>
-			<span id="betn">Bet :</span><input type="number" step=".001" min="0.001" value="0.001" pattern="\d+(\.\d{2})?" id="bet" name="bet"></center><br>
+			<span id="betn">Bet :</span><input type="number" step=".001" min="0.001" value="1" pattern="\d+(\.\d{2})?" id="bet" name="bet"></center><br>
 			<div id="game">
 				<div id="table">
 					<center>

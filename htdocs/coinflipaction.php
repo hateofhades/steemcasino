@@ -20,12 +20,13 @@ if(isset($_GET['balanceTop']))
 				while ($row = $result->fetch_assoc()) { 
 					$balanced = $row['balance'];
 					$ref = $row['reffered'];
+					$promobal = $row['promob'];
 				}
 				
 				if(IsLoggedOnUser()) {
 					$secret = generateSecret();
 					$hashed = hash("sha512", $secret);
-					if($balanced >= $_GET['balanceTop']) {
+					if(($balanced + $promobal) >= $_GET['balanceTop']) {
 						if($_GET['player'] == 1) 
 							$playered = 1;
 						else 
@@ -33,7 +34,18 @@ if(isset($_GET['balanceTop']))
 
 						$reward = $_GET['balanceTop'] * 2;
 						
-						$newbalance = $balanced - $_GET['balanceTop'];
+						if(!$promobal) {
+							$newbalance = $balanced - $_GET['balanceTop'];
+						} else {
+							if($promobal <= $_GET['balanceTop']) {
+								$betnew = $_GET['balanceTop'] - $promobal;
+								$promobal = 0;
+								$newbalance = $balanced - $betnew;
+							} else {
+								$promobal = $promobal - $_GET['balanceTop'];
+								$newbalance = $balanced;
+							}
+						}
 						
 						$query = $db->prepare('INSERT INTO coinflip (player'.$playered.', bet, reward, secret, hash) VALUES (?, ?, ?, ?, ?)');
 						$query->bind_param('sddss', $_COOKIE['username'], $_GET['balanceTop'], $reward, $secret, $hashed);
@@ -70,8 +82,8 @@ if(isset($_GET['balanceTop']))
 							$noyou->execute();
 						}
 						
-						$query = $db->prepare('UPDATE users SET balance = ? WHERE username = ?');
-						$query ->bind_param('ds', $newbalance, $_COOKIE['username']);
+						$query = $db->prepare('UPDATE users SET balance = ?, promob = ? WHERE username = ?');
+						$query ->bind_param('dds', $newbalance, $promobal, $_COOKIE['username']);
 						
 						$query->execute();	
 						echo '
