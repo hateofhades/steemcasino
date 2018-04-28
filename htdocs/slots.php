@@ -6,8 +6,14 @@
 		<script type="text/javascript" src="dist/slotmachine.js"></script>
 		<script src="dist/jquery.slotmachine.min.js"></script>
 		<script>
-		var slot1, slot2, slot3;
+		var slot1, slot2, slot3, running = 0, slotwin, slotstart;
 		$(document).ready(function(){
+			slotwin = document.createElement('audio');
+			slotstart = document.createElement('audio');
+			
+			slotwin.setAttribute('src', '/audio/slot_win.wav');
+			slotstart.setAttribute('src', '/audio/spin.mp3');
+			
 			slot1 = $("#casino1").slotMachine({
 				active	: 2,
 				delay	: 500
@@ -24,16 +30,21 @@
 		
 		function spin() {
 			var bet = $("#bet").val();
-			if(!slot3.running && !slot3.stopping) {
+			if(!running) {
 				$.getJSON( "/src/slots.php?bet=" + bet , function( data ) {
 					console.log(data);
 					if(data['status'] == "success") {
+						running = 1;
+						
+						slotwin.currentTime = 0;
+						slotstart.play();
+						
 						unsetWin();
+						
 						console.log("Spinning...");
 						animateSlots(data['slot1'], data['slot2'], data['slot3']);
 						$("#balance").text("Balance: " + data['balance'] + " SBD");
-						if(data['win'])
-							setTimeout(function() {winSet(data['win']);}, 12000);
+						setTimeout(function() {winSet(data['win']);}, 12000);
 					}
 				});
 			}
@@ -49,18 +60,23 @@
 		}
 		
 		function winSet(winId) {
-			if(winId == 1)
-				$("#2x").css("background-color", "green");
-			else if(winId == 2)
-				$("#2.5x").css("background-color", "green");
-			else if(winId == 3)
-				$("#3x").css("background-color", "green");
-			else if(winId == 4)
-				$("#4x").css("background-color", "green");
-			else if(winId == 5)
-				$("#5.5x").css("background-color", "green");
-			else if(winId == 6)
-				$("#7x").css("background-color", "green");
+			running = 0;
+			
+			if(winId) {
+				slotwin.play();
+				if(winId == 1)
+					$("#2x").css("background-color", "green");
+				else if(winId == 2)
+					$("#2.5x").css("background-color", "green");
+				else if(winId == 3)
+					$("#3x").css("background-color", "green");
+				else if(winId == 4)
+					$("#4x").css("background-color", "green");
+				else if(winId == 5)
+					$("#5.5x").css("background-color", "green");
+				else if(winId == 6)
+					$("#7x").css("background-color", "green");
+			}
 		}
 		
 		function animateSlots(sslot1, sslot2, sslot3) {
