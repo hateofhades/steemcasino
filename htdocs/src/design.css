@@ -43,6 +43,14 @@ body {
 	font-size:28px;
 }
 
+.dicesButton:hover {
+	cursor: pointer;
+}
+
+#rollButton:hover {
+	cursor: pointer;
+}
+
 #rollButton {
 	width: 80%;
 	height: 10%;

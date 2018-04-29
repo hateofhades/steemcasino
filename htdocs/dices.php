@@ -2,6 +2,8 @@
 	<head>
 		<?php include('src/head.php'); ?>
 		<script>
+			var animateVar = 0, setRollBackTimeout, rolling = 0;
+			
 			function doubleDices() {
 				var currValue = $("#dicesInput").val();
 				currValue = currValue * 2;
@@ -10,6 +12,50 @@
 				var value = $("#multiplier").val();
 					
 				$("#profit").text((currValue * value).toFixed(3));
+			}
+			
+			function rollDices() {
+				var bet = $("#dicesInput").val();
+				var under = $("#rollUnder").val();
+				
+				if(!rolling) {
+					rolling = 1;
+					$.getJSON( "../src/dices.php?bet=" + bet + "&under=" + under, function( data ) {
+						console.log(data);
+						if(data['status'] == 'success') {
+							clearTimeout(setRollBackTimeout);
+							animateVar = 0;
+							animate(data['pick'], data['win'], data['balance']);
+						} else {
+							rolling = 0;
+						}
+					});
+				}
+			}
+			
+			function animate(pick, win, bal) {
+				animateVar++;
+				picker = Math.floor(Math.random() * 10000);
+				$("#rollButton").text(picker);
+				if(animateVar <= 30)
+				setTimeout(function () { animate(pick, win, bal) }, 100);
+				else {
+					rolling = 0;
+					$("#rollButton").text(pick);
+					
+					if(win) 
+						$("#rollButton").css("color", "green");
+					else
+						$("#rollButton").css("color", "red");
+					
+					setRollBackTimeout = setTimeout(function () { setRollBack(bal) }, 5000);
+				}
+			}
+			
+			function setRollBack (bal) {
+				$("#rollButton").text("ROLL!");
+				$("#rollButton").css("color", "white");
+				$("#balance").text("Balance: " + bal + " SBD");
 			}
 			
 			function halfDices() {
