@@ -150,6 +150,19 @@ if(IsLoggedOnUser()) {
 			$history =  "
 			<h4 style=\"display:inline\">Slots | </h4> ".$win." | <h4 style=\"display:inline\">".$date."</h4><br>
 			".$history;
+		} else if($row['transType'] == 10) {
+			$date = date("F j, Y, g:i a T", $row['timestamp']);
+			if($row['win'] == 1)
+				$win = "
+					<h4 style=\"display:inline;color:green\">+".$row['reward']." SBD</h4>
+				";
+			else
+				$win = "
+					<h4 style=\"display:inline;color:red\">-".$row['amount']." SBD</h4>
+				";
+			$history =  "
+			<h4 style=\"display:inline\">Dices | </h4> ".$win." | <h4 style=\"display:inline\">".$date."</h4><br>
+			".$history;
 		}
 	}
 	

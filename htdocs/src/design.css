@@ -33,6 +33,68 @@ body {
 	width: 25%;
 }
 
+.dicesButton {
+	height: 10%;
+	width: 5%;
+	padding-top: 1%;
+	color: white;
+	background-color: #31353c;
+	border: none;
+	font-size:28px;
+}
+
+.dicesButton:hover {
+	cursor: pointer;
+}
+
+#rollButton:hover {
+	cursor: pointer;
+}
+
+#rollButton {
+	width: 80%;
+	height: 10%;
+	border-radius:20px;
+	background-color:#00c74d;
+	color:white;
+	border:none;
+	font-size:30px;
+	font-weight:bold;
+	margin-left:10%;
+}
+
+.dicesChances {
+	height: 10%;
+	width: 20%;
+	color: white;
+	border-radius:20px;
+	border: none;
+	font-size: 40px;
+	background-color: #1d2c3b;
+	padding-left:2%;
+}
+
+#dicesInput {
+	background-color: #1d2c3b;
+	width: 60%;
+	height: 10%;
+	border: none;
+	color: white;
+	padding-left: 5%;
+	font-size:40px;
+	border-radius:20px;
+}
+
+#dicesGame {
+	margin-left:10%;
+	margin-top:2%;
+	height: 70%;
+	width: 80%;
+	color: #a4a6a8;
+	border-radius: 20px;
+	background-color: #1d2126;
+}
+
 .default-body #accountName {
 	color: #444444;
 }

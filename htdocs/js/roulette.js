@@ -3,6 +3,7 @@ var HOST = "localhost:3000";
 var socket = null;
 var progress;
 var state;
+var spin;
 
 function connect() {
 	if(!socket) {
