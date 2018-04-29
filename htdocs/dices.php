@@ -15,6 +15,10 @@
 			function halfDices() {
 				var currValue = $("#dicesInput").val();
 				currValue = currValue / 2;
+				
+				if(currValue < 0.001)
+					currValue = 0.001;
+				
 				$("#dicesInput").val(currValue);
 				
 				var value = $("#multiplier").val();
@@ -58,6 +62,12 @@
 				
 				$('#dicesInput').on('input', function() {
 					var bet = $("#dicesInput").val();
+					
+					if(bet < 0.001) {
+						bet = 0.001;
+						$("#dicesInput").val(bet);
+					}
+					
 					var value = $("#multiplier").val();
 					
 					$("#profit").text((bet * value).toFixed(3));

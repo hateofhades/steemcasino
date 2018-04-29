@@ -41,6 +41,11 @@ function generateSecretMines($mode = 1, $length = 92) {
 	return $randomString;
 }
 
+//This is the random picker for dices.
+function dicesPick() {
+	return mt_rand(1, 10000);
+}
+
 //This is the random picker for slots.
 function slotPick() {
 	$pick = mt_rand(1, 100);
