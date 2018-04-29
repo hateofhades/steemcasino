@@ -29,6 +29,9 @@
 					<div>
 						<a href="slots.php"><img height="20%" src="img/slots.png"></a>
 					</div>
+					<div>
+						<a href="dices.php"><img height="20%" src="img/dices.png"></a>
+					</div>
 				</div><br>
 				<a href="howtoplay.php">How to play?</a>
 			</center>
