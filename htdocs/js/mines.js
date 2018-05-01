@@ -36,6 +36,8 @@ function newGame(game, bet) {
 			
 			$("#secret").text("");
 			
+			$("#balance").text("Balance: " + data['balance'] + " SBD");
+			
 			$("#bet").hide();
 			$("#betn").hide();
 			$("#table").show();
@@ -75,6 +77,8 @@ function cashOut(game) {
 			
 			$("#bet").show();
 			$("#betn").show();
+			
+			$("#balance").text("Balance: " + data['balance'] + " SBD");
 			
 			$("#secret").text("" + data['secret']);
 			

@@ -109,7 +109,7 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 					
 				$query->execute();
 				
-				$arr = array('status' => 'success', 'message' => 'Game has been successfully created.', 'game' => $game, 'hash' => $hash, 'reward' => $_GET['bet']);
+				$arr = array('status' => 'success', 'message' => 'Game has been successfully created.', 'game' => $game, 'hash' => $hash, 'reward' => $_GET['bet'], 'balance' => $newbalance);
 				echo json_encode($arr);
 			} else {
 				$arr = array('status' => 'error', 'error' => 506, 'message' => 'You don\'t have enough money. Balance: '.$balance." SBD.");
@@ -179,7 +179,7 @@ if(!isset($_GET['action']) || $_GET['action'] == "") {
 					
 							$query->execute();
 							
-							$arr = array('status' => 'success', 'message' => 'You have won '.$reward.' SBD.', 'secret' => 'Secret: '.$secret);
+							$arr = array('status' => 'success', 'message' => 'You have won '.$reward.' SBD.', 'secret' => 'Secret: '.$secret, 'balance' => $balance);
 							echo json_encode($arr);
 						} else {
 							$arr = array('status' => 'error', 'error' => 502, 'message' => 'Session is invalid. Please reload.');
