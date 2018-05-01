@@ -74,6 +74,23 @@ body {
 	padding-left:2%;
 }
 
+#lastRoll {
+	width: 100%;
+	height: 33%;
+}
+
+#under-win {
+	margin: 0;
+	display: inline;
+	color: green;
+}
+
+#under-lose {
+	margin: 0;
+	display: inline;
+	color: red;
+}
+
 #dicesInput {
 	background-color: #1d2c3b;
 	width: 60%;

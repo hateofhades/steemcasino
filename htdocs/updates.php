@@ -7,6 +7,18 @@
 		<div>
 			<center>
 				<h1 style="margin-bot:0">Updates</h1>
+				<h3 style="margin-top:0">(1 of May 2018)</h3>
+				<p>
+					- Added your last 3 rolls to Dices.<br>
+				</p>
+				<h3 style="margin-top:0">(29 of April 2018)</h3>
+				<p>
+					- Added Dices.<br>
+				</p>
+				<h3 style="margin-top:0">(28 of April 2018)</h3>
+				<p>
+					- Added sounds and some visual adjustments to slots.<br>
+				</p>
 				<h3 style="margin-top:0">(23 of April 2018)</h3>
 				<p>
 					- Added a scrollbar to history.<br>
