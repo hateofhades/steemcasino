@@ -108,7 +108,7 @@ function setButtons() {
 
 function displayProgressBar(timestamp) {
 	if(state == 0 && timestamp >= 0) {
-		$("#progress").attr("max", 60);
+		$("#progress").attr("max", 30);
 		$("#progress").attr("value", timestamp);
 		$("#progressText").text(timestamp + " seconds");
 		timestamp = timestamp - 1;
