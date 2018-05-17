@@ -144,7 +144,7 @@ function withdrawReceived(username, withdraw) {
 	con.query("SELECT * FROM users WHERE username = '" + username + "'", function (err, result) {
 		if (err) throw err;
 		var balance = result[0].balance;
-		if(balance >= withdraw) {
+		if(balance >= withdraw && withdraw > 0) {
 			var newBalance = balance - withdraw;
 			
 			steem.api.getAccounts([botName], function(err, result) {	
