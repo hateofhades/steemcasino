@@ -19,7 +19,7 @@ var lastRolls = [23, 11, 10, 22];
 var timestamp = 0;
 
 var rollTime = 10 * 1000;
-var betTime = 60 * 1000;
+var betTime = 30 * 1000;
 
 var jackpotTime = 10 * 60 * 1000;
 
