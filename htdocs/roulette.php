@@ -13,6 +13,61 @@ include_once('src/db.php');
 	</head>
 	<body>
 		<?php include('navbar.php'); ?>
+		<div id="overlay">
+			<div style="position:absolute;z-index:10;margin-top:15%;margin-left:30%;background-color:#1d2c3b;width:30%;height:50%">
+				<a href="#" style="float:right;color:white;text-decoration:none;font-size:24;margin-right:5" onclick="closeOver()">x</a>
+				<center><p style="display:inline;color:white;margin-left:2px;margin-top:2px">x35 (Any number)</p><br></center>
+				<button id="morebets">&nbsp0&nbsp</button>
+				<button id="morebets">00</button>
+				<button id="morebets">&nbsp1&nbsp</button>
+				<button id="morebets">&nbsp2&nbsp</button>
+				<button id="morebets">&nbsp3&nbsp</button>
+				<button id="morebets">&nbsp4&nbsp</button>
+				<button id="morebets">&nbsp5&nbsp</button>
+				<button id="morebets">&nbsp6&nbsp</button>
+				<button id="morebets">&nbsp7&nbsp</button>
+				<button id="morebets">&nbsp8&nbsp</button>
+				<button id="morebets">&nbsp9&nbsp</button>
+				<button id="morebets">10</button>
+				<button id="morebets">11</button>
+				<button id="morebets">12</button>
+				<button id="morebets">13</button>
+				<button id="morebets">14</button>
+				<button id="morebets">15</button>
+				<button id="morebets">16</button>
+				<button id="morebets">17</button>
+				<button id="morebets">18</button>
+				<button id="morebets">19</button>
+				<button id="morebets">20</button>
+				<button id="morebets">21</button>
+				<button id="morebets">22</button>
+				<button id="morebets">23</button>
+				<button id="morebets">24</button>
+				<button id="morebets">25</button>
+				<button id="morebets">26</button>
+				<button id="morebets">27</button>
+				<button id="morebets">28</button>
+				<button id="morebets">29</button>
+				<button id="morebets">30</button>
+				<button id="morebets">31</button>
+				<button id="morebets">32</button>
+				<button id="morebets">33</button>
+				<button id="morebets">34</button>
+				<button id="morebets">35</button>
+				<button id="morebets">36</button><br>
+				<center><p style="display:inline;color:white;margin-left:2px;margin-top:2px">x3</p><br>
+				<button id="morebets">&nbsp1&nbsp - 12</button>
+				<button id="morebets">13 - 24</button>
+				<button id="morebets">25 - 36</button><br>
+				<button id="morebets">Odd (1, 3, 5, ..., 35)</button>
+				<button id="morebets">Even (2, 4, 6, ..., 36)</button></center>
+				<center><p style="display:inline;color:white;margin-left:2px;margin-top:2px">x2</p><br>
+				<button id="morebets">&nbsp1&nbsp - 18</button>
+				<button id="morebets">19 - 36</button>
+
+				
+			</div>
+		</div>
 		<div id="messages-box">
 			<p id="messages" style="display:inline"></p>
 			<a href="#" id="closeMessage" onclick="closeMessage()"></a>
@@ -73,7 +128,7 @@ include_once('src/db.php');
 			<progress id="progress" value="0" max="100"></progress>
 			<br><br>
 			<h5 id="betn" style="margin:0">Bet</h5><input type="number" step=".001" min="0.001" value="1" pattern="\d+(\.\d{2})?" id="bet" name="bet"></center><br>
-			<div style="margin-left:18%;width:20%;display:inline-block;height:50%;vertical-align:top">
+			<center><div style="width:20%;display:inline-block;height:50%;vertical-align:top">
 				<center>
 					<input type="submit" value="Red (x2)" id="btn1" disabled onClick="betRoulette(1)"></input><br><br>
 					<h4 style="margin:0" id="totalRed">Loading...</h4>
@@ -103,6 +158,16 @@ include_once('src/db.php');
 					</div>
 				</center>
 			</div>
+			<div style="width:20%;display:inline-block;height:50%;vertical-align:top">
+				<center>
+					<button disabled id="btn4" onclick="moreBets()">More bet options...</button><br><br>
+					<h4 style="margin:0" id="totalCustom">Loading...</h4>
+					<div style="width:100%;height:2px;background-color:black"></div><br>
+					<div id="contentCustom" style="width:100%;">
+					
+					</div>
+				</center>
+			</div></center>
 		</div>
 		<script>
 			var owl, i;
@@ -140,6 +205,13 @@ include_once('src/db.php');
 					owl.trigger('next.owl.carousel', [100]);
 					setTimeout(function() {roll(howMuch);}, 80);
 				}
+			}
+			function moreBets() {
+				document.getElementById("overlay").style.display = "block";
+			}
+			
+			function closeOver () {
+				document.getElementById("overlay").style.display = "none";
 			}
 		</script>
 		<script src="js/roulette.js"></script>
