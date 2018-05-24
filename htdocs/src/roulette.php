@@ -6,7 +6,7 @@ include('db.php');
 if(!isset($_GET['betOn']) || $_GET['betOn'] == "" || !isset($_GET['bet']) || $_GET['bet'] == "") {
 	$arr = array('status' => 'error', 'error' => 600, 'message' => 'Invalid bet.');
 	echo json_encode($arr);
-} else if($_GET['betOn'] != 1 && $_GET['betOn'] != 2 && $_GET['betOn'] != 3) {
+} else if($_GET['betOn'] != 1 && $_GET['betOn'] != 2 && $_GET['betOn'] != 3 && ($_GET['betOn'] < 100 || $_GET['betOn'] > 137) && $_GET['betOn'] != 4 && $_GET['betOn'] != 5 && $_GET['betOn'] != 6 && $_GET['betOn'] != 7 && $_GET['betOn'] != 8) {
 	$arr = array('status' => 'error', 'error' => 601, 'message' => 'Invalid bet on.');
 	echo json_encode($arr);
 } else if($_GET['bet'] < 0 || $_GET['bet'] < 0.001) {

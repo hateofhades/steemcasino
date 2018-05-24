@@ -55,8 +55,8 @@ function getGameid() {
 
 function getBets() {
 	con.query("SELECT * FROM roulette", function (err, result) {
-		var redBet = 0, blackBet = 0, greenBet = 0;
-		var redPlayers = [], blackPlayers = [], greenPlayers = [];
+		var redBet = 0, blackBet = 0, greenBet = 0, customBet = 0;
+		var redPlayers = [], blackPlayers = [], greenPlayers = [], customPlayers = [];
 		for(var val of result) {
 			if(val.beton == 1) {
 				redBet += val.bet;
@@ -67,6 +67,9 @@ function getBets() {
 			} else if(val.beton == 3) {
 				greenBet += val.bet;
 				greenPlayers.push([val.player, val.bet]);
+			} else {
+				customBet += val.bet;
+				customPlayers.push([val.player, val.bet, val.beton]);
 			}
 		}
 		io.sockets.emit('message', {
@@ -74,9 +77,11 @@ function getBets() {
 			redBet: redBet,
 			blackBet: blackBet,
 			greenBet: greenBet,
+			customBet: customBet,
 			redPlayers: redPlayers,
 			blackPlayers: blackPlayers,
 			greenPlayers: greenPlayers,
+			customPlayers: customPlayers,
 		});
 	});
 }
@@ -264,27 +269,48 @@ function changeState() {
 		
 		console.log(lastRolls);
 		
-		win(color, currRoll);
+		var odd = 0, row = 0;
+		
+		if(currRoll != 0 || currRoll != 37) {
+			if(currRoll % 2)
+				odd = 7;
+			else if (!(currRoll % 2))
+				odd = 8;
+			
+			if(currRoll <= 12)
+				row = 4;
+			else if(currRoll <= 24)
+				row = 5;
+			else if(currRoll <= 36)
+				row = 6;
+		}
+		
+		win(color, currRoll, odd, row);
 		
 		setTimeout(changeState, rollTime);
 	}
 }
 
-function win(color, currRoll) {
+function win(color, currRoll, odd, row) {
 	
 	timestamp = Math.floor(Date.now() / 1000) + Math.floor(rollTime/1000);
 	
 	con.query("UPDATE info SET value = 1 WHERE name = 'roulettestate'", function (err, result) {
 	});
-	con.query("SELECT * FROM roulette WHERE beton = " + color, function (err, result) {
+	con.query("SELECT * FROM roulette WHERE beton = " + color + " OR beton = " + (100 + currRoll) + " OR beton = " + odd + " OR beton = " + row, function (err, result) {
 		for( var i = 0, len = result.length; i < len; i++ ) {
 			var reward = result[i].bet;
 			var bet = result[i].bet;
+			var betonb = result[i].beton;
 			var player = result[i].player;
-			if(color == 1 || color == 2)
+			if(betonb == 1 || betonb == 2 || betonb == 7 || betonb == 8)
 				reward = reward * 2;
-			else
+			else if(betonb == 3)
 				reward = reward * 14;
+			else if(betonb == 4 || betonb == 5 || betonb == 6)
+				reward = reward * 3;
+			else if(betonb >= 100 && betonb <= 137)
+				reward = reward * 35;
 			
 			con.query("SELECT * FROM users WHERE username = '" + result[i].player + "'", function (err, resultd) {
 				if(resultd) {

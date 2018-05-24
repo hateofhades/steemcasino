@@ -17,55 +17,51 @@ include_once('src/db.php');
 			<div style="position:absolute;z-index:10;margin-top:15%;margin-left:30%;background-color:#1d2c3b;width:30%;height:50%">
 				<a href="#" style="float:right;color:white;text-decoration:none;font-size:24;margin-right:5" onclick="closeOver()">x</a>
 				<center><p style="display:inline;color:white;margin-left:2px;margin-top:2px">x35 (Any number)</p><br></center>
-				<button id="morebets">&nbsp0&nbsp</button>
-				<button id="morebets">00</button>
-				<button id="morebets">&nbsp1&nbsp</button>
-				<button id="morebets">&nbsp2&nbsp</button>
-				<button id="morebets">&nbsp3&nbsp</button>
-				<button id="morebets">&nbsp4&nbsp</button>
-				<button id="morebets">&nbsp5&nbsp</button>
-				<button id="morebets">&nbsp6&nbsp</button>
-				<button id="morebets">&nbsp7&nbsp</button>
-				<button id="morebets">&nbsp8&nbsp</button>
-				<button id="morebets">&nbsp9&nbsp</button>
-				<button id="morebets">10</button>
-				<button id="morebets">11</button>
-				<button id="morebets">12</button>
-				<button id="morebets">13</button>
-				<button id="morebets">14</button>
-				<button id="morebets">15</button>
-				<button id="morebets">16</button>
-				<button id="morebets">17</button>
-				<button id="morebets">18</button>
-				<button id="morebets">19</button>
-				<button id="morebets">20</button>
-				<button id="morebets">21</button>
-				<button id="morebets">22</button>
-				<button id="morebets">23</button>
-				<button id="morebets">24</button>
-				<button id="morebets">25</button>
-				<button id="morebets">26</button>
-				<button id="morebets">27</button>
-				<button id="morebets">28</button>
-				<button id="morebets">29</button>
-				<button id="morebets">30</button>
-				<button id="morebets">31</button>
-				<button id="morebets">32</button>
-				<button id="morebets">33</button>
-				<button id="morebets">34</button>
-				<button id="morebets">35</button>
-				<button id="morebets">36</button><br>
+				<button id="morebets" onClick="betRoulette(100)">&nbsp0&nbsp</button>
+				<button id="morebets" onClick="betRoulette(137)">00</button>
+				<button id="morebets" onClick="betRoulette(101)">&nbsp1&nbsp</button>
+				<button id="morebets" onClick="betRoulette(102)">&nbsp2&nbsp</button>
+				<button id="morebets" onClick="betRoulette(103)">&nbsp3&nbsp</button>
+				<button id="morebets" onClick="betRoulette(104)">&nbsp4&nbsp</button>
+				<button id="morebets" onClick="betRoulette(105)">&nbsp5&nbsp</button>
+				<button id="morebets" onClick="betRoulette(106)">&nbsp6&nbsp</button>
+				<button id="morebets" onClick="betRoulette(107)">&nbsp7&nbsp</button>
+				<button id="morebets" onClick="betRoulette(108)">&nbsp8&nbsp</button>
+				<button id="morebets" onClick="betRoulette(109)">&nbsp9&nbsp</button>
+				<button id="morebets" onClick="betRoulette(110)">10</button>
+				<button id="morebets" onClick="betRoulette(111)">11</button>
+				<button id="morebets" onClick="betRoulette(112)">12</button>
+				<button id="morebets" onClick="betRoulette(113)">13</button>
+				<button id="morebets" onClick="betRoulette(114)">14</button>
+				<button id="morebets" onClick="betRoulette(115)">15</button>
+				<button id="morebets" onClick="betRoulette(116)">16</button>
+				<button id="morebets" onClick="betRoulette(117)">17</button>
+				<button id="morebets" onClick="betRoulette(118)">18</button>
+				<button id="morebets" onClick="betRoulette(119)">19</button>
+				<button id="morebets" onClick="betRoulette(120)">20</button>
+				<button id="morebets" onClick="betRoulette(121)">21</button>
+				<button id="morebets" onClick="betRoulette(122)">22</button>
+				<button id="morebets" onClick="betRoulette(123)">23</button>
+				<button id="morebets" onClick="betRoulette(124)">24</button>
+				<button id="morebets" onClick="betRoulette(125)">25</button>
+				<button id="morebets" onClick="betRoulette(126)">26</button>
+				<button id="morebets" onClick="betRoulette(127)">27</button>
+				<button id="morebets" onClick="betRoulette(128)">28</button>
+				<button id="morebets" onClick="betRoulette(129)">29</button>
+				<button id="morebets" onClick="betRoulette(130)">30</button>
+				<button id="morebets" onClick="betRoulette(131)">31</button>
+				<button id="morebets" onClick="betRoulette(132)">32</button>
+				<button id="morebets" onClick="betRoulette(133)">33</button>
+				<button id="morebets" onClick="betRoulette(134)">34</button>
+				<button id="morebets" onClick="betRoulette(135)">35</button>
+				<button id="morebets" onClick="betRoulette(136)">36</button><br>
 				<center><p style="display:inline;color:white;margin-left:2px;margin-top:2px">x3</p><br>
-				<button id="morebets">&nbsp1&nbsp - 12</button>
-				<button id="morebets">13 - 24</button>
-				<button id="morebets">25 - 36</button><br>
-				<button id="morebets">Odd (1, 3, 5, ..., 35)</button>
-				<button id="morebets">Even (2, 4, 6, ..., 36)</button></center>
+				<button id="morebets" onClick="betRoulette(4)">&nbsp1&nbsp - 12</button>
+				<button id="morebets" onClick="betRoulette(5)">13 - 24</button>
+				<button id="morebets" onClick="betRoulette(6)">25 - 36</button><br>
 				<center><p style="display:inline;color:white;margin-left:2px;margin-top:2px">x2</p><br>
-				<button id="morebets">&nbsp1&nbsp - 18</button>
-				<button id="morebets">19 - 36</button>
-
-				
+				<button id="morebets" onClick="betRoulette(7)">Odd (1, 3, 5, ..., 35)</button>
+				<button id="morebets" onClick="betRoulette(8)">Even (2, 4, 6, ..., 36)</button></center>
 			</div>
 		</div>
 		<div id="messages-box">
