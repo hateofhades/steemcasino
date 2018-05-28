@@ -4,6 +4,7 @@ var socket = null;
 var progress;
 var state;
 var spin;
+var lastRoll = 0;
 
 function connect() {
 	if(!socket) {
@@ -63,6 +64,8 @@ function getMessage(msg) {
 		displayProgressBar(msg['timestamp']);
 		
 		setButtons();
+				
+		lastRoll = msg['lastRolls'][0];
 	} else if(msg['messageType'] == 3) {
 		clearTimeout(progress);
 		state = 0;
@@ -367,6 +370,7 @@ function playAnimation(onWath) {
 	moves = moves + howMuch;
 	
 	i = 0;
+	
 	roll(moves);
 }
 

@@ -200,6 +200,14 @@ include_once('src/db.php');
 				if(i < howMuch) {
 					owl.trigger('next.owl.carousel', [100]);
 					setTimeout(function() {roll(howMuch);}, 80);
+				} else {
+					var currentUrl = window.location.href;
+					currentUrl = currentUrl.replace(currentUrl.substring(currentUrl.indexOf("#")+1), "");
+					if(lastRoll != 37)	
+						currentUrl = currentUrl + lastRoll;
+					else
+						currentUrl = currentUrl + "zz";
+					window.location.href = currentUrl;
 				}
 			}
 			function moreBets() {

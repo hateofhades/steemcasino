@@ -85,4 +85,40 @@ function slotIsWin($slot1, $slot2, $slot3) {
 	else
 		return 0;
 }
+
+//This is the function that creates a blackjack deck of cards and shuffles it.
+function createDeck () {
+	
+	$deck = [];
+	
+	for($i = 2; $i <= 14; $i++ ) {
+		array_push($deck, [$i, "A"]);
+		array_push($deck, [$i, "B"]);
+		array_push($deck, [$i, "C"]);
+		array_push($deck, [$i, "D"]);
+		
+		shuffle($deck);
+	}
+	shuffle($deck);
+	return $deck;
+}
+
+//This function draws the cards and returns them. *removeCards should be used after calling this function to remove them from the deck*
+function drawCards($deck, $howmany = 1) {
+	$draw = [];
+	for($i = 0; $i < $howmany; $i++)
+		array_push($draw, $deck[$i]);
+	
+	return $draw;
+}
+
+//This function removes the cards and returns the new deck.
+function removeCards($deck, $howmany = 1) {
+	for($i = 0; $i < $howmany; $i++)
+		unset($deck[$i]);
+	
+	$deck = array_values($deck);
+	
+	return $deck;
+}
 ?>
