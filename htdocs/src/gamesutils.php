@@ -112,6 +112,47 @@ function drawCards($deck, $howmany = 1) {
 	return $draw;
 }
 
+//This function checks if the hand (player or house) is over 21
+function checkIfOver21($hand) {
+	$points = 0, $aces = 0;
+	
+	for($i = 0; $i < count($hand); $i++) {
+		if($hand[$i][0] <= 10)
+			$points += $hand[$i][0];
+		else if($hand[$i][0] > 11)
+			$points += 10;
+		else if($hand[$i][0] == 11)
+			$aces++;
+	}
+	
+	if($aces == 1) {
+		if($points + 11 <= 21)
+			$points += 11;
+		else
+			$points += 1;
+	} else if($aces == 2) {
+		if($points + 12 <= 21)
+			$points += 12;
+		else if($points + 2 <= 21)
+			$points += 2;
+	} else if($aces == 3) {
+		if($points + 13 <= 21)
+			$points += 13;
+		else if($points + 3 <= 21)
+			$points += 3;
+	} else if($aces == 4) {
+		if($points + 14 <= 21)
+			$points += 14;
+		else if($points + 4 <= 21)
+			$points += 4;
+	}
+	
+	if($points > 21)
+		return true;
+	else
+		return false;
+}
+
 //This function removes the cards and returns the new deck.
 function removeCards($deck, $howmany = 1) {
 	for($i = 0; $i < $howmany; $i++)
