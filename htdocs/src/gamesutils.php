@@ -111,6 +111,17 @@ function drawCards($deck, $howmany = 1, $hand = []) {
 	return $hand;
 }
 
+//This function is called when player pressed stand or hit 21 and house has under 17 points and returns a new house hand once it hit over 17 or 17 points.
+function drawHouse($house, $deck) {
+	$house = drawCards($deck, 1, $house);
+	$deck = removeCards($deck);
+	
+	if(checkPoints($house) >= 17)
+		return $house;
+	else
+		return drawHouse($house, $deck);
+}
+
 //This function checks if the hand (player or house) is over 21
 function checkPoints($hand) {
 	$points = 0;
@@ -159,4 +170,5 @@ function removeCards($deck, $howmany = 1) {
 	
 	return $deck;
 }
+
 ?>
