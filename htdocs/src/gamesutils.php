@@ -104,17 +104,17 @@ function createDeck () {
 }
 
 //This function draws the cards and returns them. *removeCards should be used after calling this function to remove them from the deck*
-function drawCards($deck, $howmany = 1) {
-	$draw = [];
+function drawCards($deck, $howmany = 1, $hand = []) {
 	for($i = 0; $i < $howmany; $i++)
-		array_push($draw, $deck[$i]);
+		array_push($hand, $deck[$i]);
 	
-	return $draw;
+	return $hand;
 }
 
 //This function checks if the hand (player or house) is over 21
-function checkIfOver21($hand) {
-	$points = 0, $aces = 0;
+function checkPoints($hand) {
+	$points = 0;
+	$aces = 0;
 	
 	for($i = 0; $i < count($hand); $i++) {
 		if($hand[$i][0] <= 10)
@@ -133,24 +133,21 @@ function checkIfOver21($hand) {
 	} else if($aces == 2) {
 		if($points + 12 <= 21)
 			$points += 12;
-		else if($points + 2 <= 21)
+		else
 			$points += 2;
 	} else if($aces == 3) {
 		if($points + 13 <= 21)
 			$points += 13;
-		else if($points + 3 <= 21)
+		else
 			$points += 3;
 	} else if($aces == 4) {
 		if($points + 14 <= 21)
 			$points += 14;
-		else if($points + 4 <= 21)
+		else
 			$points += 4;
 	}
 	
-	if($points > 21)
-		return true;
-	else
-		return false;
+	return $points;
 }
 
 //This function removes the cards and returns the new deck.

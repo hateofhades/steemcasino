@@ -41,7 +41,7 @@ if(!IsLoggedOnUser()) {
 					$deckString = json_encode($deck);
 					$houseDrawString = json_encode($houseDraw);
 					
-					if((($playerDraw[0][0] == 11 && $playerDraw[1][0] > 11) || ($playerDraw[1][0] == 11 && $playerDraw[0][0] > 11)) && (($houseDraw[0][0] != 11 || $houseDraw[1][0] < 11) && ($houseDraw[1][0] != 11 || $houseDraw[0][0] < 11)))
+					if((($playerDraw[0][0] == 11 && ($playerDraw[1][0] > 11 || $playerDraw[1][0] == 10)) || ($playerDraw[1][0] == 11 && ($playerDraw[0][0] > 11 || $playerDraw[0][0] == 10))) && (($houseDraw[0][0] != 11 || ($houseDraw[1][0] <= 11 && $houseDraw[1][0] != 10)) && ($houseDraw[1][0] != 11 || ($houseDraw[0][0] < 11 && $houseDraw[0][0] != 10))))
 					{
 						$isBlackjack = 1;
 						
@@ -65,7 +65,7 @@ if(!IsLoggedOnUser()) {
 								$newbalance = $balance + $_GET['bet'] + $_GET['bet'];
 							}
 						}
-					} else if((($playerDraw[0][0] == 11 && $playerDraw[1][0] > 11) || ($playerDraw[1][0] == 11 && $playerDraw[0][0] > 11)) && (($houseDraw[0][0] != 11 || $houseDraw[1][0] < 11) || ($houseDraw[1][0] != 11 || $houseDraw[0][0] < 11))) {
+					} else if((($playerDraw[0][0] == 11 && ($playerDraw[1][0] > 11 || $playerDraw[1][0] == 10)) || ($playerDraw[1][0] == 11 && ($playerDraw[0][0] > 11 || $playerDraw[0][0] == 10))) && (($houseDraw[0][0] == 11 && ($houseDraw[1][0] > 11 || $houseDraw[1][0] == 10)) || ($houseDraw[1][0] == 11 && ($houseDraw[0][0] > 11 || $houseDraw[0][0] == 10)))) {
 						$isBlackjack = 2;
 						
 						$winnn = 3;
@@ -88,8 +88,7 @@ if(!IsLoggedOnUser()) {
 								$newbalance = $balance + $_GET['bet'];
 							}
 						}
-					}					
-					else {
+					} else {
 						$isBlackjack = 0;
 						$losted = $losted + $_GET['bet'];
 						
@@ -159,7 +158,7 @@ if(!IsLoggedOnUser()) {
 					
 				$query->execute();
 				
-				$arr = array('status' => 'success', 'message' => 'Game has been successfully created.', 'game' => $game, 'playerDraw' => $playerDraw, 'houseDraw' => $houseDraw, 'balance' => $newbalance, 'blackjack' => $isBlackjack);
+				$arr = array('status' => 'success', 'message' => 'Game has been successfully created.', 'game' => $game, 'playerDraw' => $playerDraw, 'houseDraw' => [$houseDraw[0]], 'balance' => $newbalance, 'blackjack' => $isBlackjack, 'points' => checkPoints($playerDraw));
 				echo json_encode($arr);
 					
 				} else {
@@ -201,10 +200,28 @@ if(!IsLoggedOnUser()) {
 				if($win == 0) {
 					if($player == $_COOKIE['username']) {
 						
-						array_push($playerHand, drawCards($deck));
+						$playerHand = drawCards($deck, 1, $playerHand);
+						
+						$cardDraw = drawCards($deck);
 						$deck = removeCards($deck);
 						
-						if(checkIfOver21($playerHand))
+						$deckString = json_encode($deck);
+						$playerHandString = json_encode($playerHand);
+						
+						if(checkPoints($playerHand) > 21)
+							$win = 2;
+						else
+							$win = 0;
+						
+						if(checkPoints($playerHand) != 21) {
+						$query = $db->prepare('UPDATE blackjack SET deck = ?, playerHand = ?, win = ? WHERE ID = ?');
+						$query->bind_param('ssii', $deckString, $playerHandString, $win, $_GET['game']);
+				
+						$query->execute();
+						}
+						
+						$arr = array('status' => 'success', 'message' => 'Card successfully drawn.', 'card' => $cardDraw, 'points' => checkPoints($playerHand), 'win' => $win);
+						echo json_encode($arr);
 						
 					} else {
 						$arr = array('status' => 'error', 'error' => 981, 'message' => 'This is not your game.');
