@@ -226,8 +226,9 @@ if(!IsLoggedOnUser()) {
 						}
 						
 						if(checkPoints($playerHand) != 21) {
-						$query = $db->prepare('UPDATE blackjack SET deck = ?, playerHand = ?, win = ? WHERE ID = ?');
-						$query->bind_param('ssii', $deckString, $playerHandString, $win, $_GET['game']);
+						$state = 1;
+						$query = $db->prepare('UPDATE blackjack SET deck = ?, playerHand = ?, win = ?, state = ? WHERE ID = ?');
+						$query->bind_param('ssiii', $deckString, $playerHandString, $win, $state, $_GET['game']);
 				
 						$query->execute();
 						
@@ -387,6 +388,249 @@ if(!IsLoggedOnUser()) {
 		if(!isset($_GET['game']) || $_GET['game'] == "" || $_GET['game'] == 0) {
 			$arr = array('status' => 'error', 'error' => 501, 'message' => 'Game is not set.');
 			echo json_encode($arr);
+		} else {
+			$query = $db->prepare('SELECT * FROM blackjack WHERE id = ?');
+			$query->bind_param('i', $_GET['game']);
+		
+			$query->execute();
+				
+			$result = $query->get_result();
+			if($result->num_rows) {
+				while ($row = $result->fetch_assoc()) { 
+				$win = $row['win'];
+				$bet = $row['bet'];
+				$deckString = $row['deck'];
+				$playerHandString = $row['playerHand'];
+				$houseHandString = $row['houseHand'];
+				$state = $row['state'];
+				$player = $row['player'];
+				
+				$deck = json_decode($deckString);
+				$playerHand = json_decode($playerHandString);
+				$houseHand = json_decode($houseHandString);
+				
+				}
+				
+				if($win == 0) {
+					if($player == $_COOKIE['username']) {
+						if(checkPoints($houseHand) >= 17) {
+							if(checkPoints($houseHand) > checkPoints($playerHand)) {
+								$win = 2;
+								
+								$query = $db->prepare('UPDATE blackjack SET win = ? WHERE ID = ?');
+								$query->bind_param('ii', $win, $_GET['game']);
+				
+								$query->execute();
+								
+								$arr = array('status' => 'success', 'message' => 'House had more points than you.', 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								echo json_encode($arr);
+							} else if(checkPoints($houseHand) == checkPoints($playerHand)) {
+								$win = 3;
+								
+								$query = $db->prepare('UPDATE blackjack SET win = ? WHERE ID = ?');
+								$query->bind_param('ii', $win, $_GET['game']);
+					
+								$query->execute();
+									
+								$query = $db->prepare('SELECT * FROM users WHERE username = ?');
+								$query->bind_param('s', $_COOKIE['username']);
+								
+								$query->execute();
+									
+								$result = $query->get_result();
+								while ($row = $result->fetch_assoc()) { 
+									$balance = $row['balance'];
+									$losted = $row['losted'];
+									$won = $row['won'];
+								}
+									
+								$balance += $bet;
+								$losted -= $bet;
+													
+								$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ? WHERE username = ?');
+								$query->bind_param('ddds', $balance, $losted, $won, $_COOKIE['username']);
+								
+								$query->execute();
+									
+								$query = $db->prepare('UPDATE history SET win = ?, reward = ? WHERE transType = ? AND gameid = ?');
+								$query->bind_param('idii', $win, $bet, $trans, $_GET['game']);
+									
+								$query->execute();
+									
+								$arr = array('status' => 'success', 'message' => 'Draw', 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								echo json_encode($arr);
+							} else {
+								$win = 1;
+								
+								$query = $db->prepare('UPDATE blackjack SET win = ? WHERE ID = ?');
+								$query->bind_param('ii', $win, $_GET['game']);
+					
+								$query->execute();
+									
+								$query = $db->prepare('SELECT * FROM users WHERE username = ?');
+								$query->bind_param('s', $_COOKIE['username']);
+								
+								$query->execute();
+									
+								$result = $query->get_result();
+								while ($row = $result->fetch_assoc()) { 
+									$balance = $row['balance'];
+									$losted = $row['losted'];
+									$won = $row['won'];
+								}
+									
+								$balance += ($bet + $bet);
+								$won += $bet;
+								$losted -= $bet;
+													
+								$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ? WHERE username = ?');
+								$query->bind_param('ddds', $balance, $losted, $won, $_COOKIE['username']);
+								
+								$query->execute();
+								
+								$query = $db->prepare('UPDATE history SET win = ?, reward = ? WHERE transType = ? AND gameid = ?');
+								$query->bind_param('idii', $win, $bet, $trans, $_GET['game']);
+									
+								$query->execute();
+									
+								$arr = array('status' => 'success', 'message' => 'You have won.', 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								echo json_encode($arr);
+							}
+						} else {
+							$houseHand = drawHouse($houseHand, $deck);
+							if(checkPoints($houseHand) > 21) {
+								$win = 1;
+								
+								$query = $db->prepare('UPDATE blackjack SET win = ? WHERE ID = ?');
+								$query->bind_param('ii', $win, $_GET['game']);
+					
+								$query->execute();
+									
+								$query = $db->prepare('SELECT * FROM users WHERE username = ?');
+								$query->bind_param('s', $_COOKIE['username']);
+								
+								$query->execute();
+									
+								$result = $query->get_result();
+								while ($row = $result->fetch_assoc()) { 
+									$balance = $row['balance'];
+									$losted = $row['losted'];
+									$won = $row['won'];
+								}
+									
+								$balance += ($bet + $bet);
+								$won += $bet;
+								$losted -= $bet;
+													
+								$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ? WHERE username = ?');
+								$query->bind_param('ddds', $balance, $losted, $won, $_COOKIE['username']);
+								
+								$query->execute();
+								
+								$query = $db->prepare('UPDATE history SET win = ?, reward = ? WHERE transType = ? AND gameid = ?');
+								$query->bind_param('idii', $win, $bet, $trans, $_GET['game']);
+									
+								$query->execute();
+									
+								$arr = array('status' => 'success', 'message' => 'You have won.', 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								echo json_encode($arr);
+							} else {
+								if(checkPoints($houseHand) > checkPoints($playerHand)) {
+									$win = 2;
+									
+									$query = $db->prepare('UPDATE blackjack SET win = ? WHERE ID = ?');
+									$query->bind_param('ii', $win, $_GET['game']);
+					
+									$query->execute();
+									
+									$arr = array('status' => 'success', 'message' => 'House had more points than you.', 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+									echo json_encode($arr);
+								} else if(checkPoints($houseHand) == checkPoints($playerHand)) {
+									$win = 3;
+									
+									$query = $db->prepare('UPDATE blackjack SET win = ? WHERE ID = ?');
+									$query->bind_param('ii', $win, $_GET['game']);
+						
+									$query->execute();
+										
+									$query = $db->prepare('SELECT * FROM users WHERE username = ?');
+									$query->bind_param('s', $_COOKIE['username']);
+									
+									$query->execute();
+										
+									$result = $query->get_result();
+									while ($row = $result->fetch_assoc()) { 
+										$balance = $row['balance'];
+										$losted = $row['losted'];
+										$won = $row['won'];
+									}
+										
+									$balance += $bet;
+									$losted -= $bet;
+														
+									$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ? WHERE username = ?');
+									$query->bind_param('ddds', $balance, $losted, $won, $_COOKIE['username']);
+									
+									$query->execute();
+										
+									$query = $db->prepare('UPDATE history SET win = ?, reward = ? WHERE transType = ? AND gameid = ?');
+									$query->bind_param('idii', $win, $bet, $trans, $_GET['game']);
+										
+									$query->execute();
+										
+									$arr = array('status' => 'success', 'message' => 'Draw', 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+									echo json_encode($arr);
+								} else {
+									$win = 1;
+									
+									$query = $db->prepare('UPDATE blackjack SET win = ? WHERE ID = ?');
+									$query->bind_param('ii', $win, $_GET['game']);
+						
+									$query->execute();
+										
+									$query = $db->prepare('SELECT * FROM users WHERE username = ?');
+									$query->bind_param('s', $_COOKIE['username']);
+									
+									$query->execute();
+										
+									$result = $query->get_result();
+									while ($row = $result->fetch_assoc()) { 
+										$balance = $row['balance'];
+										$losted = $row['losted'];
+										$won = $row['won'];
+									}
+										
+									$balance += ($bet + $bet);
+									$won += $bet;
+									$losted -= $bet;
+														
+									$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ? WHERE username = ?');
+									$query->bind_param('ddds', $balance, $losted, $won, $_COOKIE['username']);
+									
+									$query->execute();
+									
+									$query = $db->prepare('UPDATE history SET win = ?, reward = ? WHERE transType = ? AND gameid = ?');
+									$query->bind_param('idii', $win, $bet, $trans, $_GET['game']);
+										
+									$query->execute();
+										
+									$arr = array('status' => 'success', 'message' => 'You have won.', 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+									echo json_encode($arr);
+								}
+							}
+						}
+					} else {
+						$arr = array('status' => 'error', 'error' => 981, 'message' => 'This is not your game.');
+						echo json_encode($arr);
+					}
+				} else {
+					$arr = array('status' => 'error', 'error' => 982, 'message' => 'This game has already finished.');
+					echo json_encode($arr);
+				}
+			} else {
+				$arr = array('status' => 'error', 'error' => 501, 'message' => 'Game does not exist.');
+				echo json_encode($arr);
+			}
 		}
 	} else if($_GET['action'] == "split") { 
 		if(!isset($_GET['game']) || $_GET['game'] == "" || $_GET['game'] == 0) {
