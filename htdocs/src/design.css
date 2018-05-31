@@ -7,6 +7,55 @@ body {
 	max-height: 1024px;
 }
 
+#blackjack-table {
+	margin-top:2%;
+	width:50%;
+	height: 60%;
+	margin-left:25%;
+	background-color:#53AE8D;
+	border-radius:30px;
+	color:white;
+}
+
+#dealerHand {
+	background-color:white;
+	width:90%;
+	margin-left:5%;
+	height:20%;
+}
+
+#playerHand {
+	background-color:white;
+	width:90%;
+	margin-left:5%;
+	height:20%;
+}
+
+#card {
+	margin:0;
+	display:inline;
+}
+
+.bjbuttons {
+	color:black;
+	width:13%;
+	height:10%;
+	background-color:#C0DBD1;
+	display:inline-block;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 250%;
+}
+
+#deal {
+	margin-left:3.5%;
+	background-color:white;
+}
+
+#doubled {
+	line-height: 125%;
+}
+
 #clickhere {
 	text-decoration: none;
 	color: gray;

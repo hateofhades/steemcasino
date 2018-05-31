@@ -56,18 +56,18 @@ if(!IsLoggedOnUser()) {
 						$game = mysqli_insert_id($db);
 						
 						if(!$promobal) {
-							$newbalance = $balance + $_GET['bet'];
+							$newbalance = $balance + ($_GET['bet'] * 1.5);
 						} else {
 							if($promobal <= $_GET['bet']) {
-								$newbalance = $balance + $promobal + $_GET['bet'];
+								$newbalance = $balance + $promobal + ($_GET['bet'] * 1.5);
 								$promobal = 0;
 							} else {
 								$promobal = $promobal - $_GET['bet'];
-								$newbalance = $balance + $_GET['bet'] + $_GET['bet'];
+								$newbalance = $balance + $_GET['bet'] + ($_GET['bet'] * 1.5);
 							}
 						}
 						
-						$won += $_GET['bet'];
+						$won += ($_GET['bet'] * 1.5);
 						$losted -= $_GET['bet'];
 						
 					} else if((($playerDraw[0][0] == 11 && ($playerDraw[1][0] > 11 || $playerDraw[1][0] == 10)) || ($playerDraw[1][0] == 11 && ($playerDraw[0][0] > 11 || $playerDraw[0][0] == 10))) && (($houseDraw[0][0] == 11 && ($houseDraw[1][0] > 11 || $houseDraw[1][0] == 10)) || ($houseDraw[1][0] == 11 && ($houseDraw[0][0] > 11 || $houseDraw[0][0] == 10)))) {
@@ -166,7 +166,12 @@ if(!IsLoggedOnUser()) {
 					
 				$query->execute();
 				
-				$arr = array('status' => 'success', 'message' => 'Game has been successfully created.', 'game' => $game, 'playerDraw' => $playerDraw, 'houseDraw' => [$houseDraw[0]], 'balance' => $newbalance, 'blackjack' => $isBlackjack, 'points' => checkPoints($playerDraw));
+				if($isBlackjack)
+					$housed = $houseDraw;
+				else
+					$housed = [$houseDraw[0]];
+				
+				$arr = array('status' => 'success', 'message' => 'Game has been successfully created.', 'game' => $game, 'playerDraw' => $playerDraw, 'houseDraw' => $housed, 'balance' => $newbalance, 'blackjack' => $isBlackjack, 'points' => checkPoints($playerDraw));
 				echo json_encode($arr);
 					
 				} else {
@@ -232,8 +237,8 @@ if(!IsLoggedOnUser()) {
 				
 						$query->execute();
 						
-						$arr = array('status' => 'success', 'message' => 'Card successfully drawn.', 'card' => $cardDraw, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $house);
-						echo json_encode($arr);
+						$arr = array('status' => 'success', 'message' => '1', 'card' => $cardDraw, 'housePoints' => '0', 'playerHand' => $playerHand, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $house);
+						echo json_encode($arr, JSON_NUMERIC_CHECK);
 						
 						} else {
 							if(checkPoints($houseHand) == 21) {
@@ -244,8 +249,8 @@ if(!IsLoggedOnUser()) {
 				
 								$query->execute();
 								
-								$arr = array('status' => 'success', 'message' => 'House had blackjack.', 'card' => $cardDraw, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
-								echo json_encode($arr);
+								$arr = array('status' => 'success', 'message' => '5', 'card' => $cardDraw, 'housePoints' => checkPoints($houseHand), 'playerHand' => $playerHand, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								echo json_encode($arr, JSON_NUMERIC_CHECK);
 							} else if(checkPoints($houseHand) >= 17) {
 								$win = 1;
 								
@@ -280,8 +285,8 @@ if(!IsLoggedOnUser()) {
 								
 								$query->execute();
 								
-								$arr = array('status' => 'success', 'message' => 'You have won.', 'card' => $cardDraw, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
-								echo json_encode($arr);
+								$arr = array('status' => 'success', 'message' => '3', 'card' => $cardDraw, 'playerHand' => $playerHand, 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								echo json_encode($arr, JSON_NUMERIC_CHECK);
 							} else {
 								$houseHand = drawHouse($houseHand, $deck);
 								$houseHandString = json_encode($houseHand);
@@ -319,8 +324,8 @@ if(!IsLoggedOnUser()) {
 									
 									$query->execute();
 									
-									$arr = array('status' => 'success', 'message' => 'Draw. House hit to 21.', 'card' => $cardDraw, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
-									echo json_encode($arr);
+									$arr = array('status' => 'success', 'message' => '4', 'card' => $cardDraw, 'housePoints' => checkPoints($houseHand), 'playerHand' => $playerHand, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+									echo json_encode($arr, JSON_NUMERIC_CHECK);
 								} else if(checkPoints($houseHand) > 21 || checkPoints($playerHand) > checkPoints($houseHand)) {
 									$win = 1;
 								
@@ -355,8 +360,8 @@ if(!IsLoggedOnUser()) {
 									
 									$query->execute();
 									
-									$arr = array('status' => 'success', 'message' => 'You have won.', 'card' => $cardDraw, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
-									echo json_encode($arr);
+									$arr = array('status' => 'success', 'message' => '3', 'card' => $cardDraw, 'housePoints' => checkPoints($houseHand), 'playerHand' => $playerHand, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+									echo json_encode($arr, JSON_NUMERIC_CHECK);
 								} else {
 									$win = 2;
 								
@@ -365,8 +370,8 @@ if(!IsLoggedOnUser()) {
 				
 									$query->execute();
 								
-									$arr = array('status' => 'success', 'message' => 'House had more points than you.', 'card' => $cardDraw, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
-									echo json_encode($arr);
+									$arr = array('status' => 'success', 'message' => '2', 'card' => $cardDraw, 'housePoints' => checkPoints($houseHand), 'playerHand' => $playerHand, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+									echo json_encode($arr, JSON_NUMERIC_CHECK);
 								}
 							}
 						}
@@ -422,7 +427,7 @@ if(!IsLoggedOnUser()) {
 				
 								$query->execute();
 								
-								$arr = array('status' => 'success', 'message' => 'House had more points than you.', 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								$arr = array('status' => 'success', 'message' => 'House had more points than you.', 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
 								echo json_encode($arr);
 							} else if(checkPoints($houseHand) == checkPoints($playerHand)) {
 								$win = 3;
@@ -457,7 +462,7 @@ if(!IsLoggedOnUser()) {
 									
 								$query->execute();
 									
-								$arr = array('status' => 'success', 'message' => 'Draw', 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								$arr = array('status' => 'success', 'message' => 'Draw', 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
 								echo json_encode($arr);
 							} else {
 								$win = 1;
@@ -493,7 +498,7 @@ if(!IsLoggedOnUser()) {
 									
 								$query->execute();
 									
-								$arr = array('status' => 'success', 'message' => 'You have won.', 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								$arr = array('status' => 'success', 'message' => 'You have won.', 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
 								echo json_encode($arr);
 							}
 						} else {
@@ -532,7 +537,7 @@ if(!IsLoggedOnUser()) {
 									
 								$query->execute();
 									
-								$arr = array('status' => 'success', 'message' => 'You have won.', 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								$arr = array('status' => 'success', 'message' => 'You have won.', 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
 								echo json_encode($arr);
 							} else {
 								if(checkPoints($houseHand) > checkPoints($playerHand)) {
@@ -543,7 +548,7 @@ if(!IsLoggedOnUser()) {
 					
 									$query->execute();
 									
-									$arr = array('status' => 'success', 'message' => 'House had more points than you.', 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+									$arr = array('status' => 'success', 'message' => 'House had more points than you.', 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
 									echo json_encode($arr);
 								} else if(checkPoints($houseHand) == checkPoints($playerHand)) {
 									$win = 3;
@@ -578,7 +583,7 @@ if(!IsLoggedOnUser()) {
 										
 									$query->execute();
 										
-									$arr = array('status' => 'success', 'message' => 'Draw', 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+									$arr = array('status' => 'success', 'message' => 'Draw', 'points' => checkPoints($playerHand), 'housePoints' => checkPoints($houseHand), 'win' => $win, 'house' => $houseHand);
 									echo json_encode($arr);
 								} else {
 									$win = 1;
@@ -614,7 +619,7 @@ if(!IsLoggedOnUser()) {
 										
 									$query->execute();
 										
-									$arr = array('status' => 'success', 'message' => 'You have won.', 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+									$arr = array('status' => 'success', 'message' => 'You have won.', 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
 									echo json_encode($arr);
 								}
 							}
@@ -698,6 +703,9 @@ if(!IsLoggedOnUser()) {
 							$query->bind_param('ii', $win, $_GET['game']);
 						
 							$query->execute();
+							
+							$arr = array('status' => 'success', 'message' => 'Game has been successfully forfeit.', 'balance' => $balance);
+							echo json_encode($arr);
 						} else {
 							$arr = array('status' => 'error', 'error' => 981, 'message' => 'You can\'t surrender now.');
 							echo json_encode($arr);
