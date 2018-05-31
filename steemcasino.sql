@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.0
+-- version 4.8.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 25 Apr 2018 la 21:38
--- Versiune server: 10.1.25-MariaDB
--- PHP Version: 7.1.7
+-- Generation Time: May 31, 2018 at 06:39 AM
+-- Server version: 10.1.32-MariaDB
+-- PHP Version: 7.2.5
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -25,7 +25,24 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Structura de tabel pentru tabelul `coinflip`
+-- Table structure for table `blackjack`
+--
+
+CREATE TABLE `blackjack` (
+  `ID` int(11) NOT NULL,
+  `player` varchar(255) DEFAULT NULL,
+  `bet` float DEFAULT NULL,
+  `state` int(11) NOT NULL DEFAULT '0',
+  `deck` text,
+  `playerHand` mediumtext,
+  `houseHand` mediumtext,
+  `win` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `coinflip`
 --
 
 CREATE TABLE `coinflip` (
@@ -43,7 +60,7 @@ CREATE TABLE `coinflip` (
 -- --------------------------------------------------------
 
 --
--- Structura de tabel pentru tabelul `history`
+-- Table structure for table `history`
 --
 
 CREATE TABLE `history` (
@@ -61,7 +78,7 @@ CREATE TABLE `history` (
 -- --------------------------------------------------------
 
 --
--- Structura de tabel pentru tabelul `info`
+-- Table structure for table `info`
 --
 
 CREATE TABLE `info` (
@@ -71,7 +88,7 @@ CREATE TABLE `info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Salvarea datelor din tabel `info`
+-- Dumping data for table `info`
 --
 
 INSERT INTO `info` (`ID`, `name`, `value`) VALUES
@@ -86,7 +103,7 @@ INSERT INTO `info` (`ID`, `name`, `value`) VALUES
 -- --------------------------------------------------------
 
 --
--- Structura de tabel pentru tabelul `jackpot`
+-- Table structure for table `jackpot`
 --
 
 CREATE TABLE `jackpot` (
@@ -98,7 +115,7 @@ CREATE TABLE `jackpot` (
 -- --------------------------------------------------------
 
 --
--- Structura de tabel pentru tabelul `mines`
+-- Table structure for table `mines`
 --
 
 CREATE TABLE `mines` (
@@ -116,7 +133,7 @@ CREATE TABLE `mines` (
 -- --------------------------------------------------------
 
 --
--- Structura de tabel pentru tabelul `promocodes`
+-- Table structure for table `promocodes`
 --
 
 CREATE TABLE `promocodes` (
@@ -130,7 +147,7 @@ CREATE TABLE `promocodes` (
 -- --------------------------------------------------------
 
 --
--- Structura de tabel pentru tabelul `roulette`
+-- Table structure for table `roulette`
 --
 
 CREATE TABLE `roulette` (
@@ -143,7 +160,7 @@ CREATE TABLE `roulette` (
 -- --------------------------------------------------------
 
 --
--- Structura de tabel pentru tabelul `rps`
+-- Table structure for table `rps`
 --
 
 CREATE TABLE `rps` (
@@ -161,7 +178,7 @@ CREATE TABLE `rps` (
 -- --------------------------------------------------------
 
 --
--- Structura de tabel pentru tabelul `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -178,6 +195,12 @@ CREATE TABLE `users` (
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `blackjack`
+--
+ALTER TABLE `blackjack`
+  ADD PRIMARY KEY (`ID`);
 
 --
 -- Indexes for table `coinflip`
@@ -238,50 +261,65 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `blackjack`
+--
+ALTER TABLE `blackjack`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `coinflip`
 --
 ALTER TABLE `coinflip`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT for table `history`
 --
 ALTER TABLE `history`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT for table `info`
 --
 ALTER TABLE `info`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
 --
 -- AUTO_INCREMENT for table `jackpot`
 --
 ALTER TABLE `jackpot`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT for table `mines`
 --
 ALTER TABLE `mines`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT for table `promocodes`
 --
 ALTER TABLE `promocodes`
   MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT for table `roulette`
 --
 ALTER TABLE `roulette`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT for table `rps`
 --
 ALTER TABLE `rps`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;COMMIT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

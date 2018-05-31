@@ -2,7 +2,7 @@
 	<head>
 		<?php include('src/head.php'); ?>
 		<script>
-			var animateVar = 0, setRollBackTimeout, rolling = 0;
+			var animateVar = 0, setRollBackTimeout, rolling = 0, bal, lastRolls = [], updateLastRollsTimeout;
 			
 			function doubleDices() {
 				var currValue = $("#dicesInput").val();
@@ -15,30 +15,60 @@
 			}
 			
 			function rollDices() {
+				if(!rolling) {
 				var bet = $("#dicesInput").val();
 				var under = $("#rollUnder").val();
 				
-				if(!rolling) {
+				if(bal)
+					$("#balance").text("Balance: " + bal + " SBD");
+				
+				updateLastRolls();
+				clearTimeout(updateLastRollsTimeout);
+				
+				clearTimeout(setRollBackTimeout);
+				
+				$("#rollButton").css("color", "white");
+				$("#rollButton").text("Working...");
+				
 					rolling = 1;
 					$.getJSON( "../src/dices.php?bet=" + bet + "&under=" + under, function( data ) {
 						console.log(data);
 						if(data['status'] == 'success') {
-							clearTimeout(setRollBackTimeout);
 							animateVar = 0;
-							animate(data['pick'], data['win'], data['balance']);
+							bal = data['balance'];
+							
+							var lastRoll = {
+								rollUnder: data['under'],
+								multiplier: data['multiplier'],
+								pick: data['pick'],
+								reward: (data['reward']).toFixed(3),
+								win: data['win'],
+								bet: data['bet'],
+							};
+							
+							lastRolls = {
+								roll1: lastRoll,
+								roll2: lastRolls['roll1'],
+								roll3: lastRolls['roll2'],
+							};
+
+							updateLastRollsTimeout = setTimeout(function() {updateLastRolls()}, 5000);
+							
+							animate(data['pick'], data['win']);
 						} else {
+							$("#rollButton").text(data['message']);
 							rolling = 0;
 						}
 					});
 				}
 			}
 			
-			function animate(pick, win, bal) {
+			function animate(pick, win) {
 				animateVar++;
 				picker = Math.floor(Math.random() * 10000);
 				$("#rollButton").text(picker);
 				if(animateVar <= 30)
-				setTimeout(function () { animate(pick, win, bal) }, 100);
+				setTimeout(function () { animate(pick, win) }, 100);
 				else {
 					rolling = 0;
 					$("#rollButton").text(pick);
@@ -48,11 +78,11 @@
 					else
 						$("#rollButton").css("color", "red");
 					
-					setRollBackTimeout = setTimeout(function () { setRollBack(bal) }, 5000);
+					setRollBackTimeout = setTimeout(function () { setRollBack() }, 5000);
 				}
 			}
 			
-			function setRollBack (bal) {
+			function setRollBack () {
 				$("#rollButton").text("ROLL!");
 				$("#rollButton").css("color", "white");
 				$("#balance").text("Balance: " + bal + " SBD");
@@ -78,10 +108,14 @@
 					var value = $("#rollUnder").val();
 						//value.toFixed(0);
 					
-					if(value < 10)
+					if(value < 10) {
 						$("#rollUnder").val(10);
-					else if(value > 9400)
+						value = 10;
+					}
+					else if(value > 9400) {
 						$("#rollUnder").val(9400);
+						value = 9400;
+					}
 					
 					$("#multiplier").val((9500/value).toFixed(2));
 					
@@ -94,12 +128,19 @@
 					var value = $("#multiplier").val();
 						//value.toFixed(2);
 					
-					if(value < 1)
-						$("#multiplier").val(1);
-					else if(value > 9500)
+					if(value < 1.01) {
+						$("#multiplier").val(1.01);
+						value = 1.01;
+					}
+					else if(value > 9500) {
 						$("#multiplier").val(9500);
+						value = 9500;
+					}
 					
-					$("#rollUnder").val((9500/value).toFixed(0));
+					if(value != 1.01)
+						$("#rollUnder").val((9500/value).toFixed(0));
+					else
+						$("#rollUnder").val(9400);
 					
 					var bet = $("#dicesInput").val();
 					
@@ -119,6 +160,51 @@
 					$("#profit").text((bet * value).toFixed(3));
 				});
 			});
+			
+			function updateLastRolls() {
+				var lastRollsDiv = "", winz, winz2;
+				if(lastRolls['roll3']) {
+					if(lastRolls['roll3']['win']) {
+						winz = "<h1 id=\"under-win\">";
+						winz2 = "+" + lastRolls['roll3']['reward'];
+					}
+					else {
+						winz = "<h1 id=\"under-lose\">";
+						winz2 = "-" + lastRolls['roll3']['bet'];
+					}
+					
+					lastRollsDiv = "<div id=\"lastRoll\"><center>" + winz + "<" + lastRolls['roll3']['rollUnder'] + " | x" + lastRolls['roll3']['multiplier'] + " | " + winz2 + " SBD | " + lastRolls['roll3']['pick'] + "</h3></center></div>" + lastRollsDiv;
+				}
+				
+				if(lastRolls['roll2']) {
+					if(lastRolls['roll2']['win']) {
+						winz = "<h1 id=\"under-win\">";
+						winz2 = "+" + lastRolls['roll2']['reward'];
+					}
+					else {
+						winz = "<h1 id=\"under-lose\">";
+						winz2 = "-" + lastRolls['roll2']['bet'];
+					}
+					
+					lastRollsDiv = "<div id=\"lastRoll\"><center>" + winz + "<" + lastRolls['roll2']['rollUnder'] + " | x" + lastRolls['roll2']['multiplier'] + " | " + winz2 + " SBD | " + lastRolls['roll2']['pick'] + "</h3></center></div>" + lastRollsDiv;
+				}
+				
+				if(lastRolls['roll1']) {
+					if(lastRolls['roll1']['win']) {
+						winz = "<h1 id=\"under-win\">";
+						winz2 = "+" + lastRolls['roll1']['reward'];
+					}
+					else {
+						winz = "<h1 id=\"under-lose\">";
+						winz2 = "-" + lastRolls['roll1']['bet'];
+					}
+					
+					lastRollsDiv = "<div id=\"lastRoll\"><center>" + winz + "<" + lastRolls['roll1']['rollUnder'] + " | x" + lastRolls['roll1']['multiplier'] + " | " + winz2 + " SBD | " + lastRolls['roll1']['pick'] + "</h3></center></div>" + lastRollsDiv;
+				}
+
+				
+				$("#lastRolls").html(lastRollsDiv);
+			}
 		</script>
 	</head>
 	<body>
@@ -136,7 +222,12 @@
 				<b style="margin-left:14%">Multiplier</b><br><br>
 				<input style="margin-left:10px;" type="number" class="dicesChances" id="rollUnder" value="4750" min="10" max="9400">
 				<input style="margin-left:10px;" type="number" class="dicesChances" id="multiplier" value="2.00" min="1" max="9500"><br><br>
-				<button class="rollButton" id="rollButton" onclick="rollDices();">ROLL!</button>
+				<button class="rollButton" id="rollButton" onclick="rollDices();">ROLL!</button><br><br><br>
+				
+				<div style="margin-left:10%;width:80%;height:40%" id="lastRolls">
+					
+				</div>
+				
 			</div>
 		</div>
 		<?php include('src/footer.php'); ?>

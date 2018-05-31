@@ -4,19 +4,19 @@ include('utils.php');
 include('gamesutils.php');
 
 if(!isset($_GET['bet']) || $_GET['bet'] == "") {
-	$arr = array('status' => 'error', 'error' => 504, 'message' => 'Bet is not set.');
+	$arr = array('status' => 'error', 'error' => 504, 'message' => 'INVALID BET.');
 	echo json_encode($arr);
 } else if($_GET['bet'] < 0.001) {
-	$arr = array('status' => 'error', 'error' => 505, 'message' => 'Bet is too small.');
+	$arr = array('status' => 'error', 'error' => 505, 'message' => 'BET IS TOO SMALL.');
 	echo json_encode($arr);
 } else if(!isset($_GET['under']) || $_GET['under'] == "") {
-	$arr = array('status' => 'error', 'error' => 444, 'message' => 'Invalid roll under.');
+	$arr = array('status' => 'error', 'error' => 444, 'message' => 'INVALID ROLL UNDER.');
 	echo json_encode($arr);
 } else if($_GET['under'] < 10 || $_GET['under'] > 9400) {
-	$arr = array('status' => 'error', 'error' => 444, 'message' => 'Invalid roll under.');
+	$arr = array('status' => 'error', 'error' => 444, 'message' => 'INVALID ROLL UNDER.');
 	echo json_encode($arr);
 } else if(!IsLoggedOnUser()) {
-	$arr = array('status' => 'error', 'error' => 502, 'message' => 'Session is invalid. Please reload.');
+	$arr = array('status' => 'error', 'error' => 502, 'message' => 'INVALID SESSION.');
 	echo json_encode($arr);
 } else {
 	$query = $db->prepare('SELECT * FROM users WHERE username = ?');
@@ -109,15 +109,15 @@ if(!isset($_GET['bet']) || $_GET['bet'] == "") {
 					
 			$query->execute();
 			
-			$arr = array('status' => 'success', 'win' => $win, 'pick' => $pick, 'multiplier' => $multiplier, 'balance' => $newbalance, 'reward' => ($_GET['bet'] * $multiplier) - $_GET['bet']);
+			$arr = array('status' => 'success', 'win' => $win, 'pick' => $pick, 'multiplier' => $multiplier, 'balance' => $newbalance, 'reward' => ($_GET['bet'] * $multiplier) - $_GET['bet'], 'under' => $_GET['under'], 'bet' => $_GET['bet']);
 			echo json_encode($arr);
 			
 		} else {
-			$arr = array('status' => 'error', 'error' => 506, 'message' => 'You don\'t have enough money. Balance: '.$balance." SBD.");
+			$arr = array('status' => 'error', 'error' => 506, 'message' => 'NOT ENOUGHT BALANCE.');
 			echo json_encode($arr);
 		}
 	} else {
-		$arr = array('status' => 'error', 'error' => 502, 'message' => 'Session is invalid. Please reload.');
+		$arr = array('status' => 'error', 'error' => 502, 'message' => 'SESSION IS INVALID.');
 		echo json_encode($arr);
 	}
 }

@@ -8,7 +8,7 @@ include_once('src/gamesutils.php');
 include_once('src/utils.php');
 
 if(isset($_GET['balanceTop']))
-	if($_GET['balanceTop'] != 0 && ($_GET['player'] == 1 || $_GET['player'] == 2 || $_GET['player'] == 3)) {
+	if($_GET['balanceTop'] > 0 && ($_GET['player'] == 1 || $_GET['player'] == 2 || $_GET['player'] == 3)) {
 		if($_GET['action'] == "newgame") {	
 			$query = $db->prepare('SELECT * FROM users WHERE username = ?');
 			$query->bind_param('s', $_COOKIE['username']);

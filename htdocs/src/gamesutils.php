@@ -85,4 +85,90 @@ function slotIsWin($slot1, $slot2, $slot3) {
 	else
 		return 0;
 }
+
+//This is the function that creates a blackjack deck of cards and shuffles it.
+function createDeck () {
+	
+	$deck = [];
+	
+	for($i = 2; $i <= 14; $i++ ) {
+		array_push($deck, [$i, "A"]);
+		array_push($deck, [$i, "B"]);
+		array_push($deck, [$i, "C"]);
+		array_push($deck, [$i, "D"]);
+		
+		shuffle($deck);
+	}
+	shuffle($deck);
+	return $deck;
+}
+
+//This function draws the cards and returns them. *removeCards should be used after calling this function to remove them from the deck*
+function drawCards($deck, $howmany = 1, $hand = []) {
+	for($i = 0; $i < $howmany; $i++)
+		array_push($hand, $deck[$i]);
+	
+	return $hand;
+}
+
+//This function is called when player pressed stand or hit 21 and house has under 17 points and returns a new house hand once it hit over 17 or 17 points.
+function drawHouse($house, $deck) {
+	$house = drawCards($deck, 1, $house);
+	$deck = removeCards($deck);
+	
+	if(checkPoints($house) >= 17)
+		return $house;
+	else
+		return drawHouse($house, $deck);
+}
+
+//This function checks if the hand (player or house) is over 21
+function checkPoints($hand) {
+	$points = 0;
+	$aces = 0;
+	
+	for($i = 0; $i < count($hand); $i++) {
+		if($hand[$i][0] <= 10)
+			$points += $hand[$i][0];
+		else if($hand[$i][0] > 11)
+			$points += 10;
+		else if($hand[$i][0] == 11)
+			$aces++;
+	}
+	
+	if($aces == 1) {
+		if($points + 11 <= 21)
+			$points += 11;
+		else
+			$points += 1;
+	} else if($aces == 2) {
+		if($points + 12 <= 21)
+			$points += 12;
+		else
+			$points += 2;
+	} else if($aces == 3) {
+		if($points + 13 <= 21)
+			$points += 13;
+		else
+			$points += 3;
+	} else if($aces == 4) {
+		if($points + 14 <= 21)
+			$points += 14;
+		else
+			$points += 4;
+	}
+	
+	return $points;
+}
+
+//This function removes the cards and returns the new deck.
+function removeCards($deck, $howmany = 1) {
+	for($i = 0; $i < $howmany; $i++)
+		unset($deck[$i]);
+	
+	$deck = array_values($deck);
+	
+	return $deck;
+}
+
 ?>

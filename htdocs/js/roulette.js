@@ -4,6 +4,7 @@ var socket = null;
 var progress;
 var state;
 var spin;
+var lastRoll = 0;
 
 function connect() {
 	if(!socket) {
@@ -63,6 +64,8 @@ function getMessage(msg) {
 		displayProgressBar(msg['timestamp']);
 		
 		setButtons();
+				
+		lastRoll = msg['lastRolls'][0];
 	} else if(msg['messageType'] == 3) {
 		clearTimeout(progress);
 		state = 0;
@@ -76,8 +79,9 @@ function getMessage(msg) {
 		$("#totalRed").text("Total: " + msg['redBet'] + " SBD");
 		$("#totalBlack").text("Total: " + msg['blackBet'] + " SBD");
 		$("#totalGreen").text("Total: " + msg['greenBet'] + " SBD");
+		$("#totalCustom").text("Total: " + msg['customBet'] + " SBD");
 		
-		var redPlayers = "", blackPlayers = "", greenPlayers = "";
+		var redPlayers = "", blackPlayers = "", greenPlayers = "", customPlayers = "";
 		$.each(msg['redPlayers'], function(i, value) {
 			redPlayers = '<div><img width="10%" style="vertical-align:middle" src="https://steemitimages.com/u/'+ value[0] +'/avatar"> - ' + value[0] + ' - ' + value[1] + ' SBD</div><div style="width:100%;height:1px;margin-top:2px;margin-bot:2px"></div>' + redPlayers;
 		});
@@ -87,10 +91,31 @@ function getMessage(msg) {
 		$.each(msg['greenPlayers'], function(i, value) {
 			greenPlayers = '<div><img width="10%" style="vertical-align:middle" src="https://steemitimages.com/u/'+ value[0] +'/avatar"> - ' + value[0] + ' - ' + value[1] + ' SBD</div><div style="width:100%;height:1px;margin-top:2px;margin-bot:2px"></div>' + greenPlayers;
 		});
+		$.each(msg['customPlayers'], function(i, value) {
+			var bettd = "";
+			
+			if(value[2] >= 100) {
+				bettd = value[2] - 100;
+				if(bettd == 37)
+					bettd = "00";
+			} else if(value[2] == 7)
+				bettd = "Odd";
+			else if(value[2] == 8)
+				bettd = "Even";
+			else if(value[2] == 4)
+				bettd = "1 - 12";
+			else if(value[2] == 5)
+				bettd = "13 - 24";
+			else if(value[2] == 6)
+				bettd = "25 - 36";
+			
+			customPlayers = '<div><img width="10%" style="vertical-align:middle" src="https://steemitimages.com/u/'+ value[0] +'/avatar"> - ' + value[0] + ' - ' + value[1] + ' SBD - ' + bettd + '</div><div style="width:100%;height:1px;margin-top:2px;margin-bot:2px"></div>' + customPlayers;
+		});
 		
 		$("#contentRed").html(redPlayers);
 		$("#contentBlack").html(blackPlayers);
 		$("#contentGreen").html(greenPlayers);
+		$("#contentCustom").html(customPlayers);
 	}	
 }
 
@@ -99,16 +124,18 @@ function setButtons() {
 		$("#btn1").attr("disabled", "disabled");
 		$("#btn2").attr("disabled", "disabled");
 		$("#btn3").attr("disabled", "disabled");
+		$("#btn4").attr("disabled", "disabled");
 	} else {
 		$("#btn1").removeAttr("disabled");
 		$("#btn2").removeAttr("disabled");
 		$("#btn3").removeAttr("disabled");
+		$("#btn4").removeAttr("disabled");
 	}
 }
 
 function displayProgressBar(timestamp) {
 	if(state == 0 && timestamp >= 0) {
-		$("#progress").attr("max", 60);
+		$("#progress").attr("max", 30);
 		$("#progress").attr("value", timestamp);
 		$("#progressText").text(timestamp + " seconds");
 		timestamp = timestamp - 1;
@@ -343,11 +370,12 @@ function playAnimation(onWath) {
 	moves = moves + howMuch;
 	
 	i = 0;
+	
 	roll(moves);
 }
 
 function betRoulette(betOn) {
-	if(betOn == 1 || betOn == 2 || betOn == 3) {
+	if(betOn == 1 || betOn == 2 || betOn == 3 || (betOn >= 100 && betOn <=137) || betOn == 4 || betOn == 5 || betOn == 6 || betOn == 7 || betOn == 8) {
 		$("#messages-box").css('background-color', 'yellow');
 		$("#messages").text("Working...");
 		$("#closeMessage").text("X");
