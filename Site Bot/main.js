@@ -135,7 +135,7 @@ function createJackpotGame() {
 	
 	io.sockets.emit('message', {
 		messageType: 6,
-		currentHash: jackpotHash,
+		hash: jackpotHash,
 		lastSecret: lastJackpotSecret,
 		timeleft: jackpotTimeTickMax * 5,
 		gameid: jackpotGame
@@ -237,9 +237,9 @@ http.listen(3000, function(){
 });
 
 function roll() {
-	var rolled = math.random();
+	var rolled = math.random(0, 38);
 	
-	rolled = math.floor(rolled * 38);
+	rolled = math.floor(rolled);
 	
 	return rolled;
 }

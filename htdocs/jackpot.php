@@ -36,6 +36,8 @@
 						
 					</div>
 			</div>
+			<p id="hash"></p>
+			<p id="secret"></p>
 		</center>
 		<?php include('src/footer.php'); ?>
 		<script>

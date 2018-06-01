@@ -47,6 +47,8 @@ function getMessage(msg) {
 		$(".roulette-sign").hide();
 		$(".ow-carousel").html("");
 		$("#gameid").text("Game #" + msg['gameid']);
+		$("#hash").text("Current hash: " + msg['hash']);
+		$("#secret").text("Last round secret: " + msg['lastSecret']);
 		timeleft = msg['timeleft'];
 		clearInterval(timeleftCounter);
 		$("#jackpottime").text(secondsToMS(timeleft));
@@ -67,6 +69,8 @@ function getMessage(msg) {
 	else if(msg['messageType'] == 6) {
 		$(".owl-carousel").hide();
 		$(".roulette-sign").hide();
+		$("#hash").text("Current hash: " + msg['hash']);
+		$("#secret").text("Last round secret: " + msg['lastSecret']);
 		$(".owl-carousel").html("");
 		$("#circle").show();
 		$("#circle").circleProgress('value', 0);
