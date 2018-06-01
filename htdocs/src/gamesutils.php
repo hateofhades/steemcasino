@@ -42,13 +42,51 @@ function generateSecretMines($mode = 1, $length = 92) {
 }
 
 //This is the random picker for dices.
-function dicesPick() {
-	return mt_rand(1, 10000);
+function dicesPick($seed, $secret) {
+	$result = hash_hmac('sha512', $seed, $secret);
+	
+	$found = 0;
+	$new = 0;
+	
+	for($i = 5; $i < 128; $i += 5) {
+		$new = substr($result, ($i - 5), $i);
+		$new = base_convert($new, 16, 10);
+		if($new <= 999999) {
+			$found = 1;
+			break;
+		}
+	}
+	
+	if($found == 0)
+		$new = 4500;
+	else
+		$new /= 100;
+	
+	return floor($new);
 }
 
 //This is the random picker for slots.
-function slotPick() {
-	$pick = mt_rand(1, 100);
+function slotPick($seed, $secret) {
+	$result = hash_hmac('sha512', $seed, $secret);
+	
+	$found = 0;
+	$new = 0;
+	
+	for($i = 5; $i < 128; $i += 5) {
+		$new = substr($result, ($i - 5), $i);
+		$new = base_convert($new, 16, 10);
+		if($new <= 1000000) {
+			$found = 1;
+			break;
+		}
+	}
+	
+	if($found == 0)
+		$new = 1;
+	else
+		$new /= 10000;
+	
+	$pick = floor($new);
 	
 	if($pick <= 30)
 		return 0;

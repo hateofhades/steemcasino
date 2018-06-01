@@ -10,6 +10,7 @@
 				<h3 style="margin-top:0">(1 of June 2018)</h3>
 				<p>
 					- Roulette and Jackpot are now Provably Fair.<br>
+					- Slots and Dices are now Provably Fair.<br>
 				</p>
 				<h3 style="margin-top:0">(24 of May 2018)</h3>
 				<p>

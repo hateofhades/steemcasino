@@ -1,5 +1,6 @@
 <?php
 include_once('src/db.php');
+include_once('src/gamesutils.php');
 
 	if(!empty($_GET["username"]) && !empty($_GET["access_token"]) && !empty($_GET["expires_in"]))
 	{
@@ -17,8 +18,10 @@ include_once('src/db.php');
 	$result = $query->get_result();
 	if(!$result->num_rows) {
 		$balance = 0;
-		$query = $db->prepare('INSERT INTO users (`username`, `balance`) VALUES (?, ?)');
-		$query->bind_param('si', $_GET['username'], $balance);
+		$dices = generateSecret()."-".generateSecret();
+		$slots = generateSecret(98)."-".generateSecret();
+		$query = $db->prepare('INSERT INTO users (`username`, `balance`, `dicesecret`, `slotsecret`) VALUES (?, ?, ?, ?)');
+		$query->bind_param('siss', $_GET['username'], $balance, $dices, $slots);
 	
 		$query->execute();
 	} else {

@@ -40,6 +40,8 @@ require_once('src/utils.php');
 					$.getJSON( "../src/getbalance.php", function( data ) {
 					if(data['status'] == 'success') {
 						$("#balance").text("Balance: " + data['balance'] + " SBD");
+						$("#diceshash").text("Current hash: " + data['dicesecret']);
+						$("#slotshash").text("Current hash: " + data['slotsecret']);
 					}
 				});
 				}

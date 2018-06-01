@@ -18,6 +18,9 @@
 				if(!rolling) {
 				var bet = $("#dicesInput").val();
 				var under = $("#rollUnder").val();
+				var secret = $("#secretInput").val();
+				
+				console.log(secret);
 				
 				if(bal)
 					$("#balance").text("Balance: " + bal + " SBD");
@@ -31,11 +34,14 @@
 				$("#rollButton").text("Working...");
 				
 					rolling = 1;
-					$.getJSON( "../src/dices.php?bet=" + bet + "&under=" + under, function( data ) {
+					$.getJSON( "../src/dices.php?bet=" + bet + "&under=" + under + "&secret=" + secret, function( data ) {
 						console.log(data);
 						if(data['status'] == 'success') {
 							animateVar = 0;
 							bal = data['balance'];
+							
+							$("#currSecret").text("Last roll secret: " + data['secret']);
+							$("#diceshash").text("Current hash: " + data['hash']);
 							
 							var lastRoll = {
 								rollUnder: data['under'],
@@ -104,6 +110,7 @@
 			
 			//If value is under min or over max we change it and if we detect a change in Roll Under or Multiplier (done by player) we are updating the other one to correspond.
 			$(document).ready(function() {
+				$("#secretInput").val(Math.random().toString(36).replace(/[^a-z123456789]+/g, '').substr(0, 10));
 				$('#rollUnder').on('input', function() {
 					var value = $("#rollUnder").val();
 						//value.toFixed(0);
@@ -229,6 +236,9 @@
 				</div>
 				
 			</div>
+			<center>Player secret: <input type="text" id="secretInput"></center>
+			<center><p id="diceshash"></p></center>
+			<center><p id="currSecret"></p></center>
 		</div>
 		<?php include('src/footer.php'); ?>
 	</body>

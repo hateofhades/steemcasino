@@ -12,8 +12,14 @@ if(IsLoggedOnUser()) {
 	if($result->num_rows) {
 		while ($row = $result->fetch_assoc()) {
 			$balance = $row['balance'];
+			$dicesecret = $row['dicesecret'];
+			$slotsecret = $row['slotsecret'];
+			
+			$dicesecret = hash("sha256", $dicesecret);
+			$slotsecret = hash("sha256", $slotsecret);
+			
 			$balance += $row['promob'];
-			$arr = array('status' => 'success', 'balance' => $balance);
+			$arr = array('status' => 'success', 'balance' => $balance, 'dicesecret' => $dicesecret, 'slotsecret' => $slotsecret);
 			echo json_encode($arr);
 		}
 	}
