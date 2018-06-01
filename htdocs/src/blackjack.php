@@ -171,7 +171,12 @@ if(!IsLoggedOnUser()) {
 				else
 					$housed = [$houseDraw[0]];
 				
-				$arr = array('status' => 'success', 'message' => 'Game has been successfully created.', 'game' => $game, 'playerDraw' => $playerDraw, 'houseDraw' => $housed, 'balance' => $newbalance, 'blackjack' => $isBlackjack, 'points' => checkPoints($playerDraw));
+				if($houseDraw[0][0] >= 10)
+					$insurance = 1;
+				else
+					$insurance = 0;
+				
+				$arr = array('status' => 'success', 'message' => 'Game has been successfully created.', 'game' => $game, 'insurance' => $insurance, 'playerDraw' => $playerDraw, 'houseDraw' => $housed, 'balance' => $newbalance, 'blackjack' => $isBlackjack, 'points' => checkPoints($playerDraw));
 				echo json_encode($arr);
 					
 				} else {
@@ -203,6 +208,7 @@ if(!IsLoggedOnUser()) {
 				$houseHandString = $row['houseHand'];
 				$state = $row['state'];
 				$player = $row['player'];
+				$insurance = $row['insurance'];
 				
 				$deck = json_decode($deckString);
 				$playerHand = json_decode($playerHandString);
@@ -248,6 +254,28 @@ if(!IsLoggedOnUser()) {
 								$query->bind_param('ssii', $deckString, $playerHandString, $win, $_GET['game']);
 				
 								$query->execute();
+								
+								if($insurance) {
+									$query = $db->prepare('SELECT * FROM users WHERE username = ?');
+									$query->bind_param('s', $_COOKIE['username']);
+								
+									$query->execute();
+									
+									$result = $query->get_result();
+									while ($row = $result->fetch_assoc()) { 
+										$balance = $row['balance'];
+										$losted = $row['losted'];
+										$won = $row['won'];
+									}
+									
+									$balance += $bet;
+									$losted -= $bet;
+									
+									$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ? WHERE username = ?');
+									$query->bind_param('ddds', $balance, $losted, $won, $_COOKIE['username']);
+							
+									$query->execute();
+								}
 								
 								$arr = array('status' => 'success', 'message' => '5', 'card' => $cardDraw, 'housePoints' => checkPoints($houseHand), 'playerHand' => $playerHand, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
 								echo json_encode($arr, JSON_NUMERIC_CHECK);
@@ -408,6 +436,7 @@ if(!IsLoggedOnUser()) {
 				$playerHandString = $row['playerHand'];
 				$houseHandString = $row['houseHand'];
 				$state = $row['state'];
+				$insurance = $row['insurance'];
 				$player = $row['player'];
 				
 				$deck = json_decode($deckString);
@@ -426,6 +455,30 @@ if(!IsLoggedOnUser()) {
 								$query->bind_param('ii', $win, $_GET['game']);
 				
 								$query->execute();
+								
+								if(checkPoints($houseHand) == 21) {
+									if($insurance) {
+										$query = $db->prepare('SELECT * FROM users WHERE username = ?');
+										$query->bind_param('s', $_COOKIE['username']);
+									
+										$query->execute();
+										
+										$result = $query->get_result();
+										while ($row = $result->fetch_assoc()) { 
+											$balance = $row['balance'];
+											$losted = $row['losted'];
+											$won = $row['won'];
+										}
+										
+										$balance += $bet;
+										$losted -= $bet;
+										
+										$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ? WHERE username = ?');
+										$query->bind_param('ddds', $balance, $losted, $won, $_COOKIE['username']);
+								
+										$query->execute();
+									}
+								}
 								
 								$arr = array('status' => 'success', 'message' => 'House had more points than you.', 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
 								echo json_encode($arr);
@@ -727,6 +780,91 @@ if(!IsLoggedOnUser()) {
 		if(!isset($_GET['game']) || $_GET['game'] == "" || $_GET['game'] == 0) {
 			$arr = array('status' => 'error', 'error' => 501, 'message' => 'Game is not set.');
 			echo json_encode($arr);
+		} else {
+			$query = $db->prepare('SELECT * FROM blackjack WHERE id = ?');
+			$query->bind_param('i', $_GET['game']);
+		
+			$query->execute();
+				
+			$result = $query->get_result();
+			if($result->num_rows) {
+				while ($row = $result->fetch_assoc()) { 
+				$win = $row['win'];
+				$bet = $row['bet'];
+				$deckString = $row['deck'];
+				$playerHandString = $row['playerHand'];
+				$houseHandString = $row['houseHand'];
+				$state = $row['state'];
+				$insurance = $row['insurance'];
+				$player = $row['player'];
+				
+				$deck = json_decode($deckString);
+				$playerHand = json_decode($playerHandString);
+				$houseHand = json_decode($houseHandString);
+				
+				}
+				
+				//We're now checking if the game did not ended, if the player is the same and if there is no insurance already and if the player hit.
+				if($win == 0) {
+					if($player == $_COOKIE['username']) {
+						if($state == 0 && $insurance == 0) {
+							$query = $db->prepare('SELECT * FROM users WHERE username = ?');
+							$query->bind_param('s', $_COOKIE['username']);
+								
+							$query->execute();
+									
+							$result = $query->get_result();
+							while ($row = $result->fetch_assoc()) { 
+								$balance = $row['balance'];
+								$losted = $row['losted'];
+								$won = $row['won'];
+							}
+							
+							//We're now checking if the player has enough balance and if first card is a 10, ace, jack, queen or king.
+							if($balance >= ($bet/2)) {
+								if($houseHand[0][0] >= 10) {
+									
+									$balance -= ($bet/2);
+									$losted += ($bet/2);
+									
+									$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ? WHERE username = ?');
+									$query->bind_param('ddds', $balance, $losted, $won, $_COOKIE['username']);
+											
+									$query->execute();
+									
+									$insurance = 1;
+									
+									$query = $db->prepare('UPDATE blackjack SET insurance = ? WHERE ID = ?');
+									$query->bind_param('ii', $insurance, $_GET['game']);
+								
+									$query->execute();
+									
+									$arr = array('status' => 'success', 'message' => 'Insurance put successfully.', 'balance' => $balance);
+									echo json_encode($arr);
+								} else {
+									$arr = array('status' => 'error', 'message' => 'The first card of the dealer is not a 10, ace, jack, queen or king.');
+									echo json_encode($arr);
+								}
+							} else {
+								$arr = array('status' => 'error', 'message' => 'You dont have enough SBD.');
+								echo json_encode($arr);
+							}
+						} else {
+							$arr = array('status' => 'error', 'error' => 981, 'message' => 'You can\'t use insurance now.');
+							echo json_encode($arr);
+						}
+					} else {
+						$arr = array('status' => 'error', 'error' => 981, 'message' => 'This is not your game.');
+						echo json_encode($arr);
+					} 
+				} else {
+					$arr = array('status' => 'error', 'error' => 982, 'message' => 'This game has already finished.');
+					echo json_encode($arr);
+				}
+			} else {
+				$arr = array('status' => 'error', 'error' => 501, 'message' => 'Game does not exist.');
+				echo json_encode($arr);
+			}
 		}
 	} else {
 		$arr = array('status' => 'error', 'error' => 802, 'message' => 'Action is invalid.');

@@ -1,4 +1,4 @@
-var game=0, timer;
+var game=0, timer, insuranced;
 
 function deal() {
 	timer = setInterval(function() { closeMessage(); }, 1000 * 10);
@@ -15,6 +15,7 @@ function deal() {
 			if(data['status'] == 'error')
 				errorGame(data['error'], data['message']);
 			else {
+				insuranced = 0;
 				$("#gameStatus").text("Let's play!");
 				$("#dealerHandString").text("Dealer:");
 				$("#playerHandString").text("Player:");
@@ -29,7 +30,7 @@ function deal() {
 				
 				$("#playerHandString").text("Player: " + data['points']);
 				
-				createGame(data['playerDraw'], data['houseDraw'], data['blackjack']);
+				createGame(data['playerDraw'], data['houseDraw'], data['blackjack'], data['insurance']);
 			}
 		});
 	else {
@@ -112,11 +113,35 @@ function surrender() {
 		});
 }
 
-function createGame(playerHand, houseHand, isBj) {
+function insurance() {
+	timer = setInterval(function() { closeMessage(); }, 1000 * 10);
+	$("#messages-box").css('background-color', 'yellow');
+	$("#messages").text("Working...");
+	$("#closeMessage").text("X");
+	
+	if(game)
+		$.getJSON( "../src/blackjack.php?action=insurance&game=" + game, function( data ) {
+			console.log(data);
+			
+			if(data['status'] == 'error')
+				errorGame(data['error'], data['message']);
+			else {	
+				insuranced = 1;
+				closeMessage();
+				
+				$("#balance").text("Balance: " + data['balance'] + " SBD");
+				$("#gameStatus").text("Insurance");
+				
+				setButtons(0, 1, 1, 0, 0, 0, 1);
+			}
+		});
+}
+
+function createGame(playerHand, houseHand, isBj, insurance) {
 	setTable("player", playerHand);
 	setTable("dealer", houseHand);
 	
-	setButtons();
+	setButtons(0, 1, 1, insurance, 0, 0, 1);
 	
 	if(isBj == 1) {
 		$("#gameStatus").text("You win.");
@@ -137,6 +162,8 @@ function updateGame(playerHand, houseHand, type, win, points) {
 			$("#gameStatus").text("You lost.");
 			setButtons(1, 0, 0, 0, 0, 0, 0);
 			game = 0;
+			if(insuranced)
+				getBalance();
 		}
 	}
 	else {
@@ -147,8 +174,11 @@ function updateGame(playerHand, houseHand, type, win, points) {
 		
 		$("#dealerHandString").text("Dealer: " + points);
 		
-		if(type == 2)
+		if(type == 2) {
 			$("#gameStatus").text("You lose.");
+			if(insuranced)
+				getBalance();
+		}
 		else if(type == 3) {
 			$("#gameStatus").text("You win.");
 			getBalance();
@@ -157,8 +187,11 @@ function updateGame(playerHand, houseHand, type, win, points) {
 			$("#gameStatus").text("Draw.");
 			getBalance();
 		}
-		else if(type == 5)
+		else if(type == 5) {
 			$("#gameStatus").text("You lose. Dealer had blackjack.");
+			if(insuranced)
+				getBalance();
+		}
 	}
 }
 
@@ -172,8 +205,11 @@ function standGame(houseHand, win, points) {
 	if(win == 1) {
 		$("#gameStatus").text("You win.");
 		getBalance();
-	} else if(win == 2) 
+	} else if(win == 2)  {
 		$("#gameStatus").text("You lose.");
+		if(insuranced)
+				getBalance();
+	}
 	else if(win == 3) {
 		$("#gameStatus").text("Draw.");
 		getBalance();
