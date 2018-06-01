@@ -87,7 +87,7 @@ function slotIsWin($slot1, $slot2, $slot3) {
 }
 
 //This is the function that creates a blackjack deck of cards and shuffles it.
-function createDeck () {
+function createDeck ($seed) {
 	
 	$deck = [];
 	
@@ -97,10 +97,24 @@ function createDeck () {
 		array_push($deck, [$i, "C"]);
 		array_push($deck, [$i, "D"]);
 		
-		shuffle($deck);
 	}
-	shuffle($deck);
+	$deck = shuffleDeck($deck, $seed);
 	return $deck;
+}
+
+//This is the function that shuffles the deck with a given seed so it's provable fair.
+function shuffleDeck(&$items, $seed)
+{
+    @mt_srand($seed);
+    for ($i = count($items) - 1; $i > 0; $i--)
+    {
+        $j = @mt_rand(0, $i);
+        $tmp = $items[$i];
+        $items[$i] = $items[$j];
+        $items[$j] = $tmp;
+    }
+	
+	return $items;
 }
 
 //This function draws the cards and returns them. *removeCards should be used after calling this function to remove them from the deck*

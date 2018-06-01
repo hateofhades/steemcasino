@@ -16,9 +16,11 @@ function deal() {
 				errorGame(data['error'], data['message']);
 			else {
 				insuranced = 0;
+				$("#hash").text("Hash: " + data['hash']);
 				$("#gameStatus").text("Let's play!");
 				$("#dealerHandString").text("Dealer:");
 				$("#playerHandString").text("Player:");
+				$("#secret").text("");
 				closeMessage();
 				timer = setInterval(function() { closeMessage(); }, 1000 * 10);
 				$("#messages-box").css('background-color', 'green');
@@ -30,7 +32,7 @@ function deal() {
 				
 				$("#playerHandString").text("Player: " + data['points']);
 				
-				createGame(data['playerDraw'], data['houseDraw'], data['blackjack'], data['insurance']);
+				createGame(data['playerDraw'], data['houseDraw'], data['blackjack'], data['insurance'], data['secret']);
 			}
 		});
 	else {
@@ -61,7 +63,7 @@ function hit() {
 				
 				$("#playerHandString").text("Player: " + data['points']);
 				
-				updateGame(data['playerHand'], data['house'], data['message'], data['win'], data['housePoints']);
+				updateGame(data['playerHand'], data['house'], data['message'], data['win'], data['housePoints'], data['secret']);
 			}
 		});
 }
@@ -83,7 +85,7 @@ function stand() {
 				
 				closeMessage();
 				
-				standGame(data['house'], data['win'], data['housePoints']);
+				standGame(data['house'], data['win'], data['housePoints'], data['secret']);
 			}
 		});
 }
@@ -137,7 +139,7 @@ function insurance() {
 		});
 }
 
-function createGame(playerHand, houseHand, isBj, insurance) {
+function createGame(playerHand, houseHand, isBj, insurance, secret) {
 	setTable("player", playerHand);
 	setTable("dealer", houseHand);
 	
@@ -145,20 +147,23 @@ function createGame(playerHand, houseHand, isBj, insurance) {
 	
 	if(isBj == 1) {
 		$("#gameStatus").text("You win.");
+		$("#secret").text("Secret: " + secret);
 		setButtons(1, 0, 0, 0, 0, 0, 0);
 		game = 0;
 	}
 	else if(isBj == 2) {
 		$("#gameStatus").text("Draw.");
+		$("#secret").text("Secret: " + secret);
 		setButtons(1, 0, 0, 0, 0, 0, 0);
 		game = 0;
 	}
 }
 
-function updateGame(playerHand, houseHand, type, win, points) {
+function updateGame(playerHand, houseHand, type, win, points, secret) {
 	if(type == 1) {
 		setTable("player", playerHand);
 		if(win) {
+			$("#secret").text("Secret: " + secret);
 			$("#gameStatus").text("You lost.");
 			setButtons(1, 0, 0, 0, 0, 0, 0);
 			game = 0;
@@ -173,6 +178,7 @@ function updateGame(playerHand, houseHand, type, win, points) {
 		game = 0;
 		
 		$("#dealerHandString").text("Dealer: " + points);
+		$("#secret").text("Secret: " + secret);
 		
 		if(type == 2) {
 			$("#gameStatus").text("You lose.");
@@ -195,12 +201,13 @@ function updateGame(playerHand, houseHand, type, win, points) {
 	}
 }
 
-function standGame(houseHand, win, points) {
+function standGame(houseHand, win, points, secret) {
 	setButtons(1, 0, 0, 0, 0, 0, 0);
 	setTable("dealer", houseHand);
 	game = 0;
 	
 	$("#dealerHandString").text("Dealer: " + points);
+	$("#secret").text("Secret: " + secret);
 	
 	if(win == 1) {
 		$("#gameStatus").text("You win.");
