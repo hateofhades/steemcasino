@@ -180,7 +180,7 @@ if(!IsLoggedOnUser()) {
 				else
 					$housed = [$houseDraw[0]];
 				
-				if($houseDraw[0][0] >= 10)
+				if($houseDraw[0][0] == 11)
 					$insurance = 1;
 				else
 					$insurance = 0;
@@ -708,11 +708,203 @@ if(!IsLoggedOnUser()) {
 				$arr = array('status' => 'error', 'error' => 501, 'message' => 'Game is not set.');
 				echo json_encode($arr);
 			}
-	} else if($_GET['action'] == "double") { 
+	} else if($_GET['action'] == "doubled") { 
 		if(!isset($_GET['game']) || $_GET['game'] == "" || $_GET['game'] == 0) {
-				$arr = array('status' => 'error', 'error' => 501, 'message' => 'Game is not set.');
+			$arr = array('status' => 'error', 'error' => 501, 'message' => 'Game is not set.');
+			echo json_encode($arr);
+		} else {
+			$query = $db->prepare('SELECT * FROM blackjack WHERE id = ?');
+			$query->bind_param('i', $_GET['game']);
+		
+			$query->execute();
+				
+			$result = $query->get_result();
+			if($result->num_rows) {
+				while ($row = $result->fetch_assoc()) { 
+				$win = $row['win'];
+				$bet = $row['bet'];
+				$deckString = $row['deck'];
+				$playerHandString = $row['playerHand'];
+				$houseHandString = $row['houseHand'];
+				$state = $row['state'];
+				$insurance = $row['insurance'];
+				$player = $row['player'];
+				$ssecret = $row['secret'];
+				
+				$deck = json_decode($deckString);
+				$playerHand = json_decode($playerHandString);
+				$houseHand = json_decode($houseHandString);
+				
+				}
+				
+				//We're now checking if the game did not ended, if the player is the same and if no hit happend.
+				if($win == 0) {
+					if($player == $_COOKIE['username']) {
+						if($state == 0) {
+							$query = $db->prepare('SELECT * FROM users WHERE username = ?');
+							$query->bind_param('s', $_COOKIE['username']);
+								
+							$query->execute();
+									
+							$result = $query->get_result();
+							while ($row = $result->fetch_assoc()) { 
+								$balance = $row['balance'];
+								$losted = $row['losted'];
+								$won = $row['won'];
+							}
+							
+							//We're now checking if the player has enough balance.
+							if($balance >= $bet) {
+								$balance -= $bet;
+								$losted += $bet;
+								
+								//Now we are giving one card to the player.
+								$playerHand = drawCards($deck, 1, $playerHand);
+								
+								$deck = removeCards($deck);
+
+								$playerHandString = json_encode($playerHand);
+								
+								$house = $houseHand;
+								//Now we are checking every possible situation.
+								//If the player has over 21.
+								if(checkPoints($playerHand) > 21) {
+									$win = 2;
+									$status = 1;
+								}//If the player has 21
+								else if(checkPoints($playerHand) == 21) {
+									//And house has blackjack, he loses.
+									if(checkPoints($houseHand) == 21) {
+										$win = 2;
+										$status = 2;
+										//If he had insurance, he'll get 1x bet.
+										if($insurance) {
+											$balance += $bet;
+											$losted -= $bet;
+										}
+
+									}
+									//Else, if the house has under 21 but over 16, player wins
+									else if(checkPoints($houseHand) > 16) {
+										$win = 1;
+										$status = 3;
+										$balance += ($bet*2*2);
+										$losted -= ($bet*2);
+										$won += ($bet*2);
+									} else { //Else if the house has under 17, it calculates how much to draw. (Hits until points bigger than 17)
+										$houseHand = drawHouse($houseHand, $deck);
+										$houseHandString = json_encode($houseHand);
+										
+										//If the house draws 21, then it's a draw
+										if(checkPoints($houseHand) == 21) {
+											$win = 3;
+											$status = 4;
+											$balance += ($bet*2);
+											$losted -= ($bet*2);
+										//If the house draws over 21, then player wins
+										} else if(checkPoints($houseHand) > 21) {
+											$win = 1;
+											$status = 5;
+											$balance += ($bet*2*2);
+											$losted -= ($bet*2);
+											$won += ($bet*2);
+										} else { //If the house draws under 21, then player wins
+											$win = 1;
+											$status = 6;
+											$balance += ($bet*2*2);
+											$losted -= ($bet*2);
+											$won += ($bet*2);
+										}
+									}
+								} else { //If the player has under 21
+									//And the house over 16
+									if(checkPoints($houseHand) > 16) {
+										//If the house has more points than the player, the player loses.
+										if(checkPoints($houseHand) > checkPoints($playerHand)) {
+											$win = 2;
+											$status = 7;
+										} //Else if the player has more points, he wins
+										else if(checkPoints($houseHand) < checkPoints($playerHand)) {
+											$win = 1;
+											$status = 6;
+											$balance += ($bet*2*2);
+											$losted -= ($bet*2);
+											$won += ($bet*2);
+										} //Else the house and the player have the same points, so it's a draw
+										else {
+											$win = 3;
+											$status = 4;
+											$balance += ($bet*2);
+											$losted -= ($bet*2);
+										}
+									} //Else the house has under 17 and will draw until gets at least 17
+									else {
+										$houseHand = drawHouse($houseHand, $deck);
+										$houseHandString = json_encode($houseHand);
+										
+										//If the house has over 21, then the player wins.
+										if(checkPoints($houseHand) > 21) {
+											$win = 1;
+											$status = 5;
+											$balance += ($bet*2*2);
+											$losted -= ($bet*2);
+											$won += ($bet*2);
+										} //Else if the player has more points than the house, the player wins.
+										else if(checkPoints($houseHand) < checkPoints($playerHand)) {
+											$win = 1;
+											$status = 6;
+											$balance += ($bet*2*2);
+											$losted -= ($bet*2);
+											$won += ($bet*2);
+										} //Else if the house has more points, the house wins.
+										else if(checkPoints($houseHand) > checkPoints($playerHand)) {
+											$win = 2;
+											$status = 7;
+										} //Else it's a draw.
+										else {
+											$win = 3;
+											$status = 4;
+											$balance += ($bet*2);
+											$losted -= ($bet*2);
+										}
+									}
+								}
+									//We're updating the player balance.
+								$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ? WHERE username = ?');
+								$query->bind_param('ddds', $balance, $losted, $won, $_COOKIE['username']);
+											
+								$query->execute();
+								
+									//And the blackjack game win status.
+								$query = $db->prepare('UPDATE blackjack SET win = ? WHERE ID = ?');
+								$query->bind_param('ii', $win, $_GET['game']);
+											
+								$query->execute();
+									
+									//And sending the new info to the player.
+								$arr = array('status' => 'success', 'message' => 'Double down successfully.', 'balance' => $balance, 'win' => $win, 'statuss' => $status, 'player' => $playerHand, 'house' => $houseHand, 'housePoints' => checkPoints($houseHand), 'secret' => $ssecret, 'points' => checkPoints($playerHand));
+								echo json_encode($arr);
+							} else {
+								$arr = array('status' => 'error', 'message' => 'You dont have enough SBD.');
+								echo json_encode($arr);
+							}
+						} else {
+							$arr = array('status' => 'error', 'error' => 981, 'message' => 'You can\'t double down now.');
+							echo json_encode($arr);
+						}
+					} else {
+						$arr = array('status' => 'error', 'error' => 981, 'message' => 'This is not your game.');
+						echo json_encode($arr);
+					} 
+				} else {
+					$arr = array('status' => 'error', 'error' => 982, 'message' => 'This game has already finished.');
+					echo json_encode($arr);
+				}
+			} else {
+				$arr = array('status' => 'error', 'error' => 501, 'message' => 'Game does not exist.');
 				echo json_encode($arr);
 			}
+		}
 	} else if($_GET['action'] == "surrender") { 
 		if(!isset($_GET['game']) || $_GET['game'] == "" || $_GET['game'] == 0) {
 			$arr = array('status' => 'error', 'error' => 501, 'message' => 'Game is not set.');
@@ -835,7 +1027,7 @@ if(!IsLoggedOnUser()) {
 							
 							//We're now checking if the player has enough balance and if first card is a 10, ace, jack, queen or king.
 							if($balance >= ($bet/2)) {
-								if($houseHand[0][0] >= 10) {
+								if($houseHand[0][0] == 11) {
 									
 									$balance -= ($bet/2);
 									$losted += ($bet/2);
@@ -855,7 +1047,7 @@ if(!IsLoggedOnUser()) {
 									$arr = array('status' => 'success', 'message' => 'Insurance put successfully.', 'balance' => $balance);
 									echo json_encode($arr);
 								} else {
-									$arr = array('status' => 'error', 'message' => 'The first card of the dealer is not a 10, ace, jack, queen or king.');
+									$arr = array('status' => 'error', 'message' => 'The first card of the dealer is not an ace.');
 									echo json_encode($arr);
 								}
 							} else {

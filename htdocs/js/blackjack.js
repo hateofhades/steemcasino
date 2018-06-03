@@ -58,6 +58,7 @@ function hit() {
 				errorGame(data['error'], data['message']);
 			else {
 				$("#surrender").css("background-color", "#C0DBD1");
+				$("#doubled").css("background-color", "#C0DBD1");
 				
 				closeMessage();
 				
@@ -86,6 +87,32 @@ function stand() {
 				closeMessage();
 				
 				standGame(data['house'], data['win'], data['housePoints'], data['secret']);
+			}
+		});
+}
+
+function doubled() {
+	timer = setInterval(function() { closeMessage(); }, 1000 * 10);
+	$("#messages-box").css('background-color', 'yellow');
+	$("#messages").text("Working...");
+	$("#closeMessage").text("X");
+	
+	if(game)
+		$.getJSON( "../src/blackjack.php?action=doubled&game=" + game, function( data ) {
+			console.log(data);
+			
+			if(data['status'] == 'error')
+				errorGame(data['error'], data['message']);
+			else {
+				$("#surrender").css("background-color", "#C0DBD1");
+				$("#balance").text("Balance: " + data['balance'] + " SBD");
+				$("#dealerHandString").text("Dealer: " + data['housePoints']);
+				$("#secret").text("Secret: " + data['secret']);
+				$("#playerHandString").text("Player: " + data['points']);
+				
+				closeMessage();
+				
+				doubleGame(data['player'], data['house'], data['win'], data['statuss']);
 			}
 		});
 }
@@ -139,11 +166,28 @@ function insurance() {
 		});
 }
 
+function doubleGame(playerHand, houseHand, win, statuss) {
+	setTable("player", playerHand);
+	setTable("dealer", houseHand);
+	setButtons(1, 0, 0, 0, 0, 0, 0);
+	game = 0;
+	
+	if(win == 1) {
+		$("#gameStatus").text("You won.");
+	} else if(win == 2) {
+		if(statuss == 2)
+			$("#gameStatus").text("You lost. Dealer had blackjack.");
+		else
+			$("#gameStatus").text("You lost.");
+	} else
+		$("#gameStatus").text("Draw.");
+}
+
 function createGame(playerHand, houseHand, isBj, insurance, secret) {
 	setTable("player", playerHand);
 	setTable("dealer", houseHand);
 	
-	setButtons(0, 1, 1, insurance, 0, 0, 1);
+	setButtons(0, 1, 1, insurance, 1, 0, 1);
 	
 	if(isBj == 1) {
 		$("#gameStatus").text("You win.");
@@ -227,7 +271,7 @@ function searchCard(card) {
 	return cardURL = "img/blackjack/" + card[0] + card[1] + ".png";
 }
 
-function setButtons(deal = 0, hit = 1, stand = 1, insurance = 0, doubled = 0, split = 0, surrender = 1) {
+function setButtons(deal = 0, hit = 1, stand = 1, insurance = 0, doubled = 1, split = 0, surrender = 1) {
 	if(deal)
 		$("#deal").css("background-color", "white");
 	else
