@@ -200,6 +200,11 @@ function createGame(playerHand, houseHand, isBj, insurance, secret) {
 		$("#secret").text("Secret: " + secret);
 		setButtons(1, 0, 0, 0, 0, 0, 0);
 		game = 0;
+	} else if(isBj == 3) {
+		$("#gameStatus").text("House had blackjack. You lost.");
+		$("#secret").text("Secret: " + secret);
+		setButtons(1, 0, 0, 0, 0, 0, 0);
+		game = 0;
 	}
 }
 

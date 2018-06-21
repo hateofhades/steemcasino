@@ -49,18 +49,16 @@ if(!IsLoggedOnUser()) {
 					$deckString = json_encode($deck);
 					$houseDrawString = json_encode($houseDraw);
 					
-					if((($playerDraw[0][0] == 11 && ($playerDraw[1][0] > 11 || $playerDraw[1][0] == 10)) || ($playerDraw[1][0] == 11 && ($playerDraw[0][0] > 11 || $playerDraw[0][0] == 10))) && (($houseDraw[0][0] != 11 || ($houseDraw[1][0] <= 11 && $houseDraw[1][0] != 10)) && ($houseDraw[1][0] != 11 || ($houseDraw[0][0] < 11 && $houseDraw[0][0] != 10))))
+					$playerPoints = checkPoints($playerDraw);
+					$housePoints = checkPoints($houseDraw);
+					
+					//We check to see if the player or the house has blackjack and if so we end the game, else we continue with it.
+					
+					if($playerPoints == 21 && $housePoints != 21)
 					{
 						$isBlackjack = 1;
 						$ssecret = $secret;
 						$winnn = 1;
-						
-						$query = $db->prepare('INSERT INTO blackjack (player, bet, deck, playerHand, houseHand, win, secret, hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-						$query->bind_param('sdsssiss', $_COOKIE['username'], $_GET['bet'], $deckString, $playerDrawString, $houseDrawString, $winnn, $secret, $hash);
-				
-						$query->execute();
-					
-						$game = mysqli_insert_id($db);
 						
 						if(!$promobal) {
 							$newbalance = $balance + ($_GET['bet'] * 1.5);
@@ -77,19 +75,12 @@ if(!IsLoggedOnUser()) {
 						$won += ($_GET['bet'] * 1.5);
 						$losted -= $_GET['bet'];
 						
-					} else if((($playerDraw[0][0] == 11 && ($playerDraw[1][0] > 11 || $playerDraw[1][0] == 10)) || ($playerDraw[1][0] == 11 && ($playerDraw[0][0] > 11 || $playerDraw[0][0] == 10))) && (($houseDraw[0][0] == 11 && ($houseDraw[1][0] > 11 || $houseDraw[1][0] == 10)) || ($houseDraw[1][0] == 11 && ($houseDraw[0][0] > 11 || $houseDraw[0][0] == 10)))) {
+					} else if($playerPoints == 21 && $housePoints == 21) {
 						$isBlackjack = 2;
 						
 						$ssecret = $secret;
 						
 						$winnn = 3;
-						
-						$query = $db->prepare('INSERT INTO blackjack (player, bet, deck, playerHand, houseHand, win, secret, hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-						$query->bind_param('sdsssiss', $_COOKIE['username'], $_GET['bet'], $deckString, $playerDrawString, $houseDrawString, $winnn, $secret, $hash);
-				
-						$query->execute();
-					
-						$game = mysqli_insert_id($db);
 						
 						if(!$promobal) {
 							$newbalance = $balance;
@@ -104,19 +95,31 @@ if(!IsLoggedOnUser()) {
 						}
 						
 						$losted -= $bet;
+					} else if($housePoints == 21) {
+						$isBlackjack = 3;
 						
+						$ssecret = $secret;
+						
+						$winnn = 2;
+						
+						if(!$promobal) {
+							$newbalance = $balance - $_GET['bet'];
+						} else {
+							if($promobal <= $_GET['bet']) {
+								$betnew = $_GET['bet'] - $promobal;
+								$promobal = 0;
+								$newbalance = $balance - $betnew;
+							} else {
+								$promobal = $promobal - $_GET['bet'];
+								$newbalance = $balance;
+							}
+						}
+						
+						$losted = $losted + $_GET['bet'];
 					} else {
 						$isBlackjack = 0;
 						$losted = $losted + $_GET['bet'];
-						$ssecret = $secret;
 						$winnn = 0;
-						
-						$query = $db->prepare('INSERT INTO blackjack (player, bet, deck, playerHand, houseHand, win, secret, hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-						$query->bind_param('sdsssiss', $_COOKIE['username'], $_GET['bet'], $deckString, $playerDrawString, $houseDrawString, $winnn, $secret, $hash);
-				
-						$query->execute();
-					
-						$game = mysqli_insert_id($db);
 						
 						if(!$promobal) {
 							$newbalance = $balance - $_GET['bet'];
@@ -131,6 +134,13 @@ if(!IsLoggedOnUser()) {
 							}
 						}
 					}
+					
+					$query = $db->prepare('INSERT INTO blackjack (player, bet, deck, playerHand, houseHand, win, secret, hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+					$query->bind_param('sdsssiss', $_COOKIE['username'], $_GET['bet'], $deckString, $playerDrawString, $houseDrawString, $winnn, $secret, $hash);
+				
+					$query->execute();
+					
+					$game = mysqli_insert_id($db);
 					
 					$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, promob = ?, won = ? WHERE username = ?');
 					$query->bind_param('dddds', $newbalance, $losted, $promobal, $won, $_COOKIE['username']);
@@ -705,9 +715,96 @@ if(!IsLoggedOnUser()) {
 		}
 	} else if($_GET['action'] == "split") { 
 		if(!isset($_GET['game']) || $_GET['game'] == "" || $_GET['game'] == 0) {
-				$arr = array('status' => 'error', 'error' => 501, 'message' => 'Game is not set.');
+			$arr = array('status' => 'error', 'error' => 501, 'message' => 'Game is not set.');
+			echo json_encode($arr);
+		} else {
+			$query = $db->prepare('SELECT * FROM blackjack WHERE id = ?');
+			$query->bind_param('i', $_GET['game']);
+		
+			$query->execute();
+				
+			$result = $query->get_result();
+			if($result->num_rows) {
+				while ($row = $result->fetch_assoc()) { 
+				$win = $row['win'];
+				$bet = $row['bet'];
+				$deckString = $row['deck'];
+				$playerHandString = $row['playerHand'];
+				$houseHandString = $row['houseHand'];
+				$state = $row['state'];
+				$insurance = $row['insurance'];
+				$player = $row['player'];
+				$ssecret = $row['secret'];
+				
+				$deck = json_decode($deckString);
+				$playerHand = json_decode($playerHandString);
+				$houseHand = json_decode($houseHandString);
+				
+				}
+				
+				//We're now checking if the game did not ended, if the player is the same and if no hit happend.
+				if($win == 0) {
+					if($player == $_COOKIE['username']) {
+						if($state == 0) {
+							$query = $db->prepare('SELECT * FROM users WHERE username = ?');
+							$query->bind_param('s', $_COOKIE['username']);
+								
+							$query->execute();
+									
+							$result = $query->get_result();
+							while ($row = $result->fetch_assoc()) { 
+								$balance = $row['balance'];
+								$losted = $row['losted'];
+								$won = $row['won'];
+							}
+							
+							//We're now checking if the player has enough balance.
+							if($balance >= $bet) {
+								//We're checking if the cards are the same.
+								if($playerHand[0][0] == $playerHand[1][0]) {
+									$balance -= $bet;
+									$losted += $bet;
+									
+									//Now we are saving the second card in other variable and removing it from the hand and drawing a new card.
+									$splitCard = $playerHand[1][0];
+									$newDeck = array_pop($playerHand);
+									$newDeck = drawCards($deck, 1, $newDeck);
+									$deck = removeCards($deck);
+									
+									//Now we are checking to see if the new first hand is a blackjack and the house is not. If it is we reward the player and go to the second hand.
+									if(checkPoints($newDeck) == 21 && checkPoints($houseHand) != 21) {
+										//We're drawing the second card for the second deck and checking if it's a blackjack too!
+										$secondNewDeck = drawCards($deck, 1, $splitCard);
+										$deck = removeCards($deck);
+										if(checkPoints($secondNewDeck) == 21) {
+											$balance += ($bet * 4);
+										}
+									}
+								} else {
+									$arr = array('status' => 'error', 'message' => 'You can\'t split two different cards.');
+									echo json_encode($arr);
+								}
+							} else {
+								$arr = array('status' => 'error', 'message' => 'You dont have enough SBD.');
+								echo json_encode($arr);
+							}
+						} else {
+						$arr = array('status' => 'error', 'error' => 981, 'message' => 'You can\'t split now.');
+						echo json_encode($arr);
+						}
+					} else {
+						$arr = array('status' => 'error', 'error' => 981, 'message' => 'This is not your game.');
+						echo json_encode($arr);
+					}
+				} else {
+					$arr = array('status' => 'error', 'error' => 982, 'message' => 'This game has already finished.');
+					echo json_encode($arr);
+				}
+			} else {
+				$arr = array('status' => 'error', 'error' => 501, 'message' => 'Game does not exist.');
 				echo json_encode($arr);
 			}
+		}
 	} else if($_GET['action'] == "doubled") { 
 		if(!isset($_GET['game']) || $_GET['game'] == "" || $_GET['game'] == 0) {
 			$arr = array('status' => 'error', 'error' => 501, 'message' => 'Game is not set.');
