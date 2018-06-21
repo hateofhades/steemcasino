@@ -247,7 +247,10 @@ if(!IsLoggedOnUser()) {
 						$deckString = json_encode($deck);
 						$playerHandString = json_encode($playerHand);
 						
-						if(checkPoints($playerHand) > 21) {
+						$playerPoints = checkPoints($playerHand);
+						$housePoints = checkPoints($houseHand);
+						
+						if($playerPoints > 21) {
 							$win = 2;
 							$house = $houseHand;
 							$ssecret = $secret;
@@ -258,7 +261,7 @@ if(!IsLoggedOnUser()) {
 							$ssecret = "";
 						}
 						
-						if(checkPoints($playerHand) != 21) {
+						if($playerPoints != 21) {
 						$state = 1;
 						$query = $db->prepare('UPDATE blackjack SET deck = ?, playerHand = ?, win = ?, state = ? WHERE ID = ?');
 						$query->bind_param('ssiii', $deckString, $playerHandString, $win, $state, $_GET['game']);
@@ -269,39 +272,7 @@ if(!IsLoggedOnUser()) {
 						echo json_encode($arr, JSON_NUMERIC_CHECK);
 						
 						} else {
-							if(checkPoints($houseHand) == 21) {
-								$win = 2;
-								
-								$query = $db->prepare('UPDATE blackjack SET deck = ?, playerHand = ?, win = ? WHERE ID = ?');
-								$query->bind_param('ssii', $deckString, $playerHandString, $win, $_GET['game']);
-				
-								$query->execute();
-								
-								if($insurance) {
-									$query = $db->prepare('SELECT * FROM users WHERE username = ?');
-									$query->bind_param('s', $_COOKIE['username']);
-								
-									$query->execute();
-									
-									$result = $query->get_result();
-									while ($row = $result->fetch_assoc()) { 
-										$balance = $row['balance'];
-										$losted = $row['losted'];
-										$won = $row['won'];
-									}
-									
-									$balance += $bet;
-									$losted -= $bet;
-									
-									$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ? WHERE username = ?');
-									$query->bind_param('ddds', $balance, $losted, $won, $_COOKIE['username']);
-							
-									$query->execute();
-								}
-								
-								$arr = array('status' => 'success', 'secret' => $secret, 'message' => '5', 'card' => $cardDraw, 'housePoints' => checkPoints($houseHand), 'playerHand' => $playerHand, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
-								echo json_encode($arr, JSON_NUMERIC_CHECK);
-							} else if(checkPoints($houseHand) >= 17) {
+							if($housePoints >= 17) {
 								$win = 1;
 								
 								$query = $db->prepare('UPDATE blackjack SET deck = ?, playerHand = ?, win = ? WHERE ID = ?');
@@ -335,13 +306,15 @@ if(!IsLoggedOnUser()) {
 								
 								$query->execute();
 								
-								$arr = array('status' => 'success', 'secret' => $secret, 'message' => '3', 'card' => $cardDraw, 'playerHand' => $playerHand, 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								$arr = array('status' => 'success', 'secret' => $secret, 'message' => '3', 'card' => $cardDraw, 'playerHand' => $playerHand, 'housePoints' => $housePoints, 'points' => $playerPoints, 'win' => $win, 'house' => $houseHand);
 								echo json_encode($arr, JSON_NUMERIC_CHECK);
 							} else {
 								$houseHand = drawHouse($houseHand, $deck);
 								$houseHandString = json_encode($houseHand);
 								
-								if(checkPoints($houseHand) == 21) {
+								$housePoints = checkPoints($houseHand);
+								
+								if($housePoints == 21) {
 									$win = 3;
 								
 									$query = $db->prepare('UPDATE blackjack SET deck = ?, playerHand = ?, $houseHand = ?, win = ? WHERE ID = ?');
@@ -361,8 +334,13 @@ if(!IsLoggedOnUser()) {
 										$won = $row['won'];
 									}
 									
-									$balance += $bet;
-									$losted -= $bet;
+									if(!insurance) {
+										$balance += $bet;
+										$losted -= $bet;
+									} else {
+										$balance += ($bet * 1.5);
+										$losted -= ($bet * 1.5);
+									}
 													
 									$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ? WHERE username = ?');
 									$query->bind_param('ddds', $balance, $losted, $won, $_COOKIE['username']);
@@ -374,9 +352,9 @@ if(!IsLoggedOnUser()) {
 									
 									$query->execute();
 									
-									$arr = array('status' => 'success', 'secret' => $secret, 'message' => '4', 'card' => $cardDraw, 'housePoints' => checkPoints($houseHand), 'playerHand' => $playerHand, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+									$arr = array('status' => 'success', 'secret' => $secret, 'message' => '4', 'card' => $cardDraw, 'housePoints' => $housePoints, 'playerHand' => $playerHand, 'points' => $playerPoints, 'win' => $win, 'house' => $houseHand);
 									echo json_encode($arr, JSON_NUMERIC_CHECK);
-								} else if(checkPoints($houseHand) > 21 || checkPoints($playerHand) > checkPoints($houseHand)) {
+								} else if($housePoints > 21 || $playerPoints > $housePoints) {
 									$win = 1;
 								
 									$query = $db->prepare('UPDATE blackjack SET deck = ?, playerHand = ?, win = ? WHERE ID = ?');
@@ -410,7 +388,7 @@ if(!IsLoggedOnUser()) {
 									
 									$query->execute();
 									
-									$arr = array('status' => 'success', 'secret' => $secret, 'message' => '3', 'card' => $cardDraw, 'housePoints' => checkPoints($houseHand), 'playerHand' => $playerHand, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+									$arr = array('status' => 'success', 'secret' => $secret, 'message' => '3', 'card' => $cardDraw, 'housePoints' => $housePoints, 'playerHand' => $playerHand, 'points' => $playerPoints, 'win' => $win, 'house' => $houseHand);
 									echo json_encode($arr, JSON_NUMERIC_CHECK);
 								} else {
 									$win = 2;
@@ -420,7 +398,7 @@ if(!IsLoggedOnUser()) {
 				
 									$query->execute();
 								
-									$arr = array('status' => 'success', 'secret' => $secret, 'message' => '2', 'card' => $cardDraw, 'housePoints' => checkPoints($houseHand), 'playerHand' => $playerHand, 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+									$arr = array('status' => 'success', 'secret' => $secret, 'message' => '2', 'card' => $cardDraw, 'housePoints' => $housePoints, 'playerHand' => $playerHand, 'points' => $playerPoints, 'win' => $win, 'house' => $houseHand);
 									echo json_encode($arr, JSON_NUMERIC_CHECK);
 								}
 							}
@@ -470,8 +448,10 @@ if(!IsLoggedOnUser()) {
 				
 				if($win == 0) {
 					if($player == $_COOKIE['username']) {
-						if(checkPoints($houseHand) >= 17) {
-							if(checkPoints($houseHand) > checkPoints($playerHand)) {
+						$playerPoints = checkPoints($playerHand);
+						$housePoints = checkPoints($houseHand);
+						if($housePoints >= 17) {
+							if($housePoints > $playerPoints) {
 								$win = 2;
 								
 								$query = $db->prepare('UPDATE blackjack SET win = ? WHERE ID = ?');
@@ -479,7 +459,7 @@ if(!IsLoggedOnUser()) {
 				
 								$query->execute();
 								
-								if(checkPoints($houseHand) == 21) {
+								/*if(checkPoints($houseHand) == 21) {
 									if($insurance) {
 										$query = $db->prepare('SELECT * FROM users WHERE username = ?');
 										$query->bind_param('s', $_COOKIE['username']);
@@ -501,11 +481,11 @@ if(!IsLoggedOnUser()) {
 								
 										$query->execute();
 									}
-								}
+								}*/
 								
-								$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'House had more points than you.', 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'House had more points than you.', 'housePoints' => $housePoints, 'points' => $playerPoints, 'win' => $win, 'house' => $houseHand);
 								echo json_encode($arr);
-							} else if(checkPoints($houseHand) == checkPoints($playerHand)) {
+							} else if($housePoints == $playerPoints) {
 								$win = 3;
 								
 								$query = $db->prepare('UPDATE blackjack SET win = ? WHERE ID = ?');
@@ -538,7 +518,7 @@ if(!IsLoggedOnUser()) {
 									
 								$query->execute();
 									
-								$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'Draw', 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'Draw', 'housePoints' => $housePoints, 'points' => $playerPoints, 'win' => $win, 'house' => $houseHand);
 								echo json_encode($arr);
 							} else {
 								$win = 1;
@@ -574,12 +554,13 @@ if(!IsLoggedOnUser()) {
 									
 								$query->execute();
 									
-								$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'You have won.', 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'You have won.', 'housePoints' => $housePoints, 'points' => $playerPoints, 'win' => $win, 'house' => $houseHand);
 								echo json_encode($arr);
 							}
 						} else {
 							$houseHand = drawHouse($houseHand, $deck);
-							if(checkPoints($houseHand) > 21) {
+							$housePoints = checkPoints($houseHand);
+							if($housePoints > 21) {
 								$win = 1;
 								
 								$query = $db->prepare('UPDATE blackjack SET win = ? WHERE ID = ?');
@@ -613,20 +594,45 @@ if(!IsLoggedOnUser()) {
 									
 								$query->execute();
 									
-								$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'You have won.', 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+								$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'You have won.', 'housePoints' => $housePoints, 'points' => $playerPoints, 'win' => $win, 'house' => $houseHand);
 								echo json_encode($arr);
 							} else {
-								if(checkPoints($houseHand) > checkPoints($playerHand)) {
+								if($housePoints > $playerPoints) {
 									$win = 2;
+									
+									if($housePoints == 21) {
+										if($insurance) {
+											$query = $db->prepare('SELECT * FROM users WHERE username = ?');
+											$query->bind_param('s', $_COOKIE['username']);
+										
+											$query->execute();
+											
+											$result = $query->get_result();
+											while ($row = $result->fetch_assoc()) { 
+												$balance = $row['balance'];
+												$losted = $row['losted'];
+												$won = $row['won'];
+											}
+											
+											$balance += $bet;
+											$losted -= $bet;
+											
+											$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ? WHERE username = ?');
+											$query->bind_param('ddds', $balance, $losted, $won, $_COOKIE['username']);
+									
+											$query->execute();
+										}
+									}
+										
 									
 									$query = $db->prepare('UPDATE blackjack SET win = ? WHERE ID = ?');
 									$query->bind_param('ii', $win, $_GET['game']);
 					
 									$query->execute();
 									
-									$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'House had more points than you.', 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+									$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'House had more points than you.', 'housePoints' => $housePoints, 'points' => $playerPoints, 'win' => $win, 'house' => $houseHand);
 									echo json_encode($arr);
-								} else if(checkPoints($houseHand) == checkPoints($playerHand)) {
+								} else if($housePoints == $playerPoints) {
 									$win = 3;
 									
 									$query = $db->prepare('UPDATE blackjack SET win = ? WHERE ID = ?');
@@ -659,7 +665,7 @@ if(!IsLoggedOnUser()) {
 										
 									$query->execute();
 										
-									$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'Draw', 'points' => checkPoints($playerHand), 'housePoints' => checkPoints($houseHand), 'win' => $win, 'house' => $houseHand);
+									$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'Draw', 'points' => $playerPoints, 'housePoints' => $housePoints, 'win' => $win, 'house' => $houseHand);
 									echo json_encode($arr);
 								} else {
 									$win = 1;
@@ -695,7 +701,7 @@ if(!IsLoggedOnUser()) {
 										
 									$query->execute();
 										
-									$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'You have won.', 'housePoints' => checkPoints($houseHand), 'points' => checkPoints($playerHand), 'win' => $win, 'house' => $houseHand);
+									$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'You have won.', 'housePoints' => $housePoints, 'points' => $playerPoints, 'win' => $win, 'house' => $houseHand);
 									echo json_encode($arr);
 								}
 							}
