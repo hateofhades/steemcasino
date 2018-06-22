@@ -15,7 +15,7 @@ setTimeout(changeState, rollTime);
 var getBetsInterval;
 
 var state = 0;
-var lastRolls = [23, 11, 10, 22];
+var lastRolls = [11, 23, 11, 10, 22];
 var timestamp = 0;
 
 var rollTime = 10 * 1000;
@@ -26,7 +26,8 @@ var jackpotTime = 10 * 60 * 1000;
 var jackpotGame;
 
 var totalBetJackpot = 50;
-var jackpotHash, jackpotSecret = "No secret", lastJackpotSecret;
+var jackpotHash, jackpotSecret = "No secret", lastJackpotSecret = "No secret";
+var rouletteHash, rouletteSecret = "No secret", lastRouletteSecret = "No secret", rouletteRoll = roll();
 var getJackpotTotalInterval;
 var jackpotTimeTick, jackpotTimeTickMax = 120;
 
@@ -134,7 +135,7 @@ function createJackpotGame() {
 	
 	io.sockets.emit('message', {
 		messageType: 6,
-		currentHash: jackpotHash,
+		hash: jackpotHash,
 		lastSecret: lastJackpotSecret,
 		timeleft: jackpotTimeTickMax * 5,
 		gameid: jackpotGame
@@ -217,7 +218,9 @@ io.on('connection', function(socket){
 			messageType: 1,
 			state: state,
 			timestamp: timestamp,
-			lastRolls: lastRolls
+			lastRolls: lastRolls,
+			lastSecret: lastRouletteSecret,
+			hash: rouletteHash
 		});
 		socket.emit('message', {
 			messageType: 11,
@@ -235,9 +238,8 @@ http.listen(3000, function(){
 
 function roll() {
 	var rolled = math.random(0, 38);
-	rolled = math.floor(rolled);
 	
-	console.log("Rolled: " + rolled);
+	rolled = math.floor(rolled);
 	
 	return rolled;
 }
@@ -260,10 +262,9 @@ function changeState() {
 		clearInterval(getBetsInterval);
 		getBets();
 		
-		var currRoll = roll();
-		var color = calculateColor(currRoll);
+		var color = calculateColor(rouletteRoll);
 		
-		lastRolls.unshift(currRoll);
+		lastRolls.unshift(rouletteRoll);
 		if(lastRolls.length == 6)
 			lastRolls.splice(-1, 1);
 		
@@ -271,33 +272,33 @@ function changeState() {
 		
 		var odd = 0, row = 0;
 		
-		if(currRoll != 0 || currRoll != 37) {
-			if(currRoll % 2)
+		if(rouletteRoll != 0 || rouletteRoll != 37) {
+			if(rouletteRoll % 2)
 				odd = 7;
-			else if (!(currRoll % 2))
+			else if (!(rouletteRoll % 2))
 				odd = 8;
 			
-			if(currRoll <= 12)
+			if(rouletteRoll <= 12)
 				row = 4;
-			else if(currRoll <= 24)
+			else if(rouletteRoll <= 24)
 				row = 5;
-			else if(currRoll <= 36)
+			else if(rouletteRoll <= 36)
 				row = 6;
 		}
 		
-		win(color, currRoll, odd, row);
+		win(color, rouletteRoll, odd, row);
 		
 		setTimeout(changeState, rollTime);
 	}
 }
 
-function win(color, currRoll, odd, row) {
+function win(color, rollRoulette, odd, row) {
 	
 	timestamp = Math.floor(Date.now() / 1000) + Math.floor(rollTime/1000);
 	
 	con.query("UPDATE info SET value = 1 WHERE name = 'roulettestate'", function (err, result) {
 	});
-	con.query("SELECT * FROM roulette WHERE beton = " + color + " OR beton = " + (100 + currRoll) + " OR beton = " + odd + " OR beton = " + row, function (err, result) {
+	con.query("SELECT * FROM roulette WHERE beton = " + color + " OR beton = " + (100 + rollRoulette) + " OR beton = " + odd + " OR beton = " + row, function (err, result) {
 		for( var i = 0, len = result.length; i < len; i++ ) {
 			var reward = result[i].bet;
 			var bet = result[i].bet;
@@ -332,12 +333,21 @@ function win(color, currRoll, odd, row) {
 		}
 	});
 	
+	rouletteRoll = roll();
+	var secretos = rouletteRoll + "-" + randomstring.generate(100);
+	rouletteHash = sha('sha256').update(secretos).digest('hex');
+	
 	io.sockets.emit('message', {
 		messageType: 2,
-		roll: currRoll,
+		roll: rollRoulette,
 		lastRolls: lastRolls,
-		timestamp: rollTime / 1000
+		timestamp: rollTime / 1000,
+		lastSecret: rouletteSecret,
+		hash: rouletteHash
 	});
+	
+	lastRouletteSecret = rouletteSecret;
+	rouletteSecret = secretos;
 }
 
 function createGame() {
@@ -362,11 +372,11 @@ function createGame() {
 	});
 }
 
-function calculateColor(currRoll) {
-	if(currRoll == 1 || currRoll == 3 || currRoll == 5 || currRoll == 7 || currRoll == 9 || currRoll == 36 || currRoll == 34 || currRoll == 32 || currRoll == 30 || currRoll == 14 || currRoll == 16 || currRoll == 18 || currRoll == 12 || currRoll == 27 || currRoll == 23 || currRoll == 21 || currRoll == 19 || currRoll == 25)
+function calculateColor(rollRoulette) {
+	if(rollRoulette == 1 || rollRoulette == 3 || rollRoulette == 5 || rollRoulette == 7 || rollRoulette == 9 || rollRoulette == 36 || rollRoulette == 34 || rollRoulette == 32 || rollRoulette == 30 || rollRoulette == 14 || rollRoulette == 16 || rollRoulette == 18 || rollRoulette == 12 || rollRoulette == 27 || rollRoulette == 23 || rollRoulette == 21 || rollRoulette == 19 || rollRoulette == 25)
 		return 1;
-	else if(currRoll == 13 || currRoll == 24 || currRoll == 15 || currRoll == 22 || currRoll == 17 || currRoll == 20 || currRoll == 11 || currRoll == 26 || currRoll == 28 || currRoll == 2 || currRoll == 35 || currRoll == 4 || currRoll == 33 || currRoll == 6 || currRoll == 31 || currRoll == 8 || currRoll == 29 || currRoll == 10)
+	else if(rollRoulette == 13 || rollRoulette == 24 || rollRoulette == 15 || rollRoulette == 22 || rollRoulette == 17 || rollRoulette == 20 || rollRoulette == 11 || rollRoulette == 26 || rollRoulette == 28 || rollRoulette == 2 || rollRoulette == 35 || rollRoulette == 4 || rollRoulette == 33 || rollRoulette == 6 || rollRoulette == 31 || rollRoulette == 8 || rollRoulette == 29 || rollRoulette == 10)
 		return 2;
-	else if(currRoll == 0 || currRoll == 37)
+	else if(rollRoulette == 0 || rollRoulette == 37)
 		return 3;
 }

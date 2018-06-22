@@ -47,6 +47,8 @@ function getMessage(msg) {
 		}
 		
 		displayLastRolls(msg['lastRolls']);
+		$("#hash").text("Current hash: " + msg['hash']);
+		$("#secret").text("Last round secret: " + msg['lastSecret']);
 		state = msg['state'];
 		clearTimeout(progress);
 		displayProgressBar(msg['timestamp'] - Math.floor($.now()/1000));
@@ -56,7 +58,7 @@ function getMessage(msg) {
 	else if(msg['messageType'] == 2) {
 		playAnimation(msg['lastRolls'][0]);
 		
-		setTimeout(function() {displayLastRolls(msg['lastRolls']);}, 10000);
+		setTimeout(function() {displayLastRolls(msg['lastRolls'], msg['hash'], msg['lastSecret']);}, 10000);
 		
 		clearTimeout(progress);
 		state = 1;
@@ -149,7 +151,9 @@ function displayProgressBar(timestamp) {
 	}
 }
 
-function displayLastRolls(lastRolls) {
+function displayLastRolls(lastRolls, hash, secret) {
+	$("#hash").text("Current hash: " + hash);
+	$("#secret").text("Last round secret: " + secret);
 	for(var i = 0; i<5; i++) {
 		var color = getColor(lastRolls[i]);
 		var block = i + 1;

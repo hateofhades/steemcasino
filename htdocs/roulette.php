@@ -165,6 +165,10 @@ include_once('src/db.php');
 				</center>
 			</div></center>
 		</div>
+		<center>
+			<p id="hash"></p>
+			<p id="secret"></p>
+		</center>
 		<script>
 			var owl, i;
 			$(document).ready(function() {

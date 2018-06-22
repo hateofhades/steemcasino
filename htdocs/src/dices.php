@@ -32,11 +32,21 @@ if(!isset($_GET['bet']) || $_GET['bet'] == "") {
 			$losted = $row['losted'];
 			$won = $row['won'];
 			$ref = $row['reffered'];
+			$dicessecret = $row['dicesecret'];
 		}
 		
 		if(($promobal + $balance) >= $_GET['bet']) {
 			
-			$pick = dicesPick();
+			if(!isset($_GET['secret']) || $_GET['bet'] == "")
+				$playersecret = generateSecret();
+			else {
+				if(strlen($_GET['secret']) <= 32)
+					$playersecret = $_GET['secret'];
+				else
+					$playersecret = substr($_GET['secret'], 0, 32);
+			}
+			
+			$pick = dicesPick(substr($dicessecret, 0, 100), $playersecret);
 			
 			$multiplier = (9500/$_GET['under']);
 			$multiplier = round($multiplier, 2);
@@ -65,8 +75,11 @@ if(!isset($_GET['bet']) || $_GET['bet'] == "") {
 				$awon = 0;
 			}
 			
-			$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ?, promob = ? WHERE username = ?');
-			$query->bind_param('dddds', $newbalance, $losted, $won, $promobal, $_COOKIE['username']);
+			$newdicesecret = generateSecret()."-".generateSecret();
+			$newdiceshash = hash("sha256", $newdicesecret);
+			
+			$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ?, promob = ?, dicesecret = ? WHERE username = ?');
+			$query->bind_param('ddddss', $newbalance, $losted, $won, $promobal, $newdicesecret, $_COOKIE['username']);
 				
 			$query->execute();
 			
@@ -109,7 +122,7 @@ if(!isset($_GET['bet']) || $_GET['bet'] == "") {
 					
 			$query->execute();
 			
-			$arr = array('status' => 'success', 'win' => $win, 'pick' => $pick, 'multiplier' => $multiplier, 'balance' => $newbalance, 'reward' => ($_GET['bet'] * $multiplier) - $_GET['bet'], 'under' => $_GET['under'], 'bet' => $_GET['bet']);
+			$arr = array('status' => 'success', 'win' => $win, 'secret' => $dicessecret, 'hash' => $newdiceshash, 'pick' => $pick, 'multiplier' => $multiplier, 'balance' => $newbalance, 'reward' => ($_GET['bet'] * $multiplier) - $_GET['bet'], 'under' => $_GET['under'], 'bet' => $_GET['bet']);
 			echo json_encode($arr);
 			
 		} else {

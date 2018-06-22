@@ -8,6 +8,7 @@
 		<script>
 		var slot1, slot2, slot3, running = 0, slotwin, slotstart;
 		$(document).ready(function(){
+			$("#secretInput").val(Math.random().toString(36).replace(/[^a-z123456789]+/g, '').substr(0, 10));
 			slotwin = document.createElement('audio');
 			slotstart = document.createElement('audio');
 			
@@ -30,8 +31,9 @@
 		
 		function spin() {
 			var bet = $("#bet").val();
+			var secret = $("#secretInput").val();
 			if(!running) {
-				$.getJSON( "/src/slots.php?bet=" + bet , function( data ) {
+				$.getJSON( "/src/slots.php?bet=" + bet + "&secret=" + secret , function( data ) {
 					console.log(data);
 					if(data['status'] == "success") {
 						running = 1;
@@ -42,6 +44,8 @@
 						unsetWin();
 						
 						console.log("Spinning...");
+						$("#currSecret").text("Last roll secret: " + data['secret']);
+						$("#diceshash").text("Current hash: " + data['hash']);
 						animateSlots(data['slot1'], data['slot2'], data['slot3']);
 						$("#balance").text("Balance: " + data['balance'] + " SBD");
 						setTimeout(function() {winSet(data['win']);}, 12000);
@@ -180,6 +184,9 @@
 			</div>
 			</div>
 		</div>
+		<center>Player secret: <input type="text" id="secretInput"></center>
+		<center><p id="slotshash"></p></center>
+		<center><p id="currSecret"></p></center>
 		</div>
 		<?php include('src/footer.php'); ?>
 	</body>

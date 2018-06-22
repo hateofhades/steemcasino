@@ -26,13 +26,23 @@ if(!isset($_GET['bet']) || $_GET['bet'] == "") {
 			$losted = $row['losted'];
 			$won = $row['won'];
 			$ref = $row['reffered'];
+			$slotsecret = $row['slotsecret'];
 		}
 		
 		if(($promobal + $balance) >= $_GET['bet']) {
 			
-			$slot1 = slotPick();
-			$slot2 = slotPick();
-			$slot3 = slotPick();
+			if(!isset($_GET['secret']) || $_GET['bet'] == "")
+				$playersecret = generateSecret();
+			else {
+				if(strlen($_GET['secret']) <= 32)
+					$playersecret = $_GET['secret'];
+				else
+					$playersecret = substr($_GET['secret'], 0, 32);
+			}
+			
+			$slot1 = slotPick(substr($slotsecret, 0, 33), $playersecret);
+			$slot2 = slotPick(substr($slotsecret, 33, 33), $playersecret);
+			$slot3 = slotPick(substr($slotsecret, 66, 33), $playersecret);
 			
 			$win = slotIsWin($slot1, $slot2, $slot3);
 			
@@ -91,8 +101,11 @@ if(!isset($_GET['bet']) || $_GET['bet'] == "") {
 				$winning = 0;
 			}
 			
-			$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ?, promob = ? WHERE username = ?');
-			$query->bind_param('dddds', $newbalance, $losted, $won, $promobal, $_COOKIE['username']);
+			$newslotsecret = generateSecret(98)."-".generateSecret();
+			$newslotshash = hash("sha256", $newslotsecret);
+			
+			$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ?, promob = ?, slotsecret = ? WHERE username = ?');
+			$query->bind_param('ddddss', $newbalance, $losted, $won, $promobal, $newslotsecret, $_COOKIE['username']);
 				
 			$query->execute();
 				
@@ -134,7 +147,7 @@ if(!isset($_GET['bet']) || $_GET['bet'] == "") {
 					
 			$query->execute();
 			
-			$arr = array('status' => 'success', 'slot1' => $slot1, 'slot2' => $slot2, 'slot3' => $slot3, 'win' => $win, 'balance' => $newbalance);
+			$arr = array('status' => 'success', 'secret' => $slotsecret, 'hash' => $newslotshash, 'slot1' => $slot1, 'slot2' => $slot2, 'slot3' => $slot3, 'win' => $win, 'balance' => $newbalance);
 			echo json_encode($arr);
 			
 		} else {

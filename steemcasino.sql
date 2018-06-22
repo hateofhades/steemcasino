@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 31, 2018 at 06:39 AM
+-- Generation Time: Jun 02, 2018 at 06:29 AM
 -- Server version: 10.1.32-MariaDB
 -- PHP Version: 7.2.5
 
@@ -36,7 +36,10 @@ CREATE TABLE `blackjack` (
   `deck` text,
   `playerHand` mediumtext,
   `houseHand` mediumtext,
-  `win` int(11) NOT NULL DEFAULT '0'
+  `win` int(11) NOT NULL DEFAULT '0',
+  `insurance` int(11) NOT NULL DEFAULT '0',
+  `secret` varchar(256) NOT NULL,
+  `hash` varchar(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -189,7 +192,9 @@ CREATE TABLE `users` (
   `losted` float NOT NULL DEFAULT '0',
   `reffered` varchar(255) DEFAULT NULL,
   `privacy` int(1) DEFAULT '0',
-  `promob` float NOT NULL DEFAULT '0'
+  `promob` float NOT NULL DEFAULT '0',
+  `dicesecret` varchar(256) NOT NULL,
+  `slotsecret` varchar(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --

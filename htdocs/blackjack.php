@@ -33,6 +33,10 @@
 					<center><p style="margin:0">Bet</p><input type="number" step=".001" min="0.001" value="1" pattern="\d+(\.\d{2})?" id="bet" name="bet"></center>
 				</div>
 			</div>
+			<center>
+				<p id="hash"></p>
+				<p id="secret"></p>
+			</center>
 		</div>
 		<script src="js/blackjack.js"></script>
 		<?php include('src/footer.php'); ?>
