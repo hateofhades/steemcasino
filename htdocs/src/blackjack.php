@@ -698,8 +698,8 @@ if(!IsLoggedOnUser()) {
 		if(!isset($_GET['game']) || $_GET['game'] == "" || $_GET['game'] == 0) {
 			$arr = array('status' => 'error', 'error' => 501, 'message' => 'Game is not set.');
 			echo json_encode($arr);
-		} else {
-			/*$query = $db->prepare('SELECT * FROM blackjack WHERE id = ?');
+		} else {/*
+			$query = $db->prepare('SELECT * FROM blackjack WHERE id = ?');
 			$query->bind_param('i', $_GET['game']);
 		
 			$query->execute();
@@ -747,19 +747,55 @@ if(!IsLoggedOnUser()) {
 									$losted += $bet;
 									
 									//Now we are saving the second card in other variable and removing it from the hand and drawing a new card.
-									$splitCard = $playerHand[1][0];
-									$newDeck = array_pop($playerHand);
-									$newDeck = drawCards($deck, 1, $newDeck);
+									$hand2 = $playerHand[1][0];
+									$hand1 = array_pop($playerHand);
+									$hand1 = drawCards($deck, 1, $hand1);
+									$deck = removeCards($deck);
+									$hand2 = drawCards($deck, 1, $hand2);
 									$deck = removeCards($deck);
 									
-									//Now we are checking to see if the new first hand is a blackjack and the house is not. If it is we reward the player and go to the second hand.
-									if(checkPoints($newDeck) == 21 && checkPoints($houseHand) != 21) {
-										//We're drawing the second card for the second deck and checking if it's a blackjack too!
-										$secondNewDeck = drawCards($deck, 1, $splitCard);
-										$deck = removeCards($deck);
-										if(checkPoints($secondNewDeck) == 21) {
-											$balance += ($bet * 4);
+									//If both hands are blackjack, then player wins
+									if(checkPoints($hand1) == 21 && checkPoints($hand2) == 21) {
+										$win = 1;
+												
+										$query = $db->prepare('UPDATE blackjack SET win = ? WHERE ID = ?');
+										$query->bind_param('ii', $win, $_GET['game']);
+								
+										$query->execute();
+												
+										$query = $db->prepare('SELECT * FROM users WHERE username = ?');
+										$query->bind_param('s', $_COOKIE['username']);
+												
+										$query->execute();
+													
+										$result = $query->get_result();
+										while ($row = $result->fetch_assoc()) { 
+											$balance = $row['balance'];
+											$losted = $row['losted'];
+											$won = $row['won'];
 										}
+													
+										$balance += ($bet + $bet)*2;
+										$won += $bet*2;
+										$losted -= $bet;
+												
+										$trans = 8;
+												
+										$query = $db->prepare('UPDATE users SET balance = ?, losted = ?, won = ? WHERE username = ?');
+										$query->bind_param('ddds', $balance, $losted, $won, $_COOKIE['username']);
+												
+										$query->execute();
+												
+										$query = $db->prepare('UPDATE history SET win = ?, reward = ? WHERE transType = ? AND gameid = ?');
+										$query->bind_param('idii', $win, $bet, $trans, $_GET['game']);
+													
+										$query->execute();
+												
+										$arr = array('status' => 'success', 'secret' => $secret, 'message' => 'Blackjack x2', 'housePoints' => checkPoints($houseHand), 'win' => $win, 'house' => $houseHand);
+										echo json_encode($arr);
+									}//Else if only the first hand is a blackjack, then we go to the second hand
+									else if(checkPoints($hand1) == 21) {
+										
 									}
 								} else {
 									$arr = array('status' => 'error', 'message' => 'You can\'t split two different cards.');

@@ -12,7 +12,7 @@
 			<div class="blackjack-body">
 				<center><h1 style="display:inline">Blackjack </h1><b><a href="games.php" style="display:inline;text-decoration:none;color:black;">(Go back) </a></b></center>
 				<div id="blackjack-table">
-					<center><p style="margin:0" id="gameStatus">Let's play!</p></center>
+					<center><p style="margin:0" id="gameStatus">Let's play! Split is disabled!</p></center>
 
 					<p style="margin-left:25px" id="dealerHandString">Dealer:</p>
 					<div id="dealerHand" id="houseHandString">
