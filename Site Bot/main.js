@@ -5,6 +5,7 @@ var io = require('socket.io')(http);
 var math = require('mathjs');
 var randomstring = require('randomstring');
 var sha = require('sha.js');
+var request = require('request');
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -228,6 +229,28 @@ io.on('connection', function(socket){
 			timeleft: (jackpotTimeTickMax - jackpotTimeTick) * 5,
 			hash: jackpotHash,
 			lastSecret: lastJackpotSecret
+		});
+	});
+	socket.on('sendMessage', function(content) {
+		var cnt = content.split("|");
+		var user = cnt[0], token = cnt[1], message = cnt[2];
+		
+		var url = "https://steemconnect.com/api/me?access_token=" + token;
+		
+		request({
+			url: url,
+			json: true
+		}, function (error, response, body) {
+
+			if (!error) {
+				if(user == body['user']) {
+					socket.emit('message', {
+						messageType: "chat",
+						user: user,
+						content: message
+					});
+				}
+			}
 		});
 	});
 });
