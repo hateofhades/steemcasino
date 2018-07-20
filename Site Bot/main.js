@@ -235,6 +235,7 @@ io.on('connection', function(socket){
 		var cnt = content.split("|");
 		var user = cnt[0], token = cnt[1], message = cnt[2];
 		
+		//we are validating the user to see if he is real and didn't change the token
 		var url = "https://steemconnect.com/api/me?access_token=" + token;
 		
 		request({
@@ -242,13 +243,69 @@ io.on('connection', function(socket){
 			json: true
 		}, function (error, response, body) {
 
-			if (!error) {
+			if (!error) {//If he is real then we continue by sending his message to everybody
 				if(user == body['user']) {
 					socket.emit('message', {
 						messageType: "chat",
 						user: user,
 						content: message
 					});
+				} 
+				if(message == "/help" || message == "/?" ) {//If his message contains /help or /? we will send him the required info through chat.js
+					socket.emit('message', {
+						messageType: "help",
+						user: user
+					});
+				} else {
+					var messageCnt = message.split(" ");//If it's not we will then split the message and test if the first word is: 
+					if(messageCnt[0] == "/sendcoins") {//1. /sendcoins
+						if(!isNaN(messageCnt[2])) {
+							if(user != messageCnt[1]) {//If the user is different from the one he is trying to send the coins to then we continue
+								con.query("SELECT * FROM users WHERE username = " + con.escape(user), function(err, result) {
+									var balance = result[0].balance;
+									if(balance < messageCnt[2]) {//If he dosnt have enough balance then we print him a message.
+										socket.emit('message', {
+											messageType: "noBal",
+											user: user
+										});
+									} else {//If he has we continue
+										con.query("SELECT * FROM users WHERE username = " + con.escape(messageCnt[1]), function(errr, rresult) {
+											if(rresult) {//If the user that he tries to send to exists then we continue
+												var balanced = parseFloat(rresult[0].balance);
+												var amount = messageCnt[2];
+												
+												console.log(balanced);
+												
+												balance -= amount;
+												balanced += amount;	
+												
+												//Then we update their balances.
+												con.query("UPDATE users SET balance = '" + balance + "' WHERE username = " + con.escape(user), function(errrr, rrresult) {
+													con.query("UPDATE users SET balance = '" + balanced + "' WHERE username = " + con.escape(messageCnt[1]), function(errrr, rrresult) {
+														socket.emit('message', {
+															messageType: "sendCoin",
+															user: user,
+															recive: messageCnt[1]
+														});
+													});
+												});
+											} else {
+												socket.emit('message', {
+													messageType: "noUsr",
+													user: user
+												});
+											}
+										});
+									}
+								});
+							} else {
+								socket.emit('message', {
+									messageType: 'urself',
+									user: user
+								});
+							}
+						}
+					}
 				}
 			}
 		});

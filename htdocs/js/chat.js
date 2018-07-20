@@ -33,6 +33,25 @@ function getMessage(msg) {
 	if(msg['messageType'] == "chat") {
 		displayMessage(msg['user'], msg['content']);
 	}
+	else if(msg['messageType'] == "help" && msg['user'] == Cookies.get("username")) {
+		chatContent = '<div class="container"><img src="img/gray-vertical.png" alt="Avatar"><p>Commands:\n/sendCoins (username) (amount)</p></div>' + $(".chat").html();
+		$(".chat").html(chatContent);
+	} else if(msg['messageType'] == "noBal" && msg['user'] == Cookies.get("username")) {
+		chatContent = '<div class="container"><img src="img/gray-vertical.png" alt="Avatar"><p style="color:red">Not enough balance!</p></div>' + $(".chat").html();
+		$(".chat").html(chatContent);
+	} else if(msg['messageType'] == "noUsr" && msg['user'] == Cookies.get("username")) {
+		chatContent = '<div class="container"><img src="img/gray-vertical.png" alt="Avatar"><p style="color:red">User does not exist.</p></div>' + $(".chat").html();
+		$(".chat").html(chatContent);
+	} else if(msg['messageType'] == "urself" && msg['user'] == Cookies.get("username")) {
+		chatContent = '<div class="container"><img src="img/gray-vertical.png" alt="Avatar"><p style="color:red">You can\'t send coins to yourself!</p></div>' + $(".chat").html();
+		$(".chat").html(chatContent);
+	} else if(msg['messageType'] == "sendCoin" && msg['user'] == Cookies.get("username")) {
+		chatContent = '<div class="container"><img src="img/gray-vertical.png" alt="Avatar"><p style="color:green">Successfully sent coins to: ' + msg['recive'] + '!</p></div>' + $(".chat").html();
+		$(".chat").html(chatContent);
+	} else if(msg['messageType'] == "sendCoin" && msg['recive'] == Cookies.get("username")) {
+		chatContent = '<div class="container"><img src="img/gray-vertical.png" alt="Avatar"><p style="color:green">You have recived coins from: ' + msg['user'] + '!</p></div>' + $(".chat").html();
+		$(".chat").html(chatContent);
+	}
 }
 
 function displayMessage(user, content) {
